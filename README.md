@@ -9,6 +9,6 @@ user@biosci:Team2-WebServer$ conda activate team-2-conda
 ```
 
 ## Execution
-We will be calling a file called *backbone.py* in each directory of the
-4 steps of the pipeline. This ensures that a single file is running all of the
+We will be calling a file called *backbone.py* in each directory of the 4
+other steps of the pipeline. This ensures that a single file is running all of the
 code within a single pipeline step and centralizing the outputs.
