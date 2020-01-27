@@ -1,4 +1,4 @@
-#Web Server
+# Web Server
 This is Team 2's web server repository.
 
 ## Installation
