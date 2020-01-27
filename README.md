@@ -12,3 +12,6 @@ user@biosci:Team2-WebServer$ conda activate team-2-conda
 We will be calling a file called *backbone.py* in each directory of the 4
 other steps of the pipeline. This ensures that a single file is running all of the
 code within a single pipeline step and centralizing the outputs.
+
+## Data Usage
+TODO: use database? if so, how will it be organized? how will we maintain it?
