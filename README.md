@@ -33,8 +33,20 @@ the scripts are run.
 ## Frameworks & Packages Used
 - Django
 - Celery (TODO: look for alternatives (celery not too good with
-  errors or nonrepetitive tasks)? async.io, etc.)
+  errors or nonrepetitive & very long tasks)? async.io, etc.)
 - SQLite
 
 ## Data Usage
-TODO: how will it be organized? how will we maintain it? how do we use SQLite? 
+TODO: 
+      
+      1. How will it be organized?
+      
+      2. How will we maintain it? 
+      
+      3. How do we use SQLite?
+      
+      4. Explore async tools other than Celery; Celery is our fall back option.
+      
+      5. See how sqlite works with Django.
+      
+      6. Figure out the organization of your group's data, how it's going to look, what intermittent stages are there in your group, and how would you store and display these intermittent results.
