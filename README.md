@@ -14,7 +14,7 @@ user@biosci:Team2-WebServer$ conda init bash
 
 Then type in
 ```console
-user@biosci:Team2-WebServer$ conda activate team-2-conda
+user@biosci:Team2-WebServer$ conda activate group-b-conda
 ```
 
 ## Execution
