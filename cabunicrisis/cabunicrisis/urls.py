@@ -19,7 +19,7 @@ from django.urls import path, include
 from django.conf.urls import url, include
 from django.contrib.auth import views as auth_views
 
-from mysite.core import views as core_views
+from cabunicrisis.core import views as core_views
 
     
 urlpatterns = [
