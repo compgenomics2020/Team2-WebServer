@@ -7,6 +7,7 @@ will be using in our pipeline. To use our environment, type in
 ```console
 user@biosci:Team2-WebServer$ export PATH=$PATH:/home/projects/group-b/miniconda3/condabin
 ```
+
 If this is your first time using conda, type in
 ```console
 user@biosci:Team2-WebServer$ conda init bash
