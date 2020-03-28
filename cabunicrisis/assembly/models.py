@@ -14,7 +14,7 @@ class User(models.Model):
 
 
 class RawFastqFiles(models.Model):
-	user = models.ForeignKey(User, related_name = "user")
+	user = models.ForeignKey(User, related_name = "raw_files")
 	path = models.CharField(max_length=512)
 
 	def __str__(self):
@@ -39,3 +39,4 @@ class GenomeAssembly(models.Model):
 
 
 class Quast(models.Model):
+	pass
