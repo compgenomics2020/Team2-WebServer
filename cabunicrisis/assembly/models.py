@@ -16,6 +16,7 @@ class User(models.Model):
 class RawFastqFiles(models.Model):
 	user = models.ForeignKey(User, related_name = "raw_files")
 	path = models.CharField(max_length=512)
+	file = models.FileField(upload = 'RawFastqFiles/')
 
 	def __str__(self):
 		return (str(self.path))
