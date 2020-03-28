@@ -23,10 +23,9 @@ from mysite.core import views as core_views
 
     
 urlpatterns = [
-    path('admin-xyzzy/', admin.site.urls),
-    path('home/', home, name = 'home_page'),
-    path('assembly/', include('assembly.urls')),
-
+    #path('admin-xyzzy/', admin.site.urls),
+    #path('home/', home, name = 'home_page'),
+    #path('assembly/', include('assembly.urls')),
     url(r'^$', core_views.home, name='home'),
     url(r'^login/$', auth_views.login, {'template_name': 'login.html'}, name='login'),
     url(r'^logout/$', auth_views.logout, {'next_page': 'login'}, name='logout'),
