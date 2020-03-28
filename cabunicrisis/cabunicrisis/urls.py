@@ -15,7 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from assembly.views import home
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin-xyzzy/', admin.site.urls),
+    path('home/', home, name = 'home_page'),
+    path('assembly/', include('assembly.urls')),
 ]
