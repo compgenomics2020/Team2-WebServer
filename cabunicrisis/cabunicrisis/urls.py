@@ -34,5 +34,3 @@ urlpatterns = [
     url(r'^uploads/form/$', core_views.model_form_upload, name='model_form_upload'),
     url(r'^admin/', admin.site.urls),
 ]
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
