@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from assembly.views import home
+#from assembly.views import home
 from django.conf.urls import url, include
 from django.contrib.auth import views as auth_views
 
@@ -27,7 +27,7 @@ urlpatterns = [
     #path('home/', home, name = 'home_page'),
     #path('assembly/', include('assembly.urls')),
     url(r'^$', core_views.home, name='home'),
-    url(r'^login/$', auth_views.login, {'template_name': 'login.html'}, name='login'),
-    url(r'^logout/$', auth_views.logout, {'next_page': 'login'}, name='logout'),
+    url(r'^login/$', auth_views.LoginView, {'template_name': 'login.html'}, name='login'),
+    url(r'^logout/$', auth_views.LogoutView, {'next_page': 'login'}, name='logout'),
     url(r'^signup/$', core_views.signup, name='signup'),
 ]
