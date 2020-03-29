@@ -9,6 +9,7 @@
       <h1>Welcome to BIOL7200 Web Server</h1>
       {% if user.is_authenticated %}
         <a href="{% url 'logout' %}">logout</a>
+        <a href="{% url 'simple_upload' %}">upload your fastaq file</a>
       {% else %}
         <a href="{% url 'login' %}">login</a> / <a href="{% url 'signup' %}">signup</a>
       {% endif %}
