@@ -36,6 +36,11 @@ def simple_upload(request):
         })
     return render(request, 'simple_upload.html')
 
+def simple_assembly(request):
+
+    return render(request, 'simple_assembly.html')
+
+
 
 def model_form_upload(request):
     if request.method == 'POST':
