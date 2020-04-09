@@ -3,8 +3,11 @@
 {% load static %}
 
 {% block content %}
-  
+
+{% csrf_token %}
+ <header>
   <p>Currently under construction</p>
-</header>
   <p><a href="{% url 'home' %}">Return to home</a></p>
+
+ </header>
 {% endblock %}
