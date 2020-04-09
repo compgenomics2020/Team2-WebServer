@@ -18,7 +18,8 @@ from django.urls import path, include
 #from assembly.views import home
 from django.conf.urls import url, include
 from django.contrib.auth import views as auth_views
-
+from django.conf import settings
+from django.conf.urls.static import static
 from cabunicrisis.core import views as core_views
 
     
@@ -26,7 +27,12 @@ urlpatterns = [
     #path('admin-xyzzy/', admin.site.urls),
     #path('home/', home, name = 'home_page'),
     #path('assembly/', include('assembly.urls')),
+    
     url(r'^$', core_views.home, name='home'),
+    url(r'^$', core_views.simple_assembly, name='simple_assembly'),
+    url(r'^$', core_views.simple_assembly, name='simple_annotation'),
+    url(r'^$', core_views.simple_assembly, name='simple_prediction'),
+    url(r'^$', core_views.simple_assembly, name='simple_comparative'),
     url(r'^login/$', auth_views.LoginView.as_view(template_name= 'login.html'), name='login'),
     url(r'^logout/$', auth_views.LogoutView.as_view(next_page= 'login'), name='logout'),
     url(r'^signup/$', core_views.signup, name='signup'),
@@ -34,3 +40,5 @@ urlpatterns = [
     url(r'^uploads/form/$', core_views.model_form_upload, name='model_form_upload'),
     url(r'^admin/', admin.site.urls),
 ]
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
