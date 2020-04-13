@@ -14,6 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+<<<<<<< Updated upstream
 from django.urls import path, include
 #from assembly.views import home
 from django.conf.urls import url, include
@@ -21,6 +22,12 @@ from django.contrib.auth import views as auth_views
 from django.conf import settings
 from django.conf.urls.static import static
 from cabunicrisis.core import views as core_views
+=======
+from django.urls import path
+from assembly.views import home
+from django.conf.urls import url, include
+
+>>>>>>> Stashed changes
 
     
 urlpatterns = [
