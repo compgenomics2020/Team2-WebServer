@@ -6,7 +6,6 @@ from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 
 
-@login_required
 def home(request):
     return render(request, 'base.html')
 
