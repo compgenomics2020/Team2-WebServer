@@ -14,16 +14,15 @@ class User(models.Model):
 
 
 class RawFastqFiles(models.Model):
-	user = models.ForeignKey(User, related_name = "raw_files")
+	user = models.ForeignKey(User, related_name = "raw_files", on_delete=models.CASCADE)
 	path = models.CharField(max_length=512)
-	file = models.FileField(upload = 'RawFastqFiles/')
 
 	def __str__(self):
 		return (str(self.path))
 
 
 class TrimmedFiles(models.Model):
-	raw_file = models.ForeignKey(RawFastqFiles, related_name = "raw_file")
+	raw_file = models.OneToOneField(RawFastqFiles, on_delete=models.CASCADE, related_name = "trimmed_file")
 	path = models.CharField(max_length=512)	
 
 	def __str__(self):
@@ -31,13 +30,27 @@ class TrimmedFiles(models.Model):
 
 
 class GenomeAssembly(models.Model):
-	raw_untrimmed_file = models.ForeignKey(RawFastqFiles, related_name = "raw_untrimmed_file")
-	raw_trimmed_file = models.ForeignKey(TrimmedFiles, related_name = "raw_trimmed_file")
-	contigs_file_path = models.CharField(max_length=512)
+	user = models.ForeignKey(User, related_name = "assembly", on_delete=models.CASCADE)
+	raw_untrimmed_file = models.ForeignKey(RawFastqFiles, related_name = "raw_untrimmed_file", on_delete=models.CASCADE)
+	raw_trimmed_file = models.ForeignKey(TrimmedFiles, related_name = "raw_trimmed_file", null = True, on_delete=models.CASCADE)
+	path = models.CharField(max_length=512)
+	job_status = models.BooleanField(default = False)
 
 	def __str__(self):
 		return (str(self.path))
 
 
 class Quast(models.Model):
-	pass
+	user = models.ForeignKey(User, related_name = "quast", on_delete=models.CASCADE)
+	assembly = models.ForeignKey(GenomeAssembly, related_name = "quast", null = True, on_delete=models.CASCADE)
+	path = models.CharField(max_length=512)
+	l_50 = models.CharField(max_length = 16)
+	n_50 = models.CharField(max_length = 16)
+
+
+	def __str__(self):
+		return (str(self.path))
+
+
+
+
