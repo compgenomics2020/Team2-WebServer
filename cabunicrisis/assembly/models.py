@@ -7,6 +7,7 @@ class User(models.Model):
 	uuid = models.UUIDField(primary_key = True, default = uuid.uuid4, editable = False)
 	email = models.EmailField(max_length = 254)
 	job_status = models.BooleanField(default = False)
+	if_pipeline = models.BooleanField(default = False)
 	creation_date = models.DateField(auto_now_add = True , blank = True)
 
 	def __str__(self):

@@ -2,35 +2,55 @@ from django.http import HttpResponse, Http404
 from django.shortcuts import render, redirect
 from .models import User
 import uuid
-
+import os
 
 # Create your views here.
 
 def assembly_home(request):
 	#Landing page of Genome Assembly isolated functionality.
-
-	#Upload files forms.
+	#Jobs can be submitted for isolated genome assembly jobs.
 	if request.method == 'GET':
 		raw_html = render(request, 'assembly/assembly_homepage.html')
 		response = HttpResponse(raw_html)
 		return response
 
 	if request.method == 'POST':
-		user_uuid = uuid.uuid4()
+		#Create a UUID for user.
+		user_uuid = str(uuid.uuid4())
+		#Directory names.
+		dir_data = 'data/'
+		dir_user = dir_data + user_uuid + '/'
+		dir_raw_fastq = dir_user + '/' + 'raw-fastq/'
+
+		#Creating a directory for user.
+		os.mkdir(dir_user)
+
+		#Creating a directory for raw fastq files.
+		os.mkdir(dir_raw_fastq)
+
+		#Getting user's email.
+		email = request.POST['email']
+		
+		#Get number of files.
+		number_of_files = 0
+
+		#Accessing and saving the files sent by user.
 		for file in request.FILES.getlist('raw-fastq-files'):
-			with open("blah.txt", "w") as f:
+			with open(dir_raw_fastq + file.name, "w") as f:
 				f.write(str(file.read()))	
-			#print(file.name)
-		return HttpResponse("Yes")
+				number_of_files+=1
 
-def assembly_upload_files(request):
-	#Check for files.
-	#Create a UUID for user.
+		#Create Raw files model.
 
-	#Create Raw files model.
 
-	#Return the link to status page.
-	return HttpResponse("Upload files status page.")
+
+		#Run Pipeline.
+
+		raw_html = render(request, 'assembly/assembly_homepage.html', {'uuid_data': user_uuid, 'number_of_files': number_of_files})
+		return HttpResponse(raw_html)
+
+def job_status(request):
+	return HttpResponse("Genome Assembly Job Status")
 
 
 def pipeline_home(request):
