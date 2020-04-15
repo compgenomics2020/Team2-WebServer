@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from assembly.views import pipeline_home
+from assembly.views import pipeline_home, job_status
 from django.conf.urls import url, include
 from django.contrib.auth import views as auth_views
 from django.conf import settings
@@ -30,5 +30,6 @@ urlpatterns = [
 	path('assembly/', include('assembly.urls')),
 	#Pipeline is kept in Genome Assembly because that's the first component of the pipeline.
 	path('pipeline/', pipeline_home, name = 'pipeline_home'),
+	path('status/', job_status, name = 'job_status'),
 	path('prediction/', include('prediction.urls')),
 ]
