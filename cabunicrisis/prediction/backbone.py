@@ -76,7 +76,7 @@ def check_input(folder_name):
 ##############################################################################################################################################################################################
 
 # Running GeneMarkS-2 and/or Prodigal based on the options given by the user, it takes in the input path to the files, output path, type of the species( either bacteria or auto for genemarks-2) and which tool to run or both to run
-def running_tools(input_path,output_path,type_species,run_tool,name="contigs.fasta"):
+def running_tools(input_path,output_path,type_species,run_tool,input_option,name="contigs.fasta"):
     list_of_files=[]
     #List all the directories present in the input path, where the wrapper goes into those directories and runs the contigs files
     #print(os.listdir(input_path))
@@ -84,11 +84,11 @@ def running_tools(input_path,output_path,type_species,run_tool,name="contigs.fas
        
        #print(folder)
        if (run_tool==1 or run_tool==3):
-           genemarks2_output=genemarks2_script(input_path,folder,output_path,type_species,name)
+           genemarks2_output=genemarks2_script(input_path,folder,output_path,type_species,input_option,name)
            if genemarks2_output != False:
                list_of_files.append(folder)  
        if(run_tool==2 or run_tool==3):
-            prodigal_output=prodigal_script(input_path,folder,output_path,name)
+            prodigal_output=prodigal_script(input_path,folder,output_path,input_option,name)
             #if prodigal_output == False:
                 #return False
     return True,list_of_files
@@ -241,6 +241,7 @@ def main():
     run_tool=args['coding_tools']
     type_species=args['type_species']
     flag=args['input_option']
+    name=args['name_contigs']
 
     #print(output_path,run_tool,type_species,flag)
 
@@ -253,13 +254,13 @@ def main():
     ##### If the user wants to take in his own input###############################################################################################
     if flag == "2":
         input_path=args['input_assembly']
-        name=args['name_contigs']
+        
         
         
         if check_input(input_path):
             # checks the input folder for manual input, and then runs the tools. Considers input folder to contain specific sequence folder which in turn contains the name variable (name of the contigs)
             # Runs prodigal or genemarks2 or both depending on the user's choice calls the function run_out 
-            run_out,list_of_files=running_tools(input_path,output_path,type_species,run_tool,name)
+            run_out,list_of_files=running_tools(input_path,output_path,type_species,run_tool,flag,name)
             #If run out is false, it just returns false and the function returns the appropriate error message
             if not run_out:
                 return False
@@ -315,11 +316,11 @@ def main():
             ###########################Coding tools, GeneMarkS2 and Prodigal, merge the results or keep them seperate blast out the results and 
             # there are two input paths as there are two folders given to us by the genome assembly group according to the kmer count
             # Runs prodigal or genemarks2 or both depending on the user's choice calls the function run_out 
-            run_out,list_of_files=running_tools(input_folder77,output_path,type_species,run_tool,flag)
+            run_out,list_of_files=running_tools(input_folder77,output_path,type_species,run_tool,flag,name)
             #If run_out is false, it just returns false and the function returns the appropriate error message
             if not run_out:
                 return False
-            run_out,list_of_files=running_tools(input_folder99,output_path,type_species,run_tool,flag)
+            run_out,list_of_files=running_tools(input_folder99,output_path,type_species,run_tool,flag,name)
             if not run_out:
                 return False
 

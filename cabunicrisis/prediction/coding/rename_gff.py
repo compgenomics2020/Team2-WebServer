@@ -21,7 +21,7 @@ def rename_gff(union_input_path, blast_input_path, input_file, output_path,run_o
         #union_input_file = the specific union file that correlates to the input file (ex: CGT2049_union.fna/faa)
         input_file_path = input_path+"/"+input_file+"_union.gff"
         #output_folder= the folder that the known/unknown files will be placed in (folder in input_path named kn_union_fna/faa)
-        output_folder = output_path+"/"+"known_unknown/"+"/gff/"
+        output_folder = output_path+"/known_unknown/"+"/gff/"
         #output_file = the ku file in the ku folder under the union folders (ex: known_unknown_faa/CGT2049_union.faa)
         #output_file = output_folder+"/"+input_file+"_union."+type
         if input_file+"_union.gff" not in os.listdir(input_path):       #if CGT2049_union.fna/faa does not exist in union_fna/faa
@@ -35,7 +35,7 @@ def rename_gff(union_input_path, blast_input_path, input_file, output_path,run_o
         #union_input_file = the specific union file that correlates to the input file (ex: CGT2049_union.fna/faa)
         input_file_path = input_path+"/"+input_file+".gff"
         #output_folder= the folder that the known/unknown files will be placed in (folder in input_path named kn_union_fna/faa)
-        output_folder = output_path+"/"+"known_unknown/"+"/gff/"
+        output_folder = output_path+"/known_unknown/"+"/gff/"
         #output_file = the ku file in the ku folder under the union folders (ex: known_unknown_faa/CGT2049_union.faa)
         #output_file = output_folder+"/"+input_file+"_union."+type
         if input_file+".gff" not in os.listdir(input_path):       #if CGT2049_union.fna/faa does not exist in union_fna/faa

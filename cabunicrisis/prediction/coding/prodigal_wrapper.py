@@ -9,12 +9,18 @@ Output: fna,gff,faa files
 #!/usr/bin/python3
 import os,subprocess
 
-def prodigal_script(input_path,assembly_file,output_folder_path,name):
+def prodigal_script(input_path,assembly_file,output_folder_path,flag,name):
     #Get the contigs file from all the different assemblies generated
     #input= input_path is the folder in which different contigs are kept example:21,33,55,77 and assembly_file is the actual folder i.e CGT2049. name just takes those contigs files 
-    assembly_input=input_path+assembly_file+"/"+name
-    if name not in os.listdir(assembly_input_path):
-        return False
+    if flag =="2":
+        assembly_input=input_path+assembly_file
+        if assembly_file not in os.listdir(input_path):
+            return False
+    elif flag =="1":
+        assembly_input_path=input_path+assembly_file
+        assembly_input=input_path+assembly_file+"/"+name
+        if name not in os.listdir(assembly_input_path):
+            return False
     #output_tool is the folder it will create in the output_folder_path based on the tool which is running
     output_tool=output_folder_path+"/prodigal/"
     #output_folder_path is the folder in which the output folders will be generated in. It will check whether those folders are present or will generate them. 
