@@ -1,8 +1,8 @@
 from django.conf.urls import url
 from django.urls import path
-from .views import prediction_home, prediction_upload_files
+from .views import prediction_home, pipeline_home
 
 urlpatterns = [
 	path('home/', prediction_home, name = "prediction_home"),
-	path('upload/', prediction_upload_files, name = "prediction_upload_files"),
+	path('upload/', pipeline_home, name = "pipeline_home"),
 ]
