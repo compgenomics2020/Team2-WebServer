@@ -133,7 +133,8 @@ def blast_results(run_tool,out):
 # Run the rename script to generate output files with known and unknown genes 
 def rename_scripts(list_of_files,out,run_tool):
     blast_input_path=out+"/blast"
-
+    output_check=output_path+"/known_unknown/"
+    os.mkdir(output_check)
     #Checks if gene_marks2 is called or prodigal or the union of both
     if run_tool==1:
         for files in list_of_files:
@@ -330,7 +331,7 @@ def main():
                 #### If the merge output directory doesnt exist, it makes a directory called merge out where the output files will be located, 
                 # or just deletes the folder if it is present 
                 if os.path.exists(merge_output) == False:
-                    subprocess.call(["mkdir",merge_output])
+                    os.mkdir(merge_output)
                 else:
                     shutil.rmtree(merge_output)
                     os.mkdir(merge_output)
