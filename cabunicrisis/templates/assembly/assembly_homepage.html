@@ -1,5 +1,25 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
-	<div></div>
+<main role="main">
+
+	<div class="jumbotron" style="background:transparent url('{% static 'images/jejuni-2.jpg' %}') no-repeat center center /cover; border-radius: 0">
+
+		<div class="container text-center">
+			<h1 class="text-white display-3">Welcome to Genome Assembly.</h1>
+			<p class="text-white">The genome assembly step in our pipeline uses SPAdes assembler to obtain contig files from the raw fastq files submitted. We also run SPAdes-plasmids to account for plasmid data.</p>
+			<p class="text-white">SPAdes has been empirically compared against five additionl popular genome assembly tools, and quality parameter checks would be provided to the user. Check our documentation for statistical evidence.</p>
+			<br><br><br><br>
+			<h4 class="text-white">Please enter one or more fastq files.</h4>
+			<form method="post" enctype="multipart/form-data" class="text-center">
+				{% csrf_token %}
+				<button class="btn text-white" style="background-color: #2f3030">
+				<input type="file" class="text-white" name="raw-fastq-files" multiple ><b>Upload Files »</b></button>
+			</form>
+		</div>
+	</div>
+
+</main>
+
 {% endblock %}
