@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<main role="main">
+
+        <div class="jumbotron" style="background:transparent url('{% static 'images/jejuni-2.jpg' %}') no-repeat center center /cover; border-radius: 0">
+
+                <div class="container text-center">
+                        <h1 class="text-white display-3">Welcome to Gene Prediction.</h1>
+                        <h2 class="text-white">The gene prediction part of our pipeline runs either or both GeneMarkS-2 and/or Prodigal. It combines the results of the both the two tools, and runs blast to validate the results. Finally it renames the files to give known(k) hits in the blast database or unknown(U) hits in the blast database.</h2>
+                        <h2 class="text-white">It runs Infernal to obtain the noncoding RNA .</h2>
+                        <br><br><br><br>
+                        <h4 class="text-white">Please enter one or more fasta files.</h4>
+                        <form method="post" enctype="multipart/form-data" class="text-center">
+                                {% csrf_token %}
+                                <button class="btn text-white" style="background-color: #2f3030">
+                                <input type="file" class="text-white" name="contigs.fasta" multiple ><b>Upload Files »</b></button>
+                        </form>
+                </div>
+        </div>
+
+</main>
+
+{% endblock %}
+
