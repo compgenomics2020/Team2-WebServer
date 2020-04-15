@@ -15,7 +15,7 @@ def assembly_home(request):
 	
 	return response
 
-def upload_files(request):
+def assembly_upload_files(request):
 	#Check for files.
 
 	#Create a UUID for user.
