@@ -10,7 +10,7 @@ def assembly_home(request):
 	#Landing page of Genome Assembly isolated functionality.
 
 	#Upload files forms.
-	raw_html = render(request, 'homepage.html')
+	raw_html = render(request, 'assembly/assembly_homepage.html')
 	response = HttpResponse(raw_html)
 	
 	return response

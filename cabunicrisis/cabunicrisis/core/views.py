@@ -7,7 +7,7 @@ from django.core.files.storage import FileSystemStorage
 
 
 def home(request):
-    return render(request, 'base.html')
+    return render(request, 'homepage.html')
 
 
 def signup(request):

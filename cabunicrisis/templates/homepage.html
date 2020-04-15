@@ -1,10 +1,43 @@
-<!DOCTYPE html>
-	<html>
-		<head>
-			<title>Predictive Web Server</title>
-		</head>
+{% extends 'base.html' %}
+{% load static %}
 
-		<body>
-			<h5>This is a good test.</h5>
-		</body>
-	</html>
+{% block content %}
+<main role="main">
+
+  <!-- Main jumbotron for a primary marketing message or call to action -->
+<div class="jumbotron" style="background:transparent url('{% static 'cjejuni.jpg' %}') no-repeat center center /cover; border-radius: 0">
+
+	<div class="container">
+		<h1 class="text-white display-3">Hello, Bioinformaticians!</h1>
+		<h5 class="text-white">Welcome to cabunicrisis! A predictive webserver built for <i><b>Campylobacter jejuni</b></i> as the world tackles covid-19 (CRISIS)</h5>
+		<p><a class="btn btn-primary btn-lg" href="{% url 'pipeline_home' %}" role="button">Run Pipeline »</a></p>
+	</div>
+</div>
+
+<div class="row" style="padding-right: 15px; padding-left: 15px;">
+	<div class="col-md-3">
+		<h3>Genome Assembly</h3>
+		<p>A <i>de-novo</i> genome assembly to assemble the genome of a pathogen from sequencing data. Performs pre-assembly and post-assembly quality checks to yield an assembly from emperically benchmarked tools.</p>
+		<p><a class="btn btn-success" href="{% url 'assembly_home' %}" role="button">Run Assembly »</a></p>
+	</div>
+	<div class="col-md-3">
+		<h3>Gene Prediction</h3>
+		<p>A <i>de-novo</i> genome assembly to assemble the genome of a pathogen from sequencing data. Performs pre-assembly and post-assembly quality checks to yield an assembly from emperically benchmarked tools.</p>
+		<p><a class="btn btn-success" href="{% url 'prediction_home' %}" role="button">Get Predictions »</a></p>
+	</div>
+	<div class="col-md-3">
+		<h3>Functional Annotation</h3>
+		<p>A <i>de-novo</i> genome assembly to assemble the genome of a pathogen from sequencing data. Performs pre-assembly and post-assembly quality checks to yield an assembly from emperically benchmarked tools.</p>
+		<p><a class="btn btn-success" href="#" role="button">Annotate »</a></p>
+	</div>
+	<div class="col-md-3">
+		<h3>Comparative Genomics</h3>
+		<p>A <i>de-novo</i> genome assembly to assemble the genome of a pathogen from sequencing data. Performs pre-assembly and post-assembly quality checks to yield an assembly from emperically benchmarked tools.</p>
+		<p><a class="btn btn-success" href="#" role="button">Investigate »</a></p>
+	</div>
+</div>
+
+<hr>
+
+</main>
+{% endblock %}

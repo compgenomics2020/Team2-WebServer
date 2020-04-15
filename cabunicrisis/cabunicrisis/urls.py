@@ -25,12 +25,10 @@ from cabunicrisis.core import views as core_views
 urlpatterns = [
 	#path('admin-xyzzy/', admin.site.urls),
 	#path('home/', home, name = 'home_page'),
+	path('', core_views.home, name = 'home'),
 	path('home/', core_views.home, name = 'home'),
 	path('assembly/', include('assembly.urls')),
 	#Pipeline is kept in Genome Assembly because that's the first component of the pipeline.
 	path('pipeline/', pipeline_home, name = 'pipeline_home'),
 	path('prediction/', include('prediction.urls')),
-
 ]
-if settings.DEBUG:
-	urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
