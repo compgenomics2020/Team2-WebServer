@@ -15,7 +15,7 @@ def genemarks2_script(input_path,assembly_file,output_folder_path,type_species,f
         assembly_input=input_path+assembly_file
         if assembly_file not in os.listdir(input_path):
             return False
-    elif flag =="1":
+    else:
         assembly_input_path=input_path+assembly_file
         assembly_input=input_path+assembly_file+"/"+name
         if name not in os.listdir(assembly_input_path):
