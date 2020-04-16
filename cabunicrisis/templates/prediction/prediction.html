@@ -13,6 +13,7 @@
 
  
         </div>
+
         <div class="container text-left">
                 <p class="text-black">Gene prediction is one of the first and most important steps in understanding the genome of a species once it has been sequenced. Gene prediction takes in a contig and identifies regions of genomic DNA that encode genes.</p>
                 <p class="text-black">The gene prediction part of our pipeline runs either or both GeneMarkS-2 and/or Prodigal. It combines the results of the both the two tools, and runs blast to validate the results. Finally it renames the files to give known(k) or unknown(U) hits in the blast database. For Noncoding RNA, it runs Infernal.</p>
@@ -33,15 +34,16 @@
                 {% endif %}        
                 <p><strong><u>Please Upload one or more fasta files.</u></strong></p>
                 <form method="post" enctype="multipart/form-data" class="text-left"></form>
+                        {% csrf_token %}
                         <button type="button" class="btn btn-outline-secondary" >
-                        <input type="file" class="text-black" name="contigs.fasta" multiple ><b>Upload Files »</b></button>
-                </form>
-                <br><br>
-                <div><p><strong><u>Please enter one or more than one tool to run.</u></strong></p>
-                        <div class="pretty p-default p-has-focus">
-                                <input type="checkbox" />
-                                <div class="state">
-                                        <label>GeneMarkS-2</label>
+                                <input type="file" class="text-black" name="contigs.fasta" multiple ><b>Upload Files »</b></button>
+                
+                        <br><br>
+                        <div><p><strong><u>Please enter one or more than one tool to run.</u></strong></p>
+                                <div class="pretty p-default p-has-focus">
+                                        <input type="checkbox" />
+                                        <div class="state">
+                                                <label>GeneMarkS-2</label>
                                 </div>
                         </div>
                         <div class="pretty p-default p-has-focus">
@@ -49,11 +51,10 @@
                                 <div class="state">
                                         <label>Prodigal</label>
                                 </div>
-                        </div>
-                </div> 
-                <br>
-                <form method="post" enctype="multipart/form-data" class="text-left">
-                        {% csrf_token %}
+                                
+                        </div> 
+                        <br>
+                        
                         <button type="button" class="btn btn-outline-secondary col-md-7">
                                 <div class="row align-items-center"> 
                                         <div class="col-md-8">

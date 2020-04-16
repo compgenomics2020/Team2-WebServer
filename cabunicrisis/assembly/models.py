@@ -3,6 +3,11 @@ from django.db import models
 
 # Create your models here.
 
+
+####Important####
+#It's stupid to save files manually and then make the entry instead of using django's file field.
+#I didn't use it because it appeared better to create a subdir for every user.
+
 class User(models.Model):
 	uuid = models.UUIDField(primary_key = True, default = uuid.uuid4, editable = False)
 	email = models.EmailField(max_length = 254)
@@ -11,7 +16,7 @@ class User(models.Model):
 	creation_date = models.DateField(auto_now_add = True , blank = True)
 
 	def __str__(self):
-		return (str(self.email) + "with ID: " + str(self.uuid))
+		return (str(self.email) + " with ID: " + str(self.uuid))
 
 
 class RawFastqFiles(models.Model):

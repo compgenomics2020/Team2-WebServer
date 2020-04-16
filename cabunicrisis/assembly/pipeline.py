@@ -23,9 +23,11 @@ import os
 import random
 import subprocess
 
-from spades_wrapper import spades_runner
-from quast_wrapper import quast_runner
-from plasmids_spades_wrapper import plasmid_spades_runner
+from .spades_wrapper import spades_runner
+from .quast_wrapper import quast_runner
+from .plasmid_spades_wrapper import plasmid_spades_runner
+
+from .models import GenomeAssembly
 
 #############################Globals#############################
 
@@ -154,7 +156,7 @@ def check_already_done(fastq_file_forward, output_directory):
 
 
 
-def run_assemblies(input_directory_path, output_directory_path, fastq_files_dict, kmer_dict, pre_trim_manifest, post_trim_manifest):
+def run_assemblies(input_directory_path, output_directory_path, fastq_files_dict, kmer_dict, model_object_user, model_object_raw_fastq_file):
 	'''
 	We'll call 3 assembly tools, parallely
 	'''
@@ -164,11 +166,11 @@ def run_assemblies(input_directory_path, output_directory_path, fastq_files_dict
 	#print(pre_trim_manifest)
 
 	#Assembly flags, put these to False if you want to NOT RUN a particular tool.
-	if_spades = False
-	if_plasmid = True
+	if_spades = True
+	if_plasmid = False
 
 	#Output directory paths.
-	output_spades_path = output_directory_path.rstrip('/') + '/' + 'spades' + '/' + kmer_dict['spades']
+	output_spades_path = output_directory_path.rstrip('/') + '/' + 'spades'
 	output_plasmid_spades_path = output_directory_path.rstrip('/') + '/' + 'plasmid_spades' + '/' 
 
 
@@ -189,35 +191,42 @@ def run_assemblies(input_directory_path, output_directory_path, fastq_files_dict
 
 				#Check if the file has already been processed using SPAdes.
 				if check_already_done(fastq_file_forward, output_spades_path):
-					print("\nFiles {} & {} have already been processed by SPAdes.".format(fastq_file_forward, fastq_file_reverse))
-					print("If you want to process it again, please delete the directory: {} in directory: {}".format(fastq_file_forward.split('.')[0].split('_')[0], output_spades_path))
-					print("Skipping for now...\n")
+					#print("\nFiles {} & {} have already been processed by SPAdes.".format(fastq_file_forward, fastq_file_reverse))
+					#print("If you want to process it again, please delete the directory: {} in directory: {}".format(fastq_file_forward.split('.')[0].split('_')[0], output_spades_path))
+					#print("Skipping for now...\n")
 					continue
 
 				else:
 					#print("Running SPAdes for {} & {}.".format(fastq_file_forward, fastq_file_reverse))
+					contigs_file_path = output_spades_path + '/' + fastq_file_forward.split('_')[0] + '/' + 'contigs.fasta'
+					model_object_genome_assembly = GenomeAssembly(user = model_object_user,
+																	raw_untrimmed_file = model_object_raw_fastq_file,
+																	path = contigs_file_path)
 					
-					spades_output = spades_runner(fastq_file_forward, fastq_file_reverse, input_directory_path, output_spades_path, kmer_dict['spades']) 
+					model_object_genome_assembly.save()
+					#spades_output = spades_runner(fastq_file_forward, fastq_file_reverse, input_directory_path, output_spades_path, kmer_dict['spades']) 
 
 					#Check if SPAdes ran fine.
 					if spades_output is not True or None:
 						print("SPAdes process failed for reads: {} and {}".format(fastq_file_forward, fastq_file_reverse))
+					
+					#Job is completed, updating it in the database.
+					model_object_genome_assembly.job_status = True
+					model_object_genome_assembly.save()
 			##########################################
 
 
 			##############Plasmids SPAdes#############
 			if if_plasmid:
-				print(fastq_file_forward, fastq_file_reverse)
-				continue
 				#Create directory for SPAdes' results.			
 				if not os.path.exists(output_plasmid_spades_path):
 					os.mkdir(output_plasmid_spades_path)
 
 				#Check if the file has already been processed using SPAdes.
 				if check_already_done(fastq_file_forward, output_plasmid_spades_path):
-					print("\nFiles {} & {} have already been processed by plasmid-SPAdes.".format(fastq_file_forward, fastq_file_reverse))
-					print("If you want to process it again, please delete the directory: {} in directory: {}".format(fastq_file_forward.split('.')[0].split('_')[0], output_plasmid_spades_path))
-					print("Skipping for now...\n")
+					#print("\nFiles {} & {} have already been processed by plasmid-SPAdes.".format(fastq_file_forward, fastq_file_reverse))
+					#print("If you want to process it again, please delete the directory: {} in directory: {}".format(fastq_file_forward.split('.')[0].split('_')[0], output_plasmid_spades_path))
+					#print("Skipping for now...\n")
 					continue
 
 				else:
@@ -240,37 +249,18 @@ def run_assemblies(input_directory_path, output_directory_path, fastq_files_dict
 
 
 def main(essential_arguments = None):
-	parser = argparse.ArgumentParser()
+	#Getting the arguments.	
+	#Directories.
+	input_directory_path_for_fastq_files = essential_arguments['input_directory']
+	output_trimmed_files = essential_arguments['output_trimmed_files']
+	output_genome_assembly = essential_arguments['output_genome_assembly']
+	output_quast = essential_arguments['output_quast']
 
-	#Arguments added for an input-directory and output-directory.
-	parser.add_argument("-i", "--input-directory", help="Path to a directory that contains input fastq files.", required=False)
-	parser.add_argument("-o", "--output-directory", help="Path to a directory that will store the output files.", required=False)
+	#Model Objects.
+	model_object_user = essential_arguments['model_objects']['user']
+	model_object_raw_fastq_file = essential_arguments['model_objects']['raw_fastq']
 
-	#Argument for Kmers.
-	parser.add_argument("-ka", "--kmer-abyss", help="Kmer value for abyss.", required=False)
-	parser.add_argument("-ks", "--kmer-spades", help="Kmer value for spades.", required=False)
-	parser.add_argument("-km", "--kmer-masurca", help="Kmer value for MaSuRCA.", required=False)
-	parser.add_argument("-ku", "--kmer-unicycler", help="Kmer value for Unicycler.", required=False)
-	parser.add_argument("-kv", "--kmer-velvet", help="Kmer value for Velvet.", required=False)
-	#parser.add_argument("-ka", "--kmer-abyss", help="Kmer value for abyss.", required=False)
-	
-	parser.add_argument("-r", "--replace-output-files", help="Replace the output files that are already present. Currently not supported.", required=False, action="store_true")	
-
-	#Parsing the arguments.
-	args = vars(parser.parse_args())
-
-	if essential_arguments:
-
-	else:
-		input_directory_path_for_fastq_files = args['input_directory']
-		output_directory_path = args['output_directory']
-	replace_files_flag = args['replace_output_files']
-
-	#Parse Kmers for assembly tools.
-	#Most of our tools run on a Debuign graph based methods.
-	#They need kmer values.
-	kmer_spades = args['kmer_spades']
-	kmer_dict['spades'] = 'auto'
+	kmer_dict = {'spades': 'auto'}
 	###########################################Parsing Documents Ends#############################################
 	##############################################################################################################
 
@@ -312,17 +302,17 @@ def main(essential_arguments = None):
 	##############################################################################################################
 
 
-	print("Found {} file pairs in the input directory.\n".format(len(fastq_files_dict)))
+	#print("Found {} file pairs in the input directory.\n".format(len(fastq_files_dict)))
 	#################Quality Checks#################
-	print("Started pre-assembly quality check.")
+	#print("Started pre-assembly quality check.")
 
 	#Kristine
 
-	print("Completed quality check.\n")
+	#print("Completed quality check.\n")
 
 	#################Passing data over to Genome Assembly Tools#################
-	print("Now running genome assembly tools.")
-	status_run_assemblies = run_assemblies(input_directory_path_for_fastq_files, output_directory_path, fastq_files_dict, kmer_dict, pre_trim_manifest, post_trim_manifest)
+	#print("Now running genome assembly tools.")
+	status_run_assemblies = run_assemblies(input_directory_path_for_fastq_files, output_genome_assembly, fastq_files_dict, kmer_dict, model_object_user, model_object_raw_fastq_file)
 
 	if not status_run_assemblies:
 		print("Running assembly tools failed")
@@ -331,8 +321,8 @@ def main(essential_arguments = None):
 	print("Completed genome assembly tools.\n")
 	#################Post Assembly Quality Check#################
 	
-	print("Starting with post assembly quality check tools.")
-	print("Starting Quast")
+	#print("Starting with post assembly quality check tools.")
+	#print("Starting Quast")
 
 	#quast_output = quast_runner(output_directory_path)
 
