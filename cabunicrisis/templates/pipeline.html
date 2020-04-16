@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<main role="main">
+        <div class="jumbotron" style="background:transparent url('{% static 'images/jejuni-2.jpg' %}') no-repeat center center /cover; border-radius: 0">
+        
+                <div class="container text-center">
+                        <h1 class="text-white display-3">Welcome to Pipeline Overview</h1>
+                        <br><br><br><br>
+                </div>
+
+ 
+        </div>
+        <img src="{ % static 'images/Pipeline.png' %}" class="img-rounded" > 
+        <div class="jumbotron" style="background:transparent url('{% static 'images/Pipeline.png' %}') no-repeat center center /cover; border-radius: 0"></div>
+        <div class="container text-left">
+                <p class="text-black">Our Pipeline will run with the default options and give you an option to view and download files seperately.</p>
+                <br>
+                {% if uuid_data %}
+                <div class="row align-items-center" style="padding-right: 15px; padding-left: 15px;">
+                        <div class="col-md-1">
+                        </div>
+                        <div class="col-md-10">
+                                <h3 class="text-center">Files Receieved!</h3>
+                                <p class="text-center">Your files were receieved successfully. Please note down your unique UUID and check for updates in the status page.</p>
+                                <p class="text-center">Your UUID: <b>{{ uuid_data }}</b></p>
+                                <p class="text-center"><a class="btn btn-success" href="{% url 'prediction_home' %}" role="button">Get Status »</a></p>
+                        </div>
+                        <div class="col-md-1">
+                        </div>
+                </div>
+                {% endif %}        
+                <p><strong><u>Please enter one or more fastq files</u></strong></p>
+                <form method="post" enctype="multipart/form-data" class="text-left"></form>
+					{% csrf_token %}
+					<button type="button" class="btn btn-outline-secondary" >
+						<input type="file" class="text-black" name="raw-fastq-files" multiple ><b>Upload Files »</b></button>
+					<br><br>
+                        
+                    <button type="button" class="btn btn-outline-secondary col-md-7">
+                            <div class="row align-items-center"> 
+                                    <div class="col-md-8">
+                                            <input type="email" name="email" class="form-control">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <h5><b>Email Address</b></h5>
+                                    </div>
+                            </div>
+                    </button>
+	            </form>             
+    	</div>
+</main>
+
+{% endblock %}
