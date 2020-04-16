@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<main role="main">
+
+	<div class="jumbotron" style="background:transparent url('{% static 'images/jejuni-3.jpg' %}') no-repeat center center /cover; border-radius: 0">
+
+		<div class="container text-center">
+			<h1 class="text-white display-3">Job Status</h1>
+			<p class="text-white">Bioinformatics tasks usually take more than a blink of an eye. That's why cabunicrisis manages jobs and lets you check their status</p>
+			<br>
+			<h4 class="text-white">Please enter your Email or UUID associated with your job.</h4>
+			<br>
+			<form method="post" enctype="multipart/form-data" class="text-center">
+				{% csrf_token %}
+				<div class="row">
+					<button type="button" class="btn text-white btn-outline-warning btn-lg col-md-5 p-3">
+						<div class="row align-items-center"> 
+							<div class="col-md-8">
+								<input type="email" name="email" class="form-control">
+							</div>
+							<div class="col-md-4">
+								<h5><b>Email Address</b></h5>
+							</div>
+						</div>
+					</button>
+					<div class="col-md-2"><h5 class="text-white">OR</h5></div>
+					<button type="button" class="btn text-white btn-outline-warning btn-lg col-md-5 p-3">
+						<div class="row align-items-center"> 
+							<div class="col-md-8">
+								<input type="text" name="uuid" class="form-control">
+							</div>
+							<div class="col-md-4">
+								<h5><b>Job UUID</b></h5>
+							</div>
+						</div>
+					</button>
+				</div>
+				<br>
+				<div class="row"> 
+					<div class="col-md-9"></div>
+					<button type="submit" class="btn btn-warning btn-lg col-md-3">Submit »</button>
+				</div>
+			</form>
+
+		</div>
+	</div>
+
+	<div class="row align-items-center" style="padding-right: 15px; padding-left: 15px;">
+		<div class="col-md-1"></div>
+		<div class="col-md-10">
+			<h2 class="text-center">Status Report</h2>
+		</div>
+		<div class="col-md-1"></div>
+	</div>
+	<br><br>
+	<div class="row align-items-center" style="padding-right: 15px; padding-left: 15px;">
+		<div class="col-md-3 text-center">
+			<button class="btn btn-primary align-items-center" type="button" data-toggle="collapse" data-target="#assembly" aria-expanded="false" aria-controls="assembly" {% if not assembly %} disabled {% endif %}>Genome Assembly</button>
+		</div>
+		<div class="col-md-3 text-center">
+			<button class="btn btn-primary align-items-center" type="button" data-toggle="collapse" data-target="#prediction" aria-expanded="false" aria-controls="prediction" {% if not assembly %} disabled {% endif %}>Gene Prediciton</button>
+		</div>
+		<div class="col-md-3 text-center">
+			<button class="btn btn-primary align-items-center" type="button" data-toggle="collapse" data-target="#annotation" aria-expanded="false" aria-controls="annotation" {% if not assembly %} disabled {% endif %}>Functional Annotation</button>
+		</div>
+		<div class="col-md-3 text-center">
+			<button class="btn btn-primary align-items-center" type="button" data-toggle="collapse" data-target="#comparative" aria-expanded="false" aria-controls="comparative" {% if not assembly %} disabled {% endif %}>Comparative Genomics</button>
+		</div>
+	</div>
+	<br><br>
+	<div class="collapse" id="assembly" style="padding-right: 15px; padding-left: 15px;">
+		<div class="card card-body">
+			Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
+		</div>
+	</div>
+	<div class="collapse" id="prediction" style="padding-right: 15px; padding-left: 15px;">
+		<div class="card card-body">
+			Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
+		</div>
+	</div>
+	<div class="collapse" id="annotation" style="padding-right: 15px; padding-left: 15px;">
+		<div class="card card-body">
+			Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
+		</div>
+	</div>
+	<div class="collapse" id="comparative" style="padding-right: 15px; padding-left: 15px;">
+		<div class="card card-body">
+			Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
+		</div>
+	</div>
+	<br><br><br><br>
+
+</main>
+
+{% endblock %}

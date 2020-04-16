@@ -67,7 +67,22 @@ def assembly_home(request):
 		return HttpResponse(raw_html)
 
 def job_status(request):
-	return HttpResponse("Genome Assembly Job Status")
+	if request.method == 'GET':
+		raw_html = render(request, 'status/status.html')
+		response = HttpResponse(raw_html)
+		return response
+
+	if request.method == 'POST':
+		#Get email or uuid sent by the user.
+		if "email" in request.POST:
+			email = request.POST['email']
+
+		elif "uuid" in request.POST:
+			uuid = request.POST['uuid']
+
+		
+		raw_html = render(request, 'status/status.html')
+		return HttpResponse(raw_html)
 
 
 def pipeline_home(request):
