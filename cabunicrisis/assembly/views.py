@@ -1,5 +1,6 @@
 from django.http import HttpResponse, Http404
 from django.shortcuts import render, redirect
+from django.core.exceptions import ValidationError
 from .models import User, RawFastqFiles
 from .pipeline import main as pipeline_main
 import uuid
@@ -68,20 +69,21 @@ def assembly_home(request):
 
 def job_status(request):
 	if request.method == 'GET':
-		raw_html = render(request, 'status/status.html')
+		raw_html = render(request, 'status/status.html', {'user': False})
 		response = HttpResponse(raw_html)
 		return response
 
 	if request.method == 'POST':
 		#Get email or uuid sent by the user.
-		if "email" in request.POST:
-			email = request.POST['email']
-
-		elif "uuid" in request.POST:
-			uuid = request.POST['uuid']
-
-		
-		raw_html = render(request, 'status/status.html')
+		email = request.POST['email']
+		uuid = request.POST['uuid']
+		try:
+			model_object_user = User.objects.get(uuid = uuid)
+		except ValidationError:
+			raw_html = render(request, 'status/status.html', {'user': False})
+			response = HttpResponse(raw_html)
+			return response
+		raw_html = render(request, 'status/status.html', {'user': model_object_user})
 		return HttpResponse(raw_html)
 
 
