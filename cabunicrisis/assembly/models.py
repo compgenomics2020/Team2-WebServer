@@ -37,8 +37,11 @@ class TrimmedFiles(models.Model):
 
 class GenomeAssembly(models.Model):
 	user = models.ForeignKey(User, related_name = "assembly", on_delete=models.CASCADE)
-	raw_untrimmed_file = models.ForeignKey(RawFastqFiles, related_name = "raw_untrimmed_file", on_delete=models.CASCADE)
-	raw_trimmed_file = models.ForeignKey(TrimmedFiles, related_name = "raw_trimmed_file", null = True, on_delete=models.CASCADE)
+
+	raw_untrimmed_file_1 = models.ForeignKey(RawFastqFiles, related_name = "assembly", on_delete=models.CASCADE, null = True)
+
+	trimmed_file_1 = models.ForeignKey(TrimmedFiles, related_name = "assembly", null = True, on_delete=models.CASCADE)
+
 	path = models.CharField(max_length=512)
 	job_status = models.BooleanField(default = False)
 

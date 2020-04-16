@@ -43,7 +43,7 @@ def assembly_home(request):
 
 		#Create User model.
 		model_object_user = User(uuid = user_uuid, email = email, if_pipeline = False)
-		#model_object_user.save()
+		model_object_user.save()
 
 		#Create Raw files model.
 		#Accessing and saving the files sent by user.
@@ -53,14 +53,14 @@ def assembly_home(request):
 				number_of_files+=1
 			#Creating the file model object and entry in the database.
 			model_object_raw_fastq_file = RawFastqFiles(user = model_object_user, path = dir_raw_fastq + file.name)
-			#model_object_raw_fastq_file.save()
+			model_object_raw_fastq_file.save()
 
 		#Run Pipeline.
 		essential_arguments_for_pipeline = {'input_directory': dir_raw_fastq, 
 											'output_trimmed_files': dir_trimmed, 
 											'output_genome_assembly': dir_genome_assembly, 
 											'output_quast': dir_quast, 
-											'model_objects': {'user': model_object_user, 'raw_fastq': model_object_raw_fastq_file}}
+											'model_objects': {'user': model_object_user}}
 		pipeline_status = pipeline_main(essential_arguments_for_pipeline)
 
 		raw_html = render(request, 'assembly/assembly_homepage.html', {'uuid_data': user_uuid, 'number_of_files': number_of_files})

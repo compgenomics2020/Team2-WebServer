@@ -27,7 +27,7 @@ from .spades_wrapper import spades_runner
 from .quast_wrapper import quast_runner
 from .plasmid_spades_wrapper import plasmid_spades_runner
 
-from .models import GenomeAssembly
+from .models import GenomeAssembly, RawFastqFiles
 
 #############################Globals#############################
 
@@ -156,7 +156,7 @@ def check_already_done(fastq_file_forward, output_directory):
 
 
 
-def run_assemblies(input_directory_path, output_directory_path, fastq_files_dict, kmer_dict, model_object_user, model_object_raw_fastq_file):
+def run_assemblies(input_directory_path, output_directory_path, fastq_files_dict, kmer_dict, model_object_user):
 	'''
 	We'll call 3 assembly tools, parallely
 	'''
@@ -178,6 +178,9 @@ def run_assemblies(input_directory_path, output_directory_path, fastq_files_dict
 	for fastq_file_forward, fastq_file_reverse in fastq_files_dict.items():
 		#Check if foward has an _1 as a suffix.
 		if '_1' in fastq_file_forward:
+			#Getting the fastq file objects.
+			model_object_raw_fastq_file =  model_object_user.raw_files.all().filter(path__icontains = fastq_file_forward)[0]
+
 			##########################################
 			################Tools Start###############
 			##########################################
@@ -200,11 +203,11 @@ def run_assemblies(input_directory_path, output_directory_path, fastq_files_dict
 					#print("Running SPAdes for {} & {}.".format(fastq_file_forward, fastq_file_reverse))
 					contigs_file_path = output_spades_path + '/' + fastq_file_forward.split('_')[0] + '/' + 'contigs.fasta'
 					model_object_genome_assembly = GenomeAssembly(user = model_object_user,
-																	raw_untrimmed_file = model_object_raw_fastq_file,
+																	raw_untrimmed_file_1 = model_object_raw_fastq_file,
 																	path = contigs_file_path)
 					
 					model_object_genome_assembly.save()
-					#spades_output = spades_runner(fastq_file_forward, fastq_file_reverse, input_directory_path, output_spades_path, kmer_dict['spades']) 
+					spades_output = spades_runner(fastq_file_forward, fastq_file_reverse, input_directory_path, output_spades_path, kmer_dict['spades']) 
 
 					#Check if SPAdes ran fine.
 					if spades_output is not True or None:
@@ -258,7 +261,6 @@ def main(essential_arguments = None):
 
 	#Model Objects.
 	model_object_user = essential_arguments['model_objects']['user']
-	model_object_raw_fastq_file = essential_arguments['model_objects']['raw_fastq']
 
 	kmer_dict = {'spades': 'auto'}
 	###########################################Parsing Documents Ends#############################################
@@ -312,7 +314,7 @@ def main(essential_arguments = None):
 
 	#################Passing data over to Genome Assembly Tools#################
 	#print("Now running genome assembly tools.")
-	status_run_assemblies = run_assemblies(input_directory_path_for_fastq_files, output_genome_assembly, fastq_files_dict, kmer_dict, model_object_user, model_object_raw_fastq_file)
+	status_run_assemblies = run_assemblies(input_directory_path_for_fastq_files, output_genome_assembly, fastq_files_dict, kmer_dict, model_object_user)
 
 	if not status_run_assemblies:
 		print("Running assembly tools failed")
