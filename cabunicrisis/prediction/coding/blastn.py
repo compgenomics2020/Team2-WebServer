@@ -60,5 +60,6 @@ def blastn_script(input_path, input_file_folder, output_path,run_tool):
         except subprocess.CalledProcessError:
             print("Error running Blast for {}".format(input_file))
             return False
+    
 if __name__=="__main__":
     pass

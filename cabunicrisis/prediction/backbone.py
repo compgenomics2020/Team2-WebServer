@@ -6,6 +6,9 @@ Run Gene Prediction Pipe
 """
 
 #!/usr/bin/env python
+import matplotlib.pyplot as plt; plt.rcdefaults()
+import numpy as np
+import matplotlib.pyplot as plt
 import argparse
 import os
 import subprocess
@@ -76,22 +79,26 @@ def check_input(folder_name):
 ##############################################################################################################################################################################################
 
 # Running GeneMarkS-2 and/or Prodigal based on the options given by the user, it takes in the input path to the files, output path, type of the species( either bacteria or auto for genemarks-2) and which tool to run or both to run
-def running_tools(input_path,output_path,type_species,run_tool,name="contigs.fasta"):
+def running_tools(input_path,output_path,type_species,run_tool,input_option,name="contigs.fasta"):
     list_of_files=[]
+    list_failed=[]
     #List all the directories present in the input path, where the wrapper goes into those directories and runs the contigs files
     #print(os.listdir(input_path))
     for folder in sorted(os.listdir(input_path)):
        
        #print(folder)
        if (run_tool==1 or run_tool==3):
-           genemarks2_output=genemarks2_script(input_path,folder,output_path,type_species,name)
+           genemarks2_output=genemarks2_script(input_path,folder,output_path,type_species,input_option,name)
            if genemarks2_output != False:
-               list_of_files.append(folder)  
+               list_of_files.append(folder)
+            else:
+                list_failed.append(folder)
+                continue
        if(run_tool==2 or run_tool==3):
-            prodigal_output=prodigal_script(input_path,folder,output_path,name)
+            prodigal_output=prodigal_script(input_path,folder,output_path,input_option,name)
             #if prodigal_output == False:
                 #return False
-    return True,list_of_files
+    return True,list_of_files,list_failed
 
 
 ############################################################################################################################################################################################
@@ -150,8 +157,6 @@ def rename_scripts(list_of_files,out,run_tool):
             if not condition:
                 return False
 
-        genemarks2_output=out+"/genemarks2/"
-        shutil.rmtree(genemarks2_output)
 
     #Same if only prodigal is called
     elif run_tool==2:
@@ -168,8 +173,6 @@ def rename_scripts(list_of_files,out,run_tool):
             if not condition:
                 return False
 
-        prodigal_output=out+"/prodigal/"
-        shutil.rmtree(prodigal_output)
             
     #Same if both the tools are called and the merge results are obtained
     else:
@@ -190,12 +193,84 @@ def rename_scripts(list_of_files,out,run_tool):
 
         shutil.rmtree(union_path_fna)
         shutil.rmtree(union_path_faa)
-        shutil.rmtree(union_path_gff)
 
-
-    shutil.rmtree(blast_input_path)
     return True
 
+def graph(list_of_files,list_of_hits,x_name):
+    objects = list_of_files
+    y_pos = np.arange(len(objects))
+    performance = list_of_hits
+    plt.bar(y_pos, performance, align='center', alpha=0.5)
+    plt.xticks(y_pos, objects)
+    plt.ylabel('Hits')
+    plt.title(x_name)
+    plt.show()
+
+
+def hits_list(list_of_files,run_tool,out):
+    blast_input_path=out+"/blast"
+    list_blast_hits=[]
+    list_of_files=[]
+    list_total_hits=[]
+    for files in os.listdir(blast_input_path)
+        blast_dir=blast_input_path+"/"+files
+        p = subprocess.Popen(['wc', '-l', blast_dir], stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+        result, err = p.communicate()
+        if p.returncode != 0:
+            raise IOError(err)
+        list_files.append(files)
+        list_blast_hits.append(int(result.strip().split()[0]))
+    graph(list_of_files,list_blast_hits,"Blast Results")
+
+    if run_tool==1 or run_tool==3:
+        genemark_hits=[]
+        for files in list_of_files:
+            genemarks2_output=out+"/genemarks2/"+files+"/"+files+"_output.gff"
+            p = subprocess.Popen(['wc', '-l', genemarks2_output], stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+            result, err = p.communicate()
+            if p.returncode != 0:
+                raise IOError(err)
+            genemark_hits.append(int(result.strip().split()[0]))
+        
+        graph(list_of_files,genemark_hits,"GeneMarkS-2 Results")
+        
+        genemarks2_output=out+"/genemarks2/"
+        shutil.rmtree(genemarks2_output)
+
+    #Same if only prodigal is called
+    if run_tool==2 or run_tool==3:
+        prodigal_hits=[]
+        for files in list_of_files:
+            prodigal_output=out+"/prodigal/"+files+"/"+files+"_output.gff"
+            p = subprocess.Popen(['wc', '-l', prodigal_output], stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+            result, err = p.communicate()
+            if p.returncode != 0:
+                raise IOError(err)
+            prodigal_hits.append(int(result.strip().split()[0]))
+            
+        graph(list_of_files,prodigal_hits,"Prodigal Results")
+
+        prodigal_output=out+"/prodigal/"
+        shutil.rmtree(prodigal_output)
+            
+    #Same if both the tools are called and the merge results are obtained
+    if run_tool==3:
+        union_path_gff=out+"/merge_out/union_gff/"
+        merge_hits=[]
+        for files in list_of_files:
+            union_output=union_path_gff+files+"_union.gff"
+            p = subprocess.Popen(['wc', '-l', union_output], stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+            result, err = p.communicate()
+            if p.returncode != 0:
+                raise IOError(err)
+            merge_hits.append(int(result.strip().split()[0]))
+
+        graph(list_of_files,merge_hits,"Union Results")
+
+        merge_folder=out+"/merge_out/"
+        shutil.rmtree(union_path_gff)
+        shutil.rmtree(merge_folder)
+    shutil.rmtree(blast_input_path)
 
 #################################################################################################################################################################################################
 
@@ -219,9 +294,11 @@ def main():
 
     parser.add_argument("-io","--input-option",default=1,help="R|Default Option is 1, options available\n"
     "1 Take input from the genome assembly results \n"
-    "2 Input your own assembly files")
+    "2 Input your own assembly files \n"
+    "3 Plasmid Input from Genome Assembly")
     parser.add_argument("-nc", "--name-contigs", default="contigs.fasta" ,help="Name of the contig files,called when option 2 for input-option is selected, default considered is contigs.fasta",required=False)
     parser.add_argument("-ia", "--input-assembly", help="Path to the directory that contains input file manually,called when option 2 for input-option is selected",required=False)
+    parser.add_argument("-ip", "--input-plasmids", help="Path to the directory that contains input file for plasmid spades output called when Plasmid Input from Genome Assembly called ",required=False)
     parser.add_argument("-if77", "--input-files77", help="Path to the directory that contains input file for spades output of 21,33,55,77, called when default option for input-option is selected",required=False)
     parser.add_argument("-if99", "--input-files99", help="Path to the directory that contains input file for spades output of 21,33,55,77,99,127,called when default option for input-option is selected",required=False)
     parser.add_argument("-go", "--gene-output", help="Path to a directory that will store the output gff files, fna files and faa files.", required=True)
@@ -241,6 +318,7 @@ def main():
     run_tool=args['coding_tools']
     type_species=args['type_species']
     flag=args['input_option']
+    name=args['name_contigs']
 
     #print(output_path,run_tool,type_species,flag)
 
@@ -253,13 +331,13 @@ def main():
     ##### If the user wants to take in his own input###############################################################################################
     if flag == "2":
         input_path=args['input_assembly']
-        name=args['name_contigs']
+        
         
         
         if check_input(input_path):
             # checks the input folder for manual input, and then runs the tools. Considers input folder to contain specific sequence folder which in turn contains the name variable (name of the contigs)
             # Runs prodigal or genemarks2 or both depending on the user's choice calls the function run_out 
-            run_out,list_of_files=running_tools(input_path,output_path,type_species,run_tool,name)
+            run_out,list_of_files,list_failed=running_tools(input_path,output_path,type_species,run_tool,flag,name)
             #If run out is false, it just returns false and the function returns the appropriate error message
             if not run_out:
                 return False
@@ -290,7 +368,8 @@ def main():
             rename_output=rename_scripts(list_of_files,output_path,run_tool)
             if not rename_output:
                 return False
-            
+            hits_list(list_of_files,run_tool,output_path)
+            print(list_failed)
 
             ###########################################################################################################
             ######Non coding tools, runs infernal or aragon,rnammer or infernal tools and calls the function nc_run_out
@@ -306,7 +385,7 @@ def main():
     ##################################################################################################################################################
 
 
-    else:
+    elif flag== "1":
         input_folder77=args['input_files77']
         input_folder99=args['input_files99']
         
@@ -315,14 +394,13 @@ def main():
             ###########################Coding tools, GeneMarkS2 and Prodigal, merge the results or keep them seperate blast out the results and 
             # there are two input paths as there are two folders given to us by the genome assembly group according to the kmer count
             # Runs prodigal or genemarks2 or both depending on the user's choice calls the function run_out 
-            run_out,list_of_files=running_tools(input_folder77,output_path,type_species,run_tool,flag)
+            run_out,list_of_files_77,list_failed_77=running_tools(input_folder77,output_path,type_species,run_tool,flag,name)
             #If run_out is false, it just returns false and the function returns the appropriate error message
-            if not run_out:
-                return False
-            run_out,list_of_files=running_tools(input_folder99,output_path,type_species,run_tool,flag)
-            if not run_out:
-                return False
 
+            run_out,list_of_files_99,list_failed_99=running_tools(input_folder99,output_path,type_species,run_tool,flag,name)
+
+            list_of_files=list_of_files_77+list_of_files_99
+            list_failed=list_failed_77+list_failed_99
             #If the user has chosen to run both gene marks2 and prodigal, we get the merge results of it by calling the script function merge_predict from the union script    
             if run_tool==3:
                 genemarks2_output=output_path+"/genemarks2/"
@@ -348,7 +426,8 @@ def main():
             rename_output=rename_scripts(list_of_files,output_path,run_tool)
             if not rename_output:
                 return False
-            
+                
+            hits_list(list_of_files,run_tool,output_path)
             ###########################################################################################################
             ######Non coding tools, runs infernal or aragon,rnammer or infernal tools and calls the function nc_run_out
             nc_run_out=noncoding_run(input_folder77,output_path,nc_tool,name)
@@ -361,9 +440,43 @@ def main():
                 return False
                     
             ###########################################################################################################
- 
+            print(list_failed)
         else:
             return False
+    else:
+        input_path=args['input_plasmids']
+
+        if check_input(input_path):
+            # checks the input folder for plasmids, and then runs the tools.
+            # Runs prodigal or genemarks2 or both depending on the user's choice calls the function run_out 
+            run_out,list_of_files,list_failed=running_tools(input_path,output_path,type_species,run_tool,flag,name)
+            #If run out is false, it just returns false and the function returns the appropriate error message
+
+            #If the user has chosen to run both gene marks2 and prodigal, we get the merge results of it by calling the script function merge_predict from the union script
+            if run_tool==3:
+                genemarks2_output=output_path+"/genemarks2/"
+                prodigal_output=output_path+"/prodigal/"
+                merge_output=output_path+"/merge_out"
+                #### If the merge output directory doesnt exist, it makes a directory called merge out where the output files will be located, 
+                # or just deletes the folder if it is present 
+                if os.path.exists(merge_output) == False:
+                    os.mkdir(merge_output)
+                else:
+                    shutil.rmtree(merge_output)
+                    os.mkdir(merge_output)
+                # Runs the function merge_predict
+                merge=merge_predict(genemarks2_output,prodigal_output,input_path)
+                #If merge is false, it just returns false and the function returns the appropriate error message
+                if not merge:
+                    return False
+
+
+            blast_output=blast_results(run_tool,output_path)
+            if not blast_output:
+                return False
+            rename_output=rename_scripts(list_of_files,output_path,run_tool)
+            if not rename_output:
+                return False
 ################################################################################################################################################################################################################
 
 

@@ -3,24 +3,70 @@
 
 {% block content %}
 <main role="main">
-
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretty-checkbox@3.0/dist/pretty-checkbox.min.css"/>
         <div class="jumbotron" style="background:transparent url('{% static 'images/jejuni-2.jpg' %}') no-repeat center center /cover; border-radius: 0">
-
+        
                 <div class="container text-center">
                         <h1 class="text-white display-3">Welcome to Gene Prediction.</h1>
-                        <h2 class="text-white">The gene prediction part of our pipeline runs either or both GeneMarkS-2 and/or Prodigal. It combines the results of the both the two tools, and runs blast to validate the results. Finally it renames the files to give known(k) hits in the blast database or unknown(U) hits in the blast database.</h2>
-                        <h2 class="text-white">It runs Infernal to obtain the noncoding RNA .</h2>
                         <br><br><br><br>
-                        <h4 class="text-white">Please enter one or more fasta files.</h4>
-                        <form method="post" enctype="multipart/form-data" class="text-center">
-                                {% csrf_token %}
-                                <button class="btn text-white" style="background-color: #2f3030">
-                                <input type="file" class="text-white" name="contigs.fasta" multiple ><b>Upload Files »</b></button>
-                        </form>
                 </div>
-        </div>
 
+ 
+        </div>
+        <div class="container text-left">
+                <p class="text-black">Gene prediction is one of the first and most important steps in understanding the genome of a species once it has been sequenced. Gene prediction takes in a contig and identifies regions of genomic DNA that encode genes.</p>
+                <p class="text-black">The gene prediction part of our pipeline runs either or both GeneMarkS-2 and/or Prodigal. It combines the results of the both the two tools, and runs blast to validate the results. Finally it renames the files to give known(k) or unknown(U) hits in the blast database. For Noncoding RNA, it runs Infernal.</p>
+                <br>
+                {% if uuid_data %}
+                <div class="row align-items-center" style="padding-right: 15px; padding-left: 15px;">
+                        <div class="col-md-1">
+                        </div>
+                        <div class="col-md-10">
+                                <h3 class="text-center">Files Receieved!</h3>
+                                <p class="text-center">Your files were receieved successfully. Please note down your unique UUID and check for updates in the status page.</p>
+                                <p class="text-center">Your UUID: <b>{{ uuid_data }}</b></p>
+                                <p class="text-center"><a class="btn btn-success" href="{% url 'prediction_home' %}" role="button">Get Status »</a></p>
+                        </div>
+                        <div class="col-md-1">
+                        </div>
+                </div>
+                {% endif %}        
+                <p><strong><u>Please Upload one or more fasta files.</u></strong></p>
+                <form method="post" enctype="multipart/form-data" class="text-left"></form>
+                        <button type="button" class="btn btn-outline-secondary" >
+                        <input type="file" class="text-black" name="contigs.fasta" multiple ><b>Upload Files »</b></button>
+                </form>
+                <br><br>
+                <div><p><strong><u>Please enter one or more than one tool to run.</u></strong></p>
+                        <div class="pretty p-default p-has-focus">
+                                <input type="checkbox" />
+                                <div class="state">
+                                        <label>GeneMarkS-2</label>
+                                </div>
+                        </div>
+                        <div class="pretty p-default p-has-focus">
+                                <input type="checkbox" />
+                                <div class="state">
+                                        <label>Prodigal</label>
+                                </div>
+                        </div>
+                </div> 
+                <br>
+                <form method="post" enctype="multipart/form-data" class="text-left">
+                        {% csrf_token %}
+                        <button type="button" class="btn btn-outline-secondary col-md-7">
+                                <div class="row align-items-center"> 
+                                        <div class="col-md-8">
+                                                <input type="email" name="email" class="form-control">
+                                        </div>
+                                        <div class="col-md-4">
+                                                <h5><b>Email Address</b></h5>
+                                        </div>
+                                </div>
+                        </button>
+                </form>
+                 
+        </div>
 </main>
 
 {% endblock %}
-
