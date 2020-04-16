@@ -1,0 +1,9 @@
+data/*
+cabunicrisis/assembly/__pycache__/*
+cabunicrisis/assembly/migrations/*
+cabunicrisis/prediction/__pycache__/*
+cabunicrisis/prediction/migrations/*
+cabunicrisis/annotation/__pycache__/*
+cabunicrisis/annotation/migrations/*
+cabunicrisis/db.sqlite3
+cabunicrisis/default.profraw
