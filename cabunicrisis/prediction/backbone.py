@@ -88,9 +88,9 @@ def running_tools(input_path,output_path,type_species,run_tool,input_option,name
        
        #print(folder)
        if (run_tool==1 or run_tool==3):
-           genemarks2_output=genemarks2_script(input_path,folder,output_path,type_species,input_option,name)
-           if genemarks2_output != False:
-               list_of_files.append(folder)
+            genemarks2_output=genemarks2_script(input_path,folder,output_path,type_species,input_option,name)
+            if genemarks2_output != False:
+                list_of_files.append(folder)
             else:
                 list_failed.append(folder)
                 continue
@@ -212,7 +212,7 @@ def hits_list(list_of_files,run_tool,out):
     list_blast_hits=[]
     list_of_files=[]
     list_total_hits=[]
-    for files in os.listdir(blast_input_path)
+    for files in os.listdir(blast_input_path):
         blast_dir=blast_input_path+"/"+files
         p = subprocess.Popen(['wc', '-l', blast_dir], stdout=subprocess.PIPE,stderr=subprocess.PIPE)
         result, err = p.communicate()
@@ -279,8 +279,8 @@ def noncoding_run(input_path,output_path,flag,name="contigs.fasta"):
     #List all the directories present in the input path, where the wrapper goes into those directories and runs the contigs files
     for folder in sorted(os.listdir(input_path)):
         infernal_output=infernal_script(input_path,folder,output_path,type_species,name)
-            if infernal_output == False:
-                return False
+        if infernal_output == False:
+            return False
     return True
 #################################################################################################################################################################################################
 
@@ -426,7 +426,7 @@ def main():
             rename_output=rename_scripts(list_of_files,output_path,run_tool)
             if not rename_output:
                 return False
-                
+
             hits_list(list_of_files,run_tool,output_path)
             ###########################################################################################################
             ######Non coding tools, runs infernal or aragon,rnammer or infernal tools and calls the function nc_run_out
