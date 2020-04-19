@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 #MAKE SURE TO USE PYTHON 2
-import os
 import subprocess
+import sys
 
 def main(argv):
     eggnog_dir = argv[0]
