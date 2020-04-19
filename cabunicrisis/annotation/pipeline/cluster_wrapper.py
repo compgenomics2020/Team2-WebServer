@@ -23,7 +23,7 @@ def main(argv):
 
     for na in ['n','a']:
         try:
-            fxa_path = filter(lambda x: x.find("f" + na + "a") >= 0, input_dir)
+            fxa_path = list(filter(lambda x: x.find("f" + na + "a") >= 0, input_dir))
             fxa_input = inputpath + fxa_path[0] + "/all.f" + na + "a"
             fxa_output = outputpath + "f" + na + "a_rep_seq.f" + na + "a"
             print("Running CD-HIT for " + fxa_input)
