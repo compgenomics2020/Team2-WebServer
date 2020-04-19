@@ -11,7 +11,6 @@ Input: 	This script takes in a directory of directories of fna/faa/gff files.
 Output:	The final output is going to be gff files for Comparative Genomics.
 '''
 import argparse
-import multiprocessing
 import os
 import random
 import subprocess
@@ -86,11 +85,11 @@ def run_assemblies(input_directory_path, output_directory_path, if_clustering = 
 
 	if if_clustering:
 		try:
-			subprocess.call(["cat" + input_directory_path + "/fna/* > all.fna"])
-			subprocess.call(["cat", input_directory_path + "/faa/*", ">", "all.faa"])
-			subprocess.check_output(["python", "clustering_wrapper.py", input_directory_path, output_directory_path])
-			subprocess.call(["rm", input_directory_path + "/faa/all.faa"])
-			subprocess.call(["rm", input_directory_path + "/fna/all.fna"])
+			subprocess.call(["cat " + input_directory_path + "/fna/*" + " > " + input_directory_path + "/fna/all.fna"], shell=True)
+			subprocess.call(["cat " + input_directory_path + "/faa/*" + " > " + input_directory_path + "/faa/all.faa"], shell=True)
+			subprocess.check_output(["python", "cluster_wrapper.py", input_directory_path, output_directory_path])
+			os.remove(input_directory_path + "/fna/all.fna")
+			os.remove(input_directory_path + "/faa/all.faa")
 		except:
 			return False
 
@@ -99,8 +98,7 @@ def run_assemblies(input_directory_path, output_directory_path, if_clustering = 
 
 
 def main(essential_arguments = None):
-	run_assemblies("./input", "./output/")
-	return True
+	return run_assemblies("./input", "./output/", True)
 
 
 if __name__ == "__main__":
