@@ -86,6 +86,8 @@ def run_assemblies(input_directory_path, output_directory_path, if_clustering = 
 
 	if if_clustering:
 		try:
+			subprocess.call(["cat", input_directory_path + "/fna/*", ">", "all.fna"])
+			subprocess.call(["cat", input_directory_path + "/faa/*", ">", "all.faa"])
 			subprocess.check_output(["python", "clustering_wrapper.py", input_directory_path, output_directory_path])
 		except:
 			return False
