@@ -98,7 +98,7 @@ def run_assemblies(input_directory_path, output_directory_path, if_clustering = 
 
 	# EGGNOG
 	try:
-		eggnog_dir = "eggnog" #TODO: make this an input?
+		eggnog_dir = "eggnog-mapper" #TODO: make this an input?
 		subprocess.check_output(["python", "eggnog_wrapper.py", eggnog_dir, output_directory_path + "/cdhit/faa_rep_seq.faa", output_directory_path + "/eggnog_results"])
 	except:
 		print("EGGNOG failed!")
