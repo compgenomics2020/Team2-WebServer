@@ -83,16 +83,29 @@ def run_assemblies(input_directory_path, output_directory_path, if_clustering = 
 		homology: eggnog_wrapper.py, operon_wrapper.py, vfdb_wrapper.py, card_wrapper.py
 	'''
 
+	# Clustering
 	if if_clustering:
 		try:
 			subprocess.call(["cat " + input_directory_path + "/fna/*" + " > " + input_directory_path + "/fna/all.fna"], shell=True)
 			subprocess.call(["cat " + input_directory_path + "/faa/*" + " > " + input_directory_path + "/faa/all.faa"], shell=True)
-			subprocess.check_output(["python", "cluster_wrapper.py", input_directory_path, output_directory_path])
+			subprocess.check_output(["python", "cluster_wrapper.py", input_directory_path, output_directory_path + "/cdhit"])
 			os.remove(input_directory_path + "/fna/all.fna")
 			os.remove(input_directory_path + "/faa/all.faa")
 		except:
+			print "Clustering failed!"
 			return False
 
+	# EGGNOG
+	try:
+		eggnog_dir = "eggnog" #TODO: make this an input?
+		subprocess.check_output(["python", "eggnog_wrapper.py", eggnog_dir,
+					output_directory_path + "/cdhit/faa_rep_seq.faa",
+					output_directory_path + "/eggnog_results"])
+	except:
+		print "EGGNOG failed!"
+		return False
+
+		
 	return True
 
 
