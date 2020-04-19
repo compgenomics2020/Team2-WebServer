@@ -94,15 +94,12 @@ def run_assemblies(input_directory_path, output_directory_path, if_clustering = 
 		except:
 			return False
 
-	for fastq_file_forward, fastq_file_reverse in fastq_files_dict.items():
-
 	return True
 
 
 
 def main(essential_arguments = None):
 	run_assemblies("./input/", "./output/")
-
 	return True
 
 
