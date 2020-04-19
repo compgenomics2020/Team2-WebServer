@@ -92,16 +92,17 @@ def run_assemblies(input_directory_path, output_directory_path, if_clustering = 
 			subprocess.check_output(["python", "cluster_wrapper.py", input_directory_path, output_directory_path + "/cdhit"])
 			os.remove(input_directory_path + "/fna/all.fna")
 			os.remove(input_directory_path + "/faa/all.faa")
+			print("Finished clustering!\n")
 		except:
-			print("Clustering failed!")
+			print("Clustering failed!\n")
 			return False
 
 	# EGGNOG
 	try:
 		eggnog_dir = "eggnog-mapper" #TODO: make this an input?
-		subprocess.check_output(["python", "eggnog_wrapper.py", eggnog_dir, output_directory_path + "/cdhit/faa_rep_seq.faa", output_directory_path + "/eggnog_results"])
+		subprocess.check_output(["python2", "eggnog_wrapper.py", eggnog_dir, output_directory_path + "/cdhit/faa_rep_seq.faa", output_directory_path + "/eggnog_results"])
 	except:
-		print("EGGNOG failed!")
+		print("EGGNOG failed!\n")
 		return False
 
 
@@ -119,6 +120,7 @@ def main(argv, if_clustering = True):
 
 	if if_clustering:
 		os.mkdir(output_dir + "/cdhit")
+	os.mkdir(output_dir + "/eggnog_results")
 
 	return run_assemblies(input_dir, output_dir, if_clustering)
 
