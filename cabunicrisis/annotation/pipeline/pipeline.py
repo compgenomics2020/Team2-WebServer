@@ -14,6 +14,7 @@ import argparse
 import os
 import random
 import subprocess
+from shutil import rmtree
 
 import cluster_wrapper
 
@@ -98,20 +99,28 @@ def run_assemblies(input_directory_path, output_directory_path, if_clustering = 
 	# EGGNOG
 	try:
 		eggnog_dir = "eggnog" #TODO: make this an input?
-		subprocess.check_output(["python", "eggnog_wrapper.py", eggnog_dir,
-					output_directory_path + "/cdhit/faa_rep_seq.faa",
-					output_directory_path + "/eggnog_results"])
+		subprocess.check_output(["python", "eggnog_wrapper.py", eggnog_dir, output_directory_path + "/cdhit/faa_rep_seq.faa", output_directory_path + "/eggnog_results"])
 	except:
 		print "EGGNOG failed!"
 		return False
 
-		
+
 	return True
 
 
 
-def main(essential_arguments = None):
-	return run_assemblies("./input", "./output/", True)
+def main(argv, if_clustering = True):
+	input_dir = argv[0]
+	output_dir = argv[1]
+
+	if os.path.exists(output_dir):
+		rmtree(output_dir)
+	os.mkdir(output_dir)
+
+	if if_clustering:
+		os.mkdir(output_dir + "/cdhit")
+
+	return run_assemblies(input_dir, output_dir, if_clustering)
 
 
 if __name__ == "__main__":
@@ -119,5 +128,5 @@ if __name__ == "__main__":
 	For Unit testing the functionality of Functional Annotation group.
 	Always make sure that this script is working intact when called specifically.
 	'''
-	status = main()
+	status = main(sys.argv[1:]) #TODO: include clustering bool in sys argv
 	print("Final Status: {}".format(status))
