@@ -10,7 +10,7 @@ Input: 	This script takes in a directory of directories of fna/faa/gff files.
 
 Output:	The final output is going to be gff files for Comparative Genomics.
 '''
-import argparse
+import sys
 import os
 import random
 import subprocess
