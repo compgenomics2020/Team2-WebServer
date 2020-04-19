@@ -16,7 +16,7 @@ import os
 import random
 import subprocess
 
-import clustering_wrapper
+import cluster_wrapper
 
 
 def check_tool(tool):
@@ -86,7 +86,7 @@ def run_assemblies(input_directory_path, output_directory_path, if_clustering = 
 
 	if if_clustering:
 		try:
-			subprocess.call(["cat", input_directory_path + "/fna/*", ">", "all.fna"])
+			subprocess.call(["cat" + input_directory_path + "/fna/* > all.fna"])
 			subprocess.call(["cat", input_directory_path + "/faa/*", ">", "all.faa"])
 			subprocess.check_output(["python", "clustering_wrapper.py", input_directory_path, output_directory_path])
 			subprocess.call(["rm", input_directory_path + "/faa/all.faa"])
@@ -99,7 +99,7 @@ def run_assemblies(input_directory_path, output_directory_path, if_clustering = 
 
 
 def main(essential_arguments = None):
-	run_assemblies("./input/", "./output/")
+	run_assemblies("./input", "./output/")
 	return True
 
 
