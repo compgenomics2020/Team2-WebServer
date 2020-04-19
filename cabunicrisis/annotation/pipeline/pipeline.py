@@ -89,6 +89,8 @@ def run_assemblies(input_directory_path, output_directory_path, if_clustering = 
 			subprocess.call(["cat", input_directory_path + "/fna/*", ">", "all.fna"])
 			subprocess.call(["cat", input_directory_path + "/faa/*", ">", "all.faa"])
 			subprocess.check_output(["python", "clustering_wrapper.py", input_directory_path, output_directory_path])
+			subprocess.call(["rm", input_directory_path + "/faa/all.faa"])
+			subprocess.call(["rm", input_directory_path + "/fna/all.fna"])
 		except:
 			return False
 
@@ -99,108 +101,14 @@ def run_assemblies(input_directory_path, output_directory_path, if_clustering = 
 
 
 def main(essential_arguments = None):
-	parser = argparse.ArgumentParser()
-
-	#Arguments added for an input-directory and output-directory.
-	parser.add_argument("-i", "--input-directory", help="Path to a directory that contains input fastq files.", required=False)
-	parser.add_argument("-o", "--output-directory", help="Path to a directory that will store the output files.", required=False)
-
-	#Argument for Kmers.
-	parser.add_argument("-ka", "--kmer-abyss", help="Kmer value for abyss.", required=False)
-	parser.add_argument("-ks", "--kmer-spades", help="Kmer value for spades.", required=False)
-	parser.add_argument("-km", "--kmer-masurca", help="Kmer value for MaSuRCA.", required=False)
-	parser.add_argument("-ku", "--kmer-unicycler", help="Kmer value for Unicycler.", required=False)
-	parser.add_argument("-kv", "--kmer-velvet", help="Kmer value for Velvet.", required=False)
-	#parser.add_argument("-ka", "--kmer-abyss", help="Kmer value for abyss.", required=False)
-
-	parser.add_argument("-r", "--replace-output-files", help="Replace the output files that are already present. Currently not supported.", required=False, action="store_true")
-
-	#Parsing the arguments.
-	args = vars(parser.parse_args())
-
-	if essential_arguments:
-
-	else:
-		input_directory_path_for_fastq_files = args['input_directory']
-		output_directory_path = args['output_directory']
-	replace_files_flag = args['replace_output_files']
-
-	#Parse Kmers for assembly tools.
-	#Most of our tools run on a Debuign graph based methods.
-	#They need kmer values.
-	kmer_spades = args['kmer_spades']
-	kmer_dict['spades'] = 'auto'
-	###########################################Parsing Documents Ends#############################################
-	##############################################################################################################
-
-	#Check if directories exist.
-	if not os.path.exists(input_directory_path_for_fastq_files) and	not os.path.exists(output_directory_path):
-		return False, "Input and Output directories do not exist."
-
-	#Check if all the tools are present. Either the tool should be present in the PATH variable
-	#or the bioinformatician should make sure that a proper path to their tool is sent.
-	#Pipeline cannot work without tools.
-	status_check_tools = check_tools()
-
-	if not status_check_tools:
-		return False, "Tools asked for by the Genome Assembly weren't present on the system."
-
-	#########################################Check Directories Ends###############################################
-	##############################################################################################################
-
-	#Checks completed. Parse through input directories to see how fastq files are doing.
-	#Get information of input files.
-	status_process_input_directory, return_output_process_input_directory = process_input_directory(input_directory_path_for_fastq_files)
-
-	if not status_process_input_directory:
-		return False, return_output_process_input_directory
-
-	fastq_files_dict = return_output_process_input_directory[1]
-
-	#Read Manifest file. Manifest file has information of pre-trim and post-trim files.
-	#Don't change the names of manifest files. This code expects them to be in tmp.
-
-	#Reading manifest files.
-
-	pre_trim_manifest = None
-	post_trim_manifest = None
-
-	#pre_trim_manifest, post_trim_manifest = get_manifest_files()
-
-	#######################################Reading Manifest files Ends############################################
-	##############################################################################################################
-
-
-	print("Found {} file pairs in the input directory.\n".format(len(fastq_files_dict)))
-	#################Quality Checks#################
-	print("Started pre-assembly quality check.")
-
-	#Kristine
-
-	print("Completed quality check.\n")
-
-	#################Passing data over to Genome Assembly Tools#################
-	print("Now running genome assembly tools.")
-	status_run_assemblies = run_assemblies(input_directory_path_for_fastq_files, output_directory_path, fastq_files_dict, kmer_dict, pre_trim_manifest, post_trim_manifest)
-
-	if not status_run_assemblies:
-		print("Running assembly tools failed")
-		return False
-
-	print("Completed genome assembly tools.\n")
-	#################Post Assembly Quality Check#################
-
-	print("Starting with post assembly quality check tools.")
-	print("Starting Quast")
-
-	#quast_output = quast_runner(output_directory_path)
+	run_assemblies("./input/", "./output/")
 
 	return True
 
 
 if __name__ == "__main__":
 	'''
-	For Unit testing the functionality of Genome Assembly group.
+	For Unit testing the functionality of Functional Annotation group.
 	Always make sure that this script is working intact when called specifically.
 	'''
 	status = main()
