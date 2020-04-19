@@ -92,7 +92,7 @@ def run_assemblies(input_directory_path, output_directory_path, if_clustering = 
 			os.remove(input_directory_path + "/fna/all.fna")
 			os.remove(input_directory_path + "/faa/all.faa")
 		except:
-			print("Clustering failed!")
+			print "Clustering failed!"
 			return False
 
 	# EGGNOG
@@ -102,7 +102,7 @@ def run_assemblies(input_directory_path, output_directory_path, if_clustering = 
 					output_directory_path + "/cdhit/faa_rep_seq.faa",
 					output_directory_path + "/eggnog_results"])
 	except:
-		print("EGGNOG failed!")
+		print "EGGNOG failed!"
 		return False
 
 		
@@ -111,7 +111,7 @@ def run_assemblies(input_directory_path, output_directory_path, if_clustering = 
 
 
 def main(essential_arguments = None):
-	return run_assemblies("./input", "./output", True)
+	return run_assemblies("./input", "./output/", True)
 
 
 if __name__ == "__main__":
