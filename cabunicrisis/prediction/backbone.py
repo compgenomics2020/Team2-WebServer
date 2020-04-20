@@ -88,17 +88,24 @@ def running_tools(input_path,output_path,type_species,run_tool,input_option,name
     for folder in sorted(os.listdir(input_path)):
        
        #print(folder)
-       if (run_tool==1 or run_tool==3):
+       if (run_tool=="1" or run_tool=="3"):
             genemarks2_output=genemarks2_script(input_path,folder,output_path,type_species,input_option,name)
             if genemarks2_output != False:
                 list_of_files.append(folder)
             else:
                 list_failed.append(folder)
                 continue
-       if(run_tool==2 or run_tool==3):
+       if(run_tool=="2" or run_tool=="3"):
             prodigal_output=prodigal_script(input_path,folder,output_path,input_option,name)
+            if prodigal_output != False and run_tool!=3:
+                list_of_files.append(folder)
+            if run_tool!=3 and prodigal_output==False:
+                list_failed.append(folder)
+                continue
             #if prodigal_output == False:
                 #return False
+    list_of_files=list(set(list_of_files))
+    list_failed=list(set(list_failed))
     return True,list_of_files,list_failed
 
 
@@ -108,7 +115,7 @@ def running_tools(input_path,output_path,type_species,run_tool,input_option,name
 def blast_results(run_tool,out):
 
     #Checks if gene_marks2 is called or prodigal or the union of both
-    if run_tool==1:
+    if run_tool=="1":
         #Sets the genemarks2 generated output to be the input to be given to the blast script
         genemarks2_output=out+"/genemarks2/"
         #Lists all the files in the genemarks2 output directory
@@ -119,7 +126,7 @@ def blast_results(run_tool,out):
                 return False
 
     #Same if only prodigal is called
-    elif run_tool==2:
+    elif run_tool=="2":
         prodigal_output=out+"/prodigal/"
         for folder_file in os.listdir(prodigal_output):
             blast_out_prodigal=blastn_script(prodigal_output,folder_file, out,run_tool)
@@ -144,9 +151,8 @@ def rename_scripts(list_of_files,out,run_tool):
     output_check=out+"/known_unknown/"
     os.mkdir(output_check)
     #Checks if gene_marks2 is called or prodigal or the union of both
-    if run_tool==1:
+    if run_tool=="1":
         for files in list_of_files:
-
             genemarks2_output=out+"/genemarks2/"+files
             condition=rename(genemarks2_output,blast_input_path,files, out,"fna",run_tool)
             if condition == False:
@@ -157,30 +163,25 @@ def rename_scripts(list_of_files,out,run_tool):
             condition=rename_gff(genemarks2_output,blast_input_path,files,out,run_tool)
             if not condition:
                 return False
-
-
     #Same if only prodigal is called
-    elif run_tool==2:
-        for files in list_of_files:
-
-            prodigal_output=out+"/prodigal/"+files
-            condition=rename(prodigal_output,blast_input_path,files, out,"fna",run_tool)
-            if condition == False:
+    elif run_tool=="2":
+        prodigal_output=out+"/prodigal/"
+        for folder_file in os.listdir(prodigal_output):
+            prodigal_output=out+"/prodigal/"+folder_file
+            condition=rename(prodigal_output,blast_input_path,folder_file, out,"fna",run_tool)
+            if condition== False:
                 return False
-            condition=rename(prodigal_output, blast_input_path, files, out,"faa",run_tool)
+            condition=rename(prodigal_output,blast_input_path,folder_file, out,"faa",run_tool)
+            if condition== False:
+                return False
+            condition=rename_gff(prodigal_output,blast_input_path,folder_file,out,run_tool)
             if not condition:
                 return False
-            condition=rename_gff(prodigal_output,blast_input_path,files,out,run_tool)
-            if not condition:
-                return False
-
-            
     #Same if both the tools are called and the merge results are obtained
     else:
         union_path_fna=out+"/merge_out/union_fna"
         union_path_faa=out+"/merge_out/union_faa"
         union_path_gff=out+"/merge_out/union_gff"
-
         for files in list_of_files:
             condition=rename(union_path_fna, blast_input_path, files, out, "fna",run_tool)
             if not condition:
@@ -191,13 +192,11 @@ def rename_scripts(list_of_files,out,run_tool):
             condition=rename_gff(union_path_gff,blast_input_path,files,out,run_tool)
             if not condition:
                 return False
-
         shutil.rmtree(union_path_fna)
         shutil.rmtree(union_path_faa)
-
     return True
 
-def graph(list_of_files,list_of_hits,x_name):
+def graph(list_of_files,list_of_hits,x_name,out):
     objects = list_of_files
     y_pos = np.arange(len(objects))
     performance = list_of_hits
@@ -205,8 +204,8 @@ def graph(list_of_files,list_of_hits,x_name):
     plt.xticks(y_pos, objects)
     plt.ylabel('Hits')
     plt.title(x_name)
-    plt.show()
-
+    name=out+"/"+x_name+".png"
+    plt.savefig(name)
 
 def hits_list(list_of_files,run_tool,out):
     blast_input_path=out+"/blast"
@@ -221,9 +220,9 @@ def hits_list(list_of_files,run_tool,out):
             raise IOError(err)
         #list_of_files.append(files)
         list_blast_hits.append(int(result.strip().split()[0]))
-    graph(list_of_files,list_blast_hits,"Blast Results")
+    graph(list_of_files,list_blast_hits,"Blast Results",out)
 
-    if run_tool==1 or run_tool==3:
+    if run_tool=="1" or run_tool=="3":
         genemark_hits=[]
         for files in list_of_files:
             genemarks2_output=out+"/genemarks2/"+files+"/"+files+"_output.gff"
@@ -233,13 +232,13 @@ def hits_list(list_of_files,run_tool,out):
                 raise IOError(err)
             genemark_hits.append(int(result.strip().split()[0]))
         
-        graph(list_of_files,genemark_hits,"GeneMarkS-2 Results")
+        graph(list_of_files,genemark_hits,"GeneMarkS-2 Results",out)
         
         genemarks2_output=out+"/genemarks2/"
         shutil.rmtree(genemarks2_output)
 
     #Same if only prodigal is called
-    if run_tool==2 or run_tool==3:
+    if run_tool=="2" or run_tool=="3":
         prodigal_hits=[]
         for files in list_of_files:
             prodigal_output=out+"/prodigal/"+files+"/"+files+"_output.gff"
@@ -249,13 +248,13 @@ def hits_list(list_of_files,run_tool,out):
                 raise IOError(err)
             prodigal_hits.append(int(result.strip().split()[0]))
             
-        graph(list_of_files,prodigal_hits,"Prodigal Results")
+        graph(list_of_files,prodigal_hits,"Prodigal Results",out)
 
         prodigal_output=out+"/prodigal/"
         shutil.rmtree(prodigal_output)
             
     #Same if both the tools are called and the merge results are obtained
-    if run_tool==3:
+    if run_tool=="3":
         union_path_gff=out+"/merge_out/union_gff/"
         merge_hits=[]
         for files in list_of_files:
@@ -266,22 +265,22 @@ def hits_list(list_of_files,run_tool,out):
                 raise IOError(err)
             merge_hits.append(int(result.strip().split()[0]))
 
-        graph(list_of_files,merge_hits,"Union Results")
+        graph(list_of_files,merge_hits,"Union Results",out)
 
         merge_folder=out+"/merge_out/"
         shutil.rmtree(union_path_gff)
         shutil.rmtree(merge_folder)
-    #shutil.rmtree(blast_input_path)
+    shutil.rmtree(blast_input_path)
 
 #################################################################################################################################################################################################
 
 # Running Aragon and Barrnap based on the options given by the user, it takes in the input path to the files, output path
 def noncoding_run(input_path,output_path,flag,name="contigs.fasta"):
     #List all the directories present in the input path, where the wrapper goes into those directories and runs the contigs files
-    for folder in sorted(os.listdir(input_path)):
-        barrnap_output=barrnap_script(input_path,folder,output_path,flag,name)
+    for folder in os.listdir(input_path):
+        #barrnap_output=barrnap_script(input_path,folder,output_path,flag,name)
         aragon_output=aragorn_script(input_path,folder,output_path,flag,name)
-        if barrnap_output == False or aragon_output==False:
+        if aragon_output==False:
             return False
     return True
 #################################################################################################################################################################################################
@@ -304,7 +303,7 @@ def main():
     parser.add_argument("-if77", "--input-files77", help="Path to the directory that contains input file for spades output of 21,33,55,77, called when default option for input-option is selected",required=False)
     parser.add_argument("-if99", "--input-files99", help="Path to the directory that contains input file for spades output of 21,33,55,77,99,127,called when default option for input-option is selected",required=False)
     parser.add_argument("-go", "--gene-output", help="Path to a directory that will store the output gff files, fna files and faa files.", required=True)
-    parser.add_argument("-tr","--coding-tools",default=3,help="R|Default Option is 3, options available to run are\n"
+    parser.add_argument("-tr","--coding-tools",default="3",help="R|Default Option is 3, options available to run are\n"
     "1 Only GeneMarkS-2 \n"
     "2 Only Prodigal \n"
     "3 Both and getting a union of the genes")
@@ -332,8 +331,7 @@ def main():
     ##### If the user wants to take in his own input###############################################################################################
     if flag == "2":
         input_path=args['input_assembly']
-        
-        
+        print(input_path)        
         
         if check_input(input_path):
             # checks the input folder for manual input, and then runs the tools. Considers input folder to contain specific sequence folder which in turn contains the name variable (name of the contigs)
@@ -345,7 +343,7 @@ def main():
             
 
             #If the user has chosen to run both gene marks2 and prodigal, we get the merge results of it by calling the script function merge_predict from the union script
-            if run_tool==3:
+            if run_tool=="3":
                 genemarks2_output=output_path+"/genemarks2/"
                 prodigal_output=output_path+"/prodigal/"
                 merge_output=output_path+"/merge_out"
@@ -378,32 +376,24 @@ def main():
             #If nc_run_out is false, it just returns false and the function returns the appropriate error message
             if not nc_run_out:
                 return False
- 
             ###########################################################################################################
-
         else:
             return False
     ##################################################################################################################################################
-
-
     elif flag== "1":
         input_folder77=args['input_files77']
         input_folder99=args['input_files99']
-        
-        
         if check_input(input_folder77) and check_input(input_folder99):
             ###########################Coding tools, GeneMarkS2 and Prodigal, merge the results or keep them seperate blast out the results and 
             # there are two input paths as there are two folders given to us by the genome assembly group according to the kmer count
             # Runs prodigal or genemarks2 or both depending on the user's choice calls the function run_out 
             run_out,list_of_files_77,list_failed_77=running_tools(input_folder77,output_path,type_species,run_tool,flag,name)
             #If run_out is false, it just returns false and the function returns the appropriate error message
-
             run_out,list_of_files_99,list_failed_99=running_tools(input_folder99,output_path,type_species,run_tool,flag,name)
-
             list_of_files=list_of_files_77+list_of_files_99
             list_failed=list_failed_77+list_failed_99
             #If the user has chosen to run both gene marks2 and prodigal, we get the merge results of it by calling the script function merge_predict from the union script    
-            if run_tool==3:
+            if run_tool=="3":
                 genemarks2_output=output_path+"/genemarks2/"
                 prodigal_output=output_path+"/prodigal/"
                 merge_output=output_path+"/merge_out"
@@ -419,7 +409,6 @@ def main():
                 #If merge is false, it just returns false and the function returns the appropriate error message
                 if not merge:
                     return False
-
             # Running the individual results or 
             blast_output=blast_results(run_tool,output_path)
             if not blast_output:
@@ -427,19 +416,16 @@ def main():
             rename_output=rename_scripts(list_of_files,output_path,run_tool)
             if not rename_output:
                 return False
-
             hits_list(list_of_files,run_tool,output_path)
             ###########################################################################################################
             ######Non coding tools, runs infernal or aragon,rnammer or infernal tools and calls the function nc_run_out
+            nc_run_out1=noncoding_run(input_folder99,output_path,flag,name)
+            if not nc_run_out1:
+                return False
             nc_run_out=noncoding_run(input_folder77,output_path,flag,name)
             #If nc_run_out is false, it just returns false and the function returns the appropriate error message
             if not nc_run_out:
                 return False
-
-            nc_run_out=noncoding_run(input_folder99,output_path,flag,name)
-            if not nc_run_out:
-                return False
-                    
             ###########################################################################################################
             print(list_failed)
         else:
@@ -452,9 +438,8 @@ def main():
             # Runs prodigal or genemarks2 or both depending on the user's choice calls the function run_out 
             run_out,list_of_files,list_failed=running_tools(input_path,output_path,type_species,run_tool,flag,name)
             #If run out is false, it just returns false and the function returns the appropriate error message
-
             #If the user has chosen to run both gene marks2 and prodigal, we get the merge results of it by calling the script function merge_predict from the union script
-            if run_tool==3:
+            if run_tool=="3":
                 genemarks2_output=output_path+"/genemarks2/"
                 prodigal_output=output_path+"/prodigal/"
                 merge_output=output_path+"/merge_out"
@@ -470,8 +455,6 @@ def main():
                 #If merge is false, it just returns false and the function returns the appropriate error message
                 if not merge:
                     return False
-
-
             blast_output=blast_results(run_tool,output_path)
             if not blast_output:
                 return False
@@ -479,7 +462,5 @@ def main():
             if not rename_output:
                 return False
 ################################################################################################################################################################################################################
-
-
 if __name__=="__main__":
     main()

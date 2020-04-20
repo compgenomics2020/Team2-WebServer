@@ -39,7 +39,7 @@ def aragorn_script(input_path,assembly_file,output_folder_path,flag,name):
     try:
         print("Running ARAGORN for:" ,assembly_file)
             #aragorn` running with genome-type bacteria
-        bash_output=subprocess.check_output(["aragorn", "-l", "-t", "-gc1", "-w ", assembly_input, "-fo", output.fasta])
+        bash_output=subprocess.check_output(["aragorn", "-l", "-t", "-gc1", "-w ", assembly_input, "-fo",output_fasta])
     except subprocess.CalledProcessError:
         print("Error running ARAGORN please check the installation and files ")
         return False
