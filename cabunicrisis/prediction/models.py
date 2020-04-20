@@ -26,8 +26,13 @@ class Coding_Rename_Path(models.Model):
 	def __str__(self):
 		return (str(self.path))
 
-class Nc_Final(models.Model):
-	contigs_file_path = models.ForeignKey(Input_Files, related_name = "nc_final", on_delete=models.CASCADE)
+class NC_Aragon(models.Model):
+	contigs_file_path = models.ForeignKey(Input_Files, related_name = "nc_aragon", on_delete=models.CASCADE)
+	path= models.CharField(max_length=512)
+	def __str__(self):
+		return (str(self.path))
+class NC_Barrnap(models.Model):
+	contigs_file_path = models.ForeignKey(Input_Files, related_name = "nc_barrnap", on_delete=models.CASCADE)
 	path= models.CharField(max_length=512)
 	def __str__(self):
 		return (str(self.path))

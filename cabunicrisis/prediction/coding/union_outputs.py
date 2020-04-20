@@ -12,6 +12,17 @@ import os
 import subprocess as sp
 import shutil
 
+def copytree(src, dst, symlinks=False, ignore=None):
+    if not os.path.exists(dst):
+        os.makedirs(dst)
+    for item in os.listdir(src):
+        s = os.path.join(src, item)
+        d = os.path.join(dst, item)
+        if os.path.isdir(s):
+            copytree(s, d, symlinks, ignore)
+        else:
+            if not os.path.exists(d) or os.stat(s).st_mtime - os.stat(d).st_mtime > 1:
+                shutil.copy2(s, d)
 
 def merge_predict(input_gms2_path,input_prod_path,input_contig_path1,output_folder,input_contig_path2=None):
     # check the paths to directories provided contain prediction files and contig files:
@@ -77,7 +88,7 @@ def merge_predict(input_gms2_path,input_prod_path,input_contig_path1,output_fold
 
     shutil.copytree(input_contig_path1,contig_copied)
     if input_contig_path2!=None:
-        shutil.copytree(input_contig_path2,contig_copied)
+        copytree(input_contig_path2,contig_copied,False, None)
     
     for sample in os.listdir(input_gms2_path):
         # specify paths & formats:
@@ -115,8 +126,6 @@ def merge_predict(input_gms2_path,input_prod_path,input_contig_path1,output_fold
         
     shutil.rmtree(temp_folder)
     shutil.rmtree(contig_copied)
-    shutil.rmtree(input_gms2_path)
-    shutil.rmtree(input_prod_path)
     return True
 if __name__=="__main__":
     pass

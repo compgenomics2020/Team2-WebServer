@@ -10,7 +10,7 @@ its corresponding blast file.
 #!/usr/bin/python
 import os, subprocess
 
-def rename_gff(union_input_path, blast_input_path, input_file, output_path,run_out):
+def rename_gff(input_path, blast_input_path, input_file, output_path,run_out):
     #blast_input_path = the folder that the formatted blast files are in (ex: blast/formatted_)
     #union_input_path = the folder that the union gff files are in (ex: union_gff)
     #input_file = the specific file number in the folders (ex: CGT2049, CGT2211)
@@ -46,15 +46,15 @@ def rename_gff(union_input_path, blast_input_path, input_file, output_path,run_o
             return False
     output_check=output_path+"/known_unknown/"
     if "gff" in os.listdir(output_check):    #if known_unknown_(faa or fna) already exists in output_folder/fna folder
-        if input_file+"."+type_of_file in os.listdir(output_folder):  #if CGT2049_union.faa/fna already exists in output_folder/fna folder
+        if input_file+".gff" in os.listdir(output_folder):  #if CGT2049_union.faa/fna already exists in output_folder/fna folder
             print("Output Directory {} contains file. Please delete it before running the tool for the same file").format(output_folder)
             return False
         else:
-            output_file = output_folder+input_file+"."+type_of_file   #make file in known_unknown_fna/faa folder called CGT2049_union.faa/fna
+            output_file = output_folder+input_file+".gff"   #make file in known_unknown_fna/faa folder called CGT2049_union.faa/fna
             subprocess.call("cp "+input_file_path+" "+ output_file,shell=True)  #copy contents from input file to output file (union_faa/CGT2049_union.faa -> output_folder/known_unknown_faa/CGT_union_faa)
     else:
         os.mkdir(output_folder)     #make ku_union_fna/faa folder if it does not exist
-        output_file = output_folder+input_file+"."+type_of_file   #make file in known_unknown_fna/faa folder called CGT2049_union.faa/fna
+        output_file = output_folder+input_file+".gff"   #make file in known_unknown_fna/faa folder called CGT2049_union.faa/fna
         subprocess.call("cp "+input_file_path+" "+output_file,shell=True)  #copy contents from input file to output file (union_faa/CGT2049_union.faa -> output_folder/known_unknown_faa/CGT_union_faa)
 
     original = open(output_file, 'r').readlines()

@@ -32,14 +32,14 @@ def blastn_script(input_path, input_file_folder, output_path,run_tool):
     output_folder = output_path+"/blast/"
     output_file = output_folder+input_file_folder+"_blast"
 
-    if "totaldb.fna.nhr" not in os.listdir("./total_campylobacter/"):       #if no database exists in blast database directory
+    if "totaldb.fna.nhr" not in os.listdir("./coding/total_campylobacter/"):       #if no database exists in blast database directory
         print("BLAST database does not exists in specified directory, Making a new blast database")
-        subprocess.call(["makeblastdb", "-in","./total_campylobacter/totaldb.fna ","-dbtype nucl"])
+        subprocess.call(["makeblastdb", "-in","./coding/total_campylobacter/totaldb.fna ","-dbtype nucl"])
         #blast_db = the location of the blast custom database
-        blast_db ="./total_campylobacter/totaldb.fna"
+        blast_db ="./coding/total_campylobacter/totaldb.fna"
     else:
         #blast_db = the location of the blast custom database
-        blast_db ="./total_campylobacter/totaldb.fna "
+        blast_db ="./coding/total_campylobacter/totaldb.fna "
     
     if "blast" in os.listdir(output_path):    #if blast folder already exists in output path
         if output_file in os.listdir(output_folder):  #if CGT2049_union.fna_blast already exists in blast output folder

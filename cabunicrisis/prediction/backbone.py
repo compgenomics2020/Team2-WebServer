@@ -19,7 +19,8 @@ from coding.union_outputs import merge_predict
 from coding.blastn import blastn_script
 from coding.rename_faa_fna import rename
 from coding.rename_gff import rename_gff
-from noncoding.infernal_wrapper import infernal_script
+from noncoding.aragorn_wrapper import aragorn_script
+from noncoding.barrnap_wrapper import barrnap_script
 
 
 #############################################################################################################################################################################################
@@ -140,7 +141,7 @@ def blast_results(run_tool,out):
 # Run the rename script to generate output files with known and unknown genes 
 def rename_scripts(list_of_files,out,run_tool):
     blast_input_path=out+"/blast"
-    output_check=output_path+"/known_unknown/"
+    output_check=out+"/known_unknown/"
     os.mkdir(output_check)
     #Checks if gene_marks2 is called or prodigal or the union of both
     if run_tool==1:
@@ -210,7 +211,7 @@ def graph(list_of_files,list_of_hits,x_name):
 def hits_list(list_of_files,run_tool,out):
     blast_input_path=out+"/blast"
     list_blast_hits=[]
-    list_of_files=[]
+    #list_of_files=[]
     list_total_hits=[]
     for files in os.listdir(blast_input_path):
         blast_dir=blast_input_path+"/"+files
@@ -218,7 +219,7 @@ def hits_list(list_of_files,run_tool,out):
         result, err = p.communicate()
         if p.returncode != 0:
             raise IOError(err)
-        list_files.append(files)
+        #list_of_files.append(files)
         list_blast_hits.append(int(result.strip().split()[0]))
     graph(list_of_files,list_blast_hits,"Blast Results")
 
@@ -270,16 +271,17 @@ def hits_list(list_of_files,run_tool,out):
         merge_folder=out+"/merge_out/"
         shutil.rmtree(union_path_gff)
         shutil.rmtree(merge_folder)
-    shutil.rmtree(blast_input_path)
+    #shutil.rmtree(blast_input_path)
 
 #################################################################################################################################################################################################
 
-# Running Infernal or Inferal, Aragon and Rnammer based on the options given by the user, it takes in the input path to the files, output path
+# Running Aragon and Barrnap based on the options given by the user, it takes in the input path to the files, output path
 def noncoding_run(input_path,output_path,flag,name="contigs.fasta"):
     #List all the directories present in the input path, where the wrapper goes into those directories and runs the contigs files
     for folder in sorted(os.listdir(input_path)):
-        infernal_output=infernal_script(input_path,folder,output_path,type_species,name)
-        if infernal_output == False:
+        barrnap_output=barrnap_script(input_path,folder,output_path,flag,name)
+        aragon_output=aragorn_script(input_path,folder,output_path,flag,name)
+        if barrnap_output == False or aragon_output==False:
             return False
     return True
 #################################################################################################################################################################################################
@@ -292,7 +294,7 @@ def main():
     ################################# User Input ######################################################################
     parser = argparse.ArgumentParser(description="Backbone script",formatter_class=SmartFormatter)
 
-    parser.add_argument("-io","--input-option",default=1,help="R|Default Option is 1, options available\n"
+    parser.add_argument("-io","--input-option",default="1",help="R|Default Option is 1, options available\n"
     "1 Take input from the genome assembly results \n"
     "2 Input your own assembly files \n"
     "3 Plasmid Input from Genome Assembly")
@@ -319,8 +321,7 @@ def main():
     type_species=args['type_species']
     flag=args['input_option']
     name=args['name_contigs']
-
-    #print(output_path,run_tool,type_species,flag)
+    #print(flag)
 
 
     ##############################################################################################################################################
@@ -373,7 +374,7 @@ def main():
 
             ###########################################################################################################
             ######Non coding tools, runs infernal or aragon,rnammer or infernal tools and calls the function nc_run_out
-            nc_run_out=noncoding_run(input_path,output_path,name)
+            nc_run_out=noncoding_run(input_path,output_path,flag,name)
             #If nc_run_out is false, it just returns false and the function returns the appropriate error message
             if not nc_run_out:
                 return False
@@ -430,12 +431,12 @@ def main():
             hits_list(list_of_files,run_tool,output_path)
             ###########################################################################################################
             ######Non coding tools, runs infernal or aragon,rnammer or infernal tools and calls the function nc_run_out
-            nc_run_out=noncoding_run(input_folder77,output_path,nc_tool,name)
+            nc_run_out=noncoding_run(input_folder77,output_path,flag,name)
             #If nc_run_out is false, it just returns false and the function returns the appropriate error message
             if not nc_run_out:
                 return False
 
-            nc_run_out=noncoding_run(input_folder99,output_path,nc_tool,name)
+            nc_run_out=noncoding_run(input_folder99,output_path,flag,name)
             if not nc_run_out:
                 return False
                     
