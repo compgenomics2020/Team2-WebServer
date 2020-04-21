@@ -28,9 +28,9 @@ def main(argv):
             fxa_output = outputpath + "f" + na + "a_rep_seq.f" + na + "a"
             print("Running CD-HIT for " + fxa_input)
             if na == 'a':
-                command = ["cd-hit", "-i", fxa_input, "-o", fxa_output]
+                command = ["cd-hit", "-i", fxa_input, "-o", fxa_output, "-d", "0"]
             else:
-                command = ["cd-hit-est", "-i", fxa_input, "-o", fxa_output]
+                command = ["cd-hit-est", "-i", fxa_input, "-o", fxa_output, "-d", "0"]
             subprocess.check_output(command)
         except subprocess.CalledProcessError as err:
             print("Error running CD-HIT. Check the input files.")
