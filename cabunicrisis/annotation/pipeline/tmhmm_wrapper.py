@@ -18,6 +18,7 @@ def tmhmm_runner(input_directory_path,protein_file,output_directory_path):
 	#Creating output file
 	mod_protein_file_name=protein_file.split("_")
 	output_file=output_directory_path+mod_protein_file_name[0]+"_tmhmm"
+	f = open(output_file, "w")
 
 	#Executing TMHMM
 	'''
@@ -29,7 +30,8 @@ def tmhmm_runner(input_directory_path,protein_file,output_directory_path):
 	'''
 	try:
 		print("Running TMHMM for "+protein_file)
-		subprocess.check_output(["tmhmm", input_file, ">", output_file])
+		subprocess.call(["tmhmm", input_file], stdout=f)
+		f.close()
 	except subprocess.CalledProcessError as err:
 		print("Error running TMHMM. Check the input files")
 		print("Error thrown: "+err.output)

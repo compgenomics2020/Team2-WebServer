@@ -75,7 +75,7 @@ def process_in_directory(in_dir):
 	return True, nags_dict
 
 
-def run_annotations(in_dir, out_dir, db_dir, if_clustering = True):
+def run_annotations(in_dir, out_dir, db_dir, if_clustering = True, if_pilercr = False):
 	'''
 	Input:
 		in_dir (path of directory of fna/faa/gff directories)
@@ -147,7 +147,8 @@ def run_annotations(in_dir, out_dir, db_dir, if_clustering = True):
 	signalp_wrapper.main(input_dir + "/faa/", output_dir + "/signalp/")
 
 	# PilerCR - must use LDLIBS = -lm when using make, needs fasta files from genome assembly
-	pilercr_wrapper.main(input_dir + "/fasta/", output_dir + "/pilercr/")
+	if if_pilercr:
+		pilercr_wrapper.main(input_dir + "/fasta/", output_dir + "/pilercr/")
 
 	# TMHMM
 	tmhmm_wrapper.main(input_dir + "/faa/", output_dir + "/tmhmm/")
