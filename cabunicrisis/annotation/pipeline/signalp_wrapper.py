@@ -17,8 +17,8 @@ def signalp_runner(input_directory_path,faa_file):
 
 	try:
 		print("SignalP 5.0 "+faa_file)
-		subprocess.check_output("signalp", "-fasta", input_file,
-			"-org", "gram-", "-format", "short", "-gff3")
+		subprocess.check_output(["signalp", "-fasta", input_file,
+			"-org", "gram-", "-format", "short", "-gff3"])
 
 	except subprocess.CalledProcessError as err:
 		print("Error running SignalP. Check the input files.")
