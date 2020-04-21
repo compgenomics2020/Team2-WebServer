@@ -11,19 +11,19 @@ this is an important script
 import subprocess,os,sys,shutil
 
 
-def signalp_runner(input_directory_path,faa_file,signalp_path):
+def signalp_runner(input_directory_path,faa_file):
     #Creating file path
 	input_file=input_directory_path + faa_file
 
 	try:
 		print("SignalP 5.0 "+faa_file)
-		subprocess.check_output(signalp_path, "-fasta", input_file,
+		subprocess.check_output("signalp", "-fasta", input_file,
 			"-org", "gram-", "-format", "short", "-gff3")
 
 	except subprocess.CalledProcessError as err:
 		print("Error running SignalP. Check the input files.")
 		print("Error thrown: "+err.output)
-        return False
+		return False
 
 	print("Completed running SignalP")
 	return True
@@ -41,10 +41,9 @@ def main(argv):
 	if len(files) == 0:
 		print("No files present in the directory.")
 	for name in files:
-		name_faa = inputpath + name
-		signalp_runner(inputpath,name_faa,signalp_path) # input_directory_path,faa_file,output_directory_path
+		signalp_runner(inputpath,name)
 		name_gff3 = name.split(".")[0] + ".gff3"
-		shutil.move(inputpath + name_gff3, outputpath + name_gff3)
+		shutil.move(name_gff3, outputpath + name_gff3)
 	return
 
 if __name__ == "__main__":

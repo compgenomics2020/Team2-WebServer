@@ -33,3 +33,6 @@ class FunctionalAnnotation(models.Model):
 # 												path = contigs_file_path)
 #
 # model_object_genome_assembly.save()
+
+# TODO:
+# must add signalp/bin to $PATH
