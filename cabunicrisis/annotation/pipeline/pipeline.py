@@ -17,7 +17,10 @@ import subprocess
 from shutil import rmtree
 
 import cluster_wrapper
+
 import signalp_wrapper
+import pilercr_wrapper
+import tmhmm_wrapper
 
 
 def check_tool(tool):
@@ -143,10 +146,11 @@ def run_annotations(in_dir, out_dir, db_dir, if_clustering = True):
 	# SignalP - must be on $PATH
 	signalp_wrapper.main(input_dir + "/faa/", output_dir + "/signalp/")
 
-	# PilerCR - must use LDLIBS = -lm when using make
-	pilercr_wrapper.main(input_dir + "/faa/", output_dir + "/pilercr/")
+	# PilerCR - must use LDLIBS = -lm when using make, needs fasta files from genome assembly
+	pilercr_wrapper.main(input_dir + "/fasta/", output_dir + "/pilercr/")
 
 	# TMHMM
+	tmhmm_wrapper.main(input_dir + "/faa/", output_dir + "/tmhmm/")
 
 	return True
 
@@ -166,6 +170,7 @@ def main(argv, if_clustering = True):
 	os.mkdir(out_dir + "/eggnog_results")
 	os.mkdir(out_dir + "/signalp")
 	os.mkdir(out_dir + "/pilercr")
+	os.mkdir(out_dir + "/tmhmm")
 
 	return run_annotations(in_dir, out_dir, db_dir, if_clustering)
 
