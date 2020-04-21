@@ -121,7 +121,7 @@ def run_annotations(in_dir, out_dir, db_dir):
 	try:
         subprocess.check_output(["python2", db_dir + "/eggnog-mapper/emapper.py",
             "-i", out_dir + "/cdhit/faa_rep_seq.faa",
-			"--output", out_dir + "/eggnog",
+			"--output", out_dir + "/eggnog_results",
             "--data_dir", db_dir + "/eggnog-db", "-m", "diamond", ">", "log", "&"])
     except subprocess.CalledProcessError as err:
         print("Error running EGGNOG.")
@@ -132,11 +132,11 @@ def run_annotations(in_dir, out_dir, db_dir):
 
 	# VFDB
 	try:
-		subprocess.check_output(["blastn", "-db", db_dir + '/vfdb-db',
-			"-query", out_dir + "/cdhit/faa_rep_seq.faa",
-			"-out", out_dir + "/eggnog",
+		subprocess.check_output(["blastn", "-db", db_dir + '/vfdb-db/vfdb-db',
+			"-query", out_dir + "/cdhit/fna_rep_seq.fna",
+			"-out", out_dir + "/vfdb",
 			"-max_hsps", "1", "-max_target_seqs", "1",
-		    "-outfmt", "6 qseqid length qstart qend sstart send evalue bitscore stitle",
+		    "-outfmt", '"6 qseqid length qstart qend sstart send evalue bitscore stitle"',
 			"-perc_identity", "100", "-num_threads", "5"])
 	except subprocess.CalledProcessError as err:
         print("Error running VFDB.")
@@ -174,6 +174,9 @@ def main(argv, use_clustering = True):
 	if use_clustering:
 		os.mkdir(out_dir + "/cdhit")
 	os.mkdir(out_dir + "/eggnog_results")
+	os.mkdir(out_dir + "/CARD")
+	os.mkdir(out_dir + "/CARD/CARD_results")
+	os.mkdir(out_dir + "/CARD/CARD_plasmids_results")
 	os.mkdir(out_dir + "/signalp")
 	os.mkdir(out_dir + "/pilercr")
 	os.mkdir(out_dir + "/tmhmm")
