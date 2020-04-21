@@ -17,6 +17,7 @@ import subprocess
 from shutil import rmtree
 
 import cluster_wrapper
+import signalp_wrapper
 
 
 def check_tool(tool):
@@ -71,7 +72,7 @@ def process_in_directory(in_dir):
 	return True, nags_dict
 
 
-def run_assemblies(in_dir, out_dir, db_dir, if_clustering = True):
+def run_annotations(in_dir, out_dir, db_dir, if_clustering = True):
 	'''
 	Input:
 		in_dir (path of directory of fna/faa/gff directories)
@@ -90,9 +91,9 @@ def run_assemblies(in_dir, out_dir, db_dir, if_clustering = True):
 
 	if if_clustering:
 		try:
-			if !(os.path.exists(in_dir + "/fna/all.fna")):
+			if not os.path.exists(in_dir + "/fna/all.fna"):
 				subprocess.call(["cat " + in_dir + "/fna/*" + " > " + in_dir + "/fna/all.fna"], shell=True)
-			if !(os.path.exists(in_dir + "/faa/all.faa")):
+			if not os.path.exists(in_dir + "/faa/all.faa"):
 				subprocess.call(["cat " + in_dir + "/faa/*" + " > " + in_dir + "/faa/all.faa"], shell=True)
 			subprocess.check_output(["python", "cluster_wrapper.py", in_dir, out_dir + "/cdhit"])
 			os.remove(in_dir + "/fna/all.fna")
@@ -118,6 +119,34 @@ def run_assemblies(in_dir, out_dir, db_dir, if_clustering = True):
         print("Error thrown: " + err.output)
 		return False
 
+	# Operons
+
+	# VFDB
+	try:
+		subprocess.check_output(["blastn", "-db", db_dir + '/vfdb-db',
+			"-query", out_dir + "/cdhit/faa_rep_seq.faa",
+			"-out", out_dir + "/eggnog",
+			"-max_hsps", "1", "-max_target_seqs", "1",
+		    "-outfmt", "6 qseqid length qstart qend sstart send evalue bitscore stitle",
+			"-perc_identity", "100", "-num_threads", "5"])
+	except subprocess.CalledProcessError as err:
+        print("Error running VFDB.")
+        print("Error thrown: " + err.output)
+		return False
+
+	# CARD
+
+	###################
+	# ab initio tools #
+	###################
+
+	# SignalP
+	signalp_wrapper.main()
+
+	# PilerCR
+
+	# TMHMM
+
 	return True
 
 
@@ -135,7 +164,7 @@ def main(argv, if_clustering = True):
 		os.mkdir(out_dir + "/cdhit")
 	os.mkdir(out_dir + "/eggnog_results")
 
-	return run_assemblies(in_dir, out_dir, db_dir, if_clustering)
+	return run_annotations(in_dir, out_dir, db_dir, if_clustering)
 
 
 if __name__ == "__main__":

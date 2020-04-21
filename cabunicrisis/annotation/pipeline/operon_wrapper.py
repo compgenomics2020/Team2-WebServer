@@ -2,6 +2,7 @@ import os
 from Bio import Entrez
 import urllib3
 import subprocess
+import sys
 
 def operon_blast(input_file, input_cluster):
 
@@ -70,7 +71,7 @@ def operon_db_creation(ref, op_dir):
 	return(fasta_file)
 
 
-def main():
+def main(argv):
 	'''
 	# Argparse
 	parser = argparse.ArgumentParser(description='Predicting Operons')
@@ -81,7 +82,8 @@ def main():
 	args = parser.parse_args()
 	'''
 
-	input_cluster = '../output/cdhit/faa_rep_seq.faa'
+	# input_cluster = '../output/cdhit/faa_rep_seq.faa'
+	input_cluster = argv[0]
 
 	reference = 'ref_CJ/'
 	predicted_operons = 'MO_operons/'
@@ -95,4 +97,4 @@ def main():
 	# blastp -query cdhit/faa_rep_seq.faa -db tmp/db_operon -max_target_seqs 1 -max_hsps 1 -outfmt 6 -out tmp/hits2.txt -num_threads 5
 
 if __name__ == "__main__":
-	main()
+	main(sys.argv[1:])

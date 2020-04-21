@@ -9,47 +9,43 @@ this is an important script
 36-96939
 '''
 
-import subprocess,os,sys
+import subprocess,os,sys,shutil
 
-def signalp_runner(input_directory_path,faa_file,output_directory_path):
-        #Creating file path
+def signalp_runner(input_directory_path,faa_file):
+    #Creating file path
 	input_file=input_directory_path + faa_file
 
-        #Creating a subdirectory in the output directory
-        #output_subdir=output_directory_path
-	
-	#print(output_directory_path + " CREATEDDDDDDDDDDD.")
-	
-        try:
-            print("SignalP 5.0 "+faa_file)
-            os.system("signalp -fasta " + input_file + " -org gram- -format short -gff3")
-	
-	    #cwd = os.getcwd()
-            #location_of_files = input_directory_path + "*.gff3" 
-	    #subprocess.call("mv %s %s" % (location_of_files, output_directory_path), shell=True)
-	    #os.replace("*.gff","output_directory_path")
-            #pilercr_output=subprocess.check_output(["pilercr", "-in", input_file, "-out",output_file, "-noinfo", "-quiet"])
+    #Creating a subdirectory in the output directory
+    #output_subdir=output_directory_path
 
-        except subprocess.CalledProcessError as err:
-            print("Error running SignalP. Check the input files")
-            print("Error thrown: "+err.output)
-            return False
+    try:
+        print("SignalP 5.0 "+faa_file)
+        subprocess.check_output(signalp_path, "-fasta", input_file,
+			"-org", "gram-", "-format", "short", "-gff3")
 
-        print("Completed running SignalP")
-        return True
-	
-	#location_of_files = input_directory_path + "*.gff3" 
-	#subprocess.call("mv %s %s" % (location_of_files, output_directory_path), shell=True)
-def main():
-        inputpath=sys.argv[1] # input directory of files
-        outputpath=sys.argv[2] # input subdirectory path to create
-        files=os.listdir(inputpath)
+    except subprocess.CalledProcessError as err:
+        print("Error running SignalP. Check the input files.")
+        print("Error thrown: "+err.output)
+        return False
 
-        if len(files) == 0:
-            print("No files present in the directory.")
-        for name in files:
-            signalp = signalp_runner(inputpath,name,outputpath) # input_directory_path,faa_file,output_directory_path
-            #pilercr=signalp_runner(inputpath,name,outputpath)
+    print("Completed running SignalP")
+    return True
+
+def main(argv):
+    inputpath=argv[0] # input directory of files
+    outputpath=argv[1] # input subdirectory path to create
+    files=os.listdir(inputpath)
+
+	if os.path.exists(outputpath):
+		shutil.rmtree(outputpath)
+	os.mkdir(outputpath)
+
+    if len(files) == 0:
+        print("No files present in the directory.")
+    for name in files:
+        signalp_runner(inputpath,name) # input_directory_path,faa_file,output_directory_path
+		name_gff3 = name.split(".")[0] + ".gff3"
+		shutil.move(inputpath + name_gff3, outputpath + name_gff3)
 
 if __name__ == "__main__":
-        main()
+        main(sys.argv[1:])
