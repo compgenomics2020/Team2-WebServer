@@ -12,26 +12,19 @@ WARNING: Using "gene" sequences will not give the desired results.
 import subprocess,os,sys
 
 def pilercr_runner(input_directory_path,contig_file,output_directory_path):
-	
+
 	#Creating file path
 	input_file=input_directory_path + contig_file
 
-	#Creating a subdirectory in the output directory
-	output_subdir=output_directory_path+"pilercr/"
-	
 	#Creating output file
 	mod_contig_file_name=contig_file.replace(".fasta","_crispr")
-	output_file=output_subdir+mod_contig_file_name
+	output_file=output_directory_path+mod_contig_file_name
 
-	#Checking if the subdirectory exists
-	if not "pilercr" in os.listdir(output_directory_path):
-		os.mkdir(output_subdir)
-	
 	#Executing PilerCR
 	try:
 		print("Running PilerCR for "+contig_file)
-		pilercr_output=subprocess.check_output(["pilercr", "-in", input_file, "-out",output_file, "-noinfo", "-quiet"])
-		
+		subprocess.check_output(["pilercr", "-in", input_file, "-out",output_file, "-noinfo", "-quiet"])
+
 	except subprocess.CalledProcessError as err:
 		print("Error running PilerCR. Check the input files")
 		print("Error thrown: "+err.output)
@@ -39,18 +32,14 @@ def pilercr_runner(input_directory_path,contig_file,output_directory_path):
 	print("Completed running PilerCR")
 	return True
 
-def main():
-	inputpath=sys.argv[1]
-	outputpath=sys.argv[2]
+def main(argv):
+	inputpath=argv[0]
+	outputpath=argv[1]
 	files=os.listdir(inputpath)
 	if len(files) == 0:
-                print("No files present in the directory.")
+        print("No files present in the directory.")
 	for name in files:
 		pilercr=pilercr_runner(inputpath,name,outputpath)
-	
-if __name__ == "__main__":
-	main() 
-	
 
-	
-	
+if __name__ == "__main__":
+	main(sys.argv[1:])

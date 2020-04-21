@@ -38,9 +38,9 @@ def main(argv):
 	for name in files:
 		result = signalp_runner(inputpath,name)
 		if result:
-			name_gff3 = name.split(".")[0] + ".gff3"
+			name_gff3 = name.replace(".faa", ".gff3")
 			shutil.move(name_gff3, outputpath + name_gff3)
-			name_summary = name.split(".")[0] + "_summary.signalp5"
+			name_summary = name.replace(".faa", "_summary.signalp5")
 			shutil.move(name_summary, outputpath + name_summary)
 	return
 

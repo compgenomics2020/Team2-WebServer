@@ -140,10 +140,11 @@ def run_annotations(in_dir, out_dir, db_dir, if_clustering = True):
 	# ab initio tools #
 	###################
 
-	# SignalP
+	# SignalP - must be on $PATH
 	signalp_wrapper.main(input_dir + "/faa/", output_dir + "/signalp/")
 
-	# PilerCR
+	# PilerCR - must use LDLIBS = -lm when using make
+	pilercr_wrapper.main(input_dir + "/faa/", output_dir + "/pilercr/")
 
 	# TMHMM
 
@@ -164,6 +165,7 @@ def main(argv, if_clustering = True):
 		os.mkdir(out_dir + "/cdhit")
 	os.mkdir(out_dir + "/eggnog_results")
 	os.mkdir(out_dir + "/signalp")
+	os.mkdir(out_dir + "/pilercr")
 
 	return run_annotations(in_dir, out_dir, db_dir, if_clustering)
 
