@@ -12,69 +12,17 @@ Output:	The final output is going to be gff files for Comparative Genomics.
 '''
 import sys
 import os
-import random
 import subprocess
 from shutil import rmtree
 
 import cluster_wrapper, match_clust_inputs
-
 import card_wrapper
-
 import signalp_wrapper
 import pilercr_wrapper
 import tmhmm_wrapper
 
-
-def check_tool(tool):
-	'''
-	This function checks if the listed tool required for our pipeline to work is
-	present on the system.
-	'''
-	try:
-		#Calling the tool by name supplied.
-		bash_output = subprocess.check_output([tool])
-	except (FileNotFoundError, subprocess.CalledProcessError) as error:
-		print("A tool: {}, was not present on the system. Now quitting...".format(tool))
-		return False
-	#All is fine.
-	return True
-
-
-def process_in_directory(in_dir):
-	'''
-	Get an idea of what the directory of directory files look like.
-	'''
-	#####################Please make sure that all files have a similar naming scheme.#####################
-
-	nag_dirs = os.listdir(in_dir)
-	if len(nag_dirs) != 3:
-		return False, "Directory is not split into fna/faa/gff subdirectories."
-
-	nag_keys = {'fna', 'faa', 'gff'}
-	nag_dict = dict()
-	same_files = {}
-
-	for nag in nag_dirs:
-		files = os.listdir(in_dir + nag)
-		file_exts = set([file[file.index('.'):] for file in files])
-		if len(file_exts) > 1:
-			print("Too many file types present in a single directory.")
-			return False, "Too many file types present in a single directory."
-		elif len(file_exts) == 0:
-			print("No files present in the directory.")
-			return False, "No files present in the directory."
-		else:
-			nag_dict[file_exts[0]] = nag
-
-		# checks if the same file naming scheme exists among fna/faa/gff directories
-		if not same_files:
-			same_files = set([file[0:file.index('.')] for file in files])
-		else:
-			nag_file_names = set([file[0:file.index('.')] for file in files])
-			if nag_file_names != same_files:
-				return False, "The naming scheme in each subdirectory is not consistent."
-
-	return True, nags_dict
+import create_homology_gff, create_abinitio_gff
+import merging_annotations
 
 
 def run_annotations(in_dir, out_dir, db_dir, plasmid_dir):
@@ -87,7 +35,7 @@ def run_annotations(in_dir, out_dir, db_dir, plasmid_dir):
 	We'll call clustering, ab initio, and homology tools:
 		clustering: clustering_wrapper.py
 		ab initio: signalp_wrapper.py, pilercr_wrapper.py, tmhmm_wrapper.py
-		homology: eggnog_wrapper.py, operon_wrapper.py, vfdb_wrapper.py, card_wrapper.py
+		homology: eggnog_wrapper.py, vfdb_wrapper.py, card_wrapper.py
 	'''
 
 	####################
@@ -124,14 +72,12 @@ def run_annotations(in_dir, out_dir, db_dir, plasmid_dir):
 	try:
         subprocess.check_output(["python2", db_dir + "/eggnog-mapper/emapper.py",
             "-i", out_dir + "/cdhit/faa_rep_seq.faa",
-			"--output", out_dir + "/eggnog_results",
+			"--output", out_dir + "/eggnog",
             "--data_dir", db_dir + "/eggnog-db", "-m", "diamond", ">", "log", "&"])
     except subprocess.CalledProcessError as err:
         print("Error running EGGNOG.")
         print("Error thrown: " + err.output)
 		return False
-
-	# Operons
 
 	# VFDB
 	try:
@@ -183,6 +129,17 @@ def run_annotations(in_dir, out_dir, db_dir, plasmid_dir):
 		return False
 
 	print("All tools run!")
+
+
+	#######################
+	# Merging annotations #
+	#######################
+	create_homology_gff.main(output_dir + "/vfdb", output_dir + "/card",
+		output_dir + "/eggnog", out_dir + "/cdhit/faa_rep_seq.faa",
+		out_dir + "/cdhit/faa_cluster_membership.txt")
+	create_abinitio_gff.main(output_dir + "/pilercr", output_dir + "/tmhmm",
+	 	output_dir + "/signalp")
+	merging_annotations.main("./tmp", output_dir + "/final")
 	return True
 
 
@@ -197,14 +154,14 @@ def main(argv, use_clustering = True):
 		rmtree(out_dir)
 	os.mkdir(out_dir)
 
-	if use_clustering:
-		os.mkdir(out_dir + "/cdhit")
-	os.mkdir(out_dir + "/eggnog_results")
+	os.mkdir(out_dir + "/cdhit")
+	os.mkdir(out_dir + "/eggnog")
 	os.mkdir(out_dir + "/card")
 	os.mkdir(out_dir + "/card/plasmids")
 	os.mkdir(out_dir + "/signalp")
 	os.mkdir(out_dir + "/pilercr")
 	os.mkdir(out_dir + "/tmhmm")
+	os.mkdir(out_dir + "/final")
 
 	return run_annotations(in_dir, out_dir, db_dir, plasmid_dir)
 

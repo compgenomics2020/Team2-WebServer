@@ -10,16 +10,16 @@ import subprocess,os,sys
 Function to merge the .gffs
 '''
 def merge_gff(input_directory_path,output_directory_path):
-	
+
 	files=os.listdir(input_directory_path)
-	
+
 	#Getting a list od unique sample names
 	sample_list=[]
 	for item in files:
 		sample_name=item.split("_")
 		if sample_name[0] not in sample_list:
 			sample_list.append(sample_name[0])
-	
+
 	#Merging the .gffs of each sample
 	for sample in sample_list:
 		sample_dict={}
@@ -49,7 +49,7 @@ def merge_gff(input_directory_path,output_directory_path):
 						sample_dict[tm_key]=[tm_def]
 					else:
 						sample_dict[tm_key].append(tm_def)
-		
+
 		#Reading SignalP results
 		sample_sp=input_directory_path+"/"+sample+"_union_signalp.gff"
 		if os.path.isfile(sample_sp)==True:
@@ -63,7 +63,7 @@ def merge_gff(input_directory_path,output_directory_path):
 						sample_dict[sp_key]=[sp_def]
 					else:
 						sample_dict[sp_key].append(sp_def)
-		
+
 		#Reading VFDB results
 		sample_vf=input_directory_path+"/"+sample+"_union_vf.gff"
 		if os.path.isfile(sample_vf)==True:
@@ -105,7 +105,7 @@ def merge_gff(input_directory_path,output_directory_path):
 						sample_dict[eg_key]=[eg_def]
 					else:
 						sample_dict[eg_key].append(eg_def)
-
+		'''
 		#Reading Operon results
 		sample_op=input_directory_path+"/"+sample+"_union_op.gff"
 		if os.path.isfile(sample_op)==True:
@@ -119,6 +119,7 @@ def merge_gff(input_directory_path,output_directory_path):
 						sample_dict[op_key]=[op_def]
 					else:
 						sample_dict[op_key].append(op_def)
+		'''
 
 		#Writing final merged .gff
 		output_file=output_directory_path+"/"+sample+".gff"

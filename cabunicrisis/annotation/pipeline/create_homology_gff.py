@@ -1,5 +1,5 @@
 '''
-Script for creating .gff files from homology results
+Script for creating .gff files from homology results incorporating the clustering data
 
 '''
 
@@ -12,9 +12,9 @@ Function reads in the VFDB results
 
 '''
 def vfdb(input_file_path):
-	
+
 	vfdic={}
-	
+
 	#Parsing the VFDB results:
 	with open(input_file_path,"r") as vfin:
 		for line in vfin:
@@ -29,12 +29,12 @@ def vfdb(input_file_path):
 Function reads in the CARD results
 '''
 def card(input_file_path):
-	
+
 	cardic={}
-	
+
 	#Parsing the CARD results:
 	with open(input_file_path,"r") as cardin:
-		
+
 		#Skipping the first line
 		cardin.readline()
 		for line in cardin:
@@ -53,9 +53,9 @@ Function reads in the Eggnog results
 
 '''
 def eggnog(input_file_path):
-	
+
 	eggdic={}
-	
+
 	#Parsing the Eggnog results:
 	with open(input_file_path,"r") as eggin:
 		for line in eggin:
@@ -67,12 +67,12 @@ def eggnog(input_file_path):
 				if node not in eggdic.keys():
 					eggdic[node]=[function]
 	return eggdic
-				 
+
 '''
 Function reads in the Operon results
 '''
 def operon(input_file_path):
-	
+
 	operondic={}
 
 	#Parsing Operon results:
@@ -93,7 +93,7 @@ def operon(input_file_path):
 This function relates homology results to their clusters
 '''
 def cluster(cluster_input):
-	
+
 	#Reading the centroids of each cluster
 	centroid=[]
 	clustdic={}
@@ -139,31 +139,47 @@ def gff(clustdic,dictionary,retype):
 				details=",".join(list1)
 				with open(output_file,"a+") as ot:
 					ot.write(name+"\t"+"."+"\t"+"."+"\t"+str(start)+"\t"+stop[0]+"\t"+"."+"\t"+"."+"\t"+"."+"\t"+details+"\n")
-					
-				
+
+
 def main():
 	vfdb_input=sys.argv[1]
 	card_input=sys.argv[2]
 	eggnog_input=sys.argv[3]
-	operon_input=sys.argv[4]
-	cluster_input=sys.argv[5]
-	
+#	operon_input=sys.argv[4]
+	cluster_input=sys.argv[4]
+	cluster_membership=sys.argv[5]
+
 	vf_name="vf"
 	card_name="card"
 	eggnog_name="eg"
 	operon_name="op"
-	
+
+	#Merging the cluster files
+	paste_com="paste "+cluster_membership+" "+cluster_input+" > Clust1"
+	os.system(paste_com)
+	awk_com="cat Clust1 | cut -d'\t' -f1,3 > Clust2"
+	os.system(awk_com)
+	rm_com="rm Clust1"
+	os.system(rm_com)
+	sed1_com="sed -i 's/>//g' Clust2"
+	os.system(sed1_com)
+	sed2_com="sed -i 's/Cluster //g' Clust2"
+	os.system(sed2_com)
+	sed3_com="sed -i -E 's/\s+[0-9]+[a]{2},\s+/\//g' Clust2"
+	os.system(sed3_com)
+
+	#Parsing the outputs
 	vfdic=vfdb(vfdb_input)
-	clustdic=cluster(cluster_input)
+	clustdic=cluster(Clust2)
 	cardic=card(card_input)
 	eggdic=eggnog(eggnog_input)
-	operondic=operon(operon_input)
-	
+	#operondic=operon(operon_input)
+
+	#Creating gffs
 	gff(clustdic,vfdic,vf_name)
 	gff(clustdic,cardic,card_name)
 	gff(clustdic,eggdic,eggnog_name)
-	gff(clustdic,operondic,operon_name)
-	
+	#gff(clustdic,operondic,operon_name)
+
 if __name__ == "__main__":
 	main()
-
