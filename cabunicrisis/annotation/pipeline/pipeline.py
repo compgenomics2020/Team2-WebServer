@@ -71,7 +71,7 @@ def process_in_directory(in_dir):
 	return True, nags_dict
 
 
-def run_assemblies(in_dir, out_dir, if_clustering = True):
+def run_assemblies(in_dir, out_dir, db_dir, if_clustering = True):
 	'''
 	Input:
 		in_dir (path of directory of fna/faa/gff directories)
@@ -84,7 +84,10 @@ def run_assemblies(in_dir, out_dir, if_clustering = True):
 		homology: eggnog_wrapper.py, operon_wrapper.py, vfdb_wrapper.py, card_wrapper.py
 	'''
 
-	# Clustering
+	####################
+	# Clustering tools #
+	####################
+
 	if if_clustering:
 		try:
 			if !(os.path.exists(in_dir + "/fna/all.fna")):
@@ -99,14 +102,21 @@ def run_assemblies(in_dir, out_dir, if_clustering = True):
 			print("Clustering failed!\n")
 			return False
 
+
+	########################
+	# Homology-based tools #
+	########################
+
 	# EGGNOG
 	try:
-		eggnog_dir = "eggnog-mapper" #TODO: make this an input?
-		subprocess.check_output(["python2", "eggnog_wrapper.py", eggnog_dir, out_dir + "/cdhit/faa_rep_seq.faa", out_dir + "/eggnog_results"])
-	except:
-		print("EGGNOG failed!\n")
+        subprocess.check_output(["python2", db_dir + "/eggnog-mapper/emapper.py",
+            "-i", out_dir + "/cdhit/faa_rep_seq.faa",
+			"--output", out_dir + "/eggnog",
+            "--data_dir", db_dir + "/eggnog-db", "-m", "diamond", ">", "log", "&"])
+    except subprocess.CalledProcessError as err:
+        print("Error running EGGNOG.")
+        print("Error thrown: " + err.output)
 		return False
-
 
 	return True
 
@@ -114,17 +124,18 @@ def run_assemblies(in_dir, out_dir, if_clustering = True):
 
 def main(argv, if_clustering = True):
 	in_dir = argv[0]
-	output_dir = argv[1]
+	out_dir = argv[1]
+	db_dir = argv[2]
 
-	if os.path.exists(output_dir):
-		rmtree(output_dir)
-	os.mkdir(output_dir)
+	if os.path.exists(out_dir):
+		rmtree(out_dir)
+	os.mkdir(out_dir)
 
 	if if_clustering:
-		os.mkdir(output_dir + "/cdhit")
-	os.mkdir(output_dir + "/eggnog_results")
+		os.mkdir(out_dir + "/cdhit")
+	os.mkdir(out_dir + "/eggnog_results")
 
-	return run_assemblies(in_dir, output_dir, if_clustering)
+	return run_assemblies(in_dir, out_dir, db_dir, if_clustering)
 
 
 if __name__ == "__main__":

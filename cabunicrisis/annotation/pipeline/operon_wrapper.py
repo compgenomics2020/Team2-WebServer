@@ -12,7 +12,7 @@ def operon_blast(input_file, input_cluster):
 
 def operon_db_creation(ref, op_dir):
 
-	#Creating a list of operon IDs 
+	#Creating a list of operon IDs
 	locus=[]
 	files = os.listdir(ref)
 	for i in files:
@@ -26,8 +26,8 @@ def operon_db_creation(ref, op_dir):
 						if float(line[7])>0.9:
 							locus.append(line[0])
 							locus.append(line[1])
-			
-		f.close()	
+
+		f.close()
 
 	#Removing duplicate operon IDs
 	locus = list(dict.fromkeys(locus))
@@ -75,14 +75,13 @@ def main():
 	# Argparse
 	parser = argparse.ArgumentParser(description='Predicting Operons')
 	parser.add_argument('--input_file', '-f1', type=str, help='Cluster input file path')
-	parser.add_argument('--input_file', '-f1', type=str, help='Cluster input file path')
 	parser.add_argument('--output_file', '-o', type=str, help='Output file name')
 	#parser.add_argument('--input_sequence_type', '-t', type=str, help='Sequence type - n/p')
 
 	args = parser.parse_args()
 	'''
 
-	input_cluster = '../output/cdhit/faa_rep_seq.faa' 
+	input_cluster = '../output/cdhit/faa_rep_seq.faa'
 
 	reference = 'ref_CJ/'
 	predicted_operons = 'MO_operons/'
