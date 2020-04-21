@@ -16,7 +16,7 @@ import random
 import subprocess
 from shutil import rmtree
 
-import cluster_wrapper
+import cluster_wrapper, match_clust_inputs
 
 import signalp_wrapper
 import pilercr_wrapper
@@ -75,7 +75,7 @@ def process_in_directory(in_dir):
 	return True, nags_dict
 
 
-def run_annotations(in_dir, out_dir, db_dir, use_clustering = True, use_pilercr = False):
+def run_annotations(in_dir, out_dir, db_dir):
 	'''
 	Input:
 		in_dir (path of directory of fna/faa/gff directories)
@@ -92,19 +92,25 @@ def run_annotations(in_dir, out_dir, db_dir, use_clustering = True, use_pilercr 
 	# Clustering tools #
 	####################
 
-	if use_clustering:
-		try:
-			if not os.path.exists(in_dir + "/fna/all.fna"):
-				subprocess.call(["cat " + in_dir + "/fna/*" + " > " + in_dir + "/fna/all.fna"], shell=True)
-			if not os.path.exists(in_dir + "/faa/all.faa"):
-				subprocess.call(["cat " + in_dir + "/faa/*" + " > " + in_dir + "/faa/all.faa"], shell=True)
-			subprocess.check_output(["python", "cluster_wrapper.py", in_dir, out_dir + "/cdhit"])
-			os.remove(in_dir + "/fna/all.fna")
-			os.remove(in_dir + "/faa/all.faa")
-			print("Finished clustering!\n")
-		except:
-			print("Clustering failed!\n")
-			return False
+	# CD-HIT
+	try:
+		if not os.path.exists(in_dir + "/fna/all.fna"):
+			subprocess.call(["cat " + in_dir + "/fna/*" + " > " + in_dir + "/fna/all.fna"], shell=True)
+		if not os.path.exists(in_dir + "/faa/all.faa"):
+			subprocess.call(["cat " + in_dir + "/faa/*" + " > " + in_dir + "/faa/all.faa"], shell=True)
+		subprocess.check_output(["python", "cluster_wrapper.py", in_dir, out_dir + "/cdhit"])
+		os.remove(in_dir + "/fna/all.fna")
+		os.remove(in_dir + "/faa/all.faa")
+		print("Finished clustering!\n")
+	except:
+		print("Clustering failed!\n")
+		return False
+
+	try:
+		subprocess.check_output(["python", "match_clust_inputs.py", in_dir, out_dir + "/cdhit"])
+		print("Finished matching cluster outputs to individual files!\n")
+	except:
+		print("Cluster matching failed!\n")
 
 
 	########################
@@ -147,8 +153,7 @@ def run_annotations(in_dir, out_dir, db_dir, use_clustering = True, use_pilercr 
 	signalp_wrapper.main(input_dir + "/faa/", output_dir + "/signalp/")
 
 	# PilerCR - must use LDLIBS = -lm when using make, needs fasta files from genome assembly
-	if use_pilercr:
-		pilercr_wrapper.main(input_dir + "/fasta/", output_dir + "/pilercr/")
+	pilercr_wrapper.main(input_dir + "/fasta/", output_dir + "/pilercr/")
 
 	# TMHMM - must be on $PATH
 	tmhmm_wrapper.main(input_dir + "/faa/", output_dir + "/tmhmm/")
@@ -177,9 +182,5 @@ def main(argv, use_clustering = True):
 
 
 if __name__ == "__main__":
-	'''
-	For Unit testing the functionality of Functional Annotation group.
-	Always make sure that this script is working intact when called specifically.
-	'''
 	status = main(sys.argv[1:]) #TODO: include clustering bool in sys argv
 	print("Final Status: {}".format(status))
