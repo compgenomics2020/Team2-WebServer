@@ -8,17 +8,14 @@ WARNING: Using "gene" sequences will not give the desired results.
 this is an important script
 36-96939
 '''
-
 import subprocess,os,sys,shutil
+
 
 def signalp_runner(input_directory_path,faa_file,signalp_path):
     #Creating file path
 	input_file=input_directory_path + faa_file
 
-    #Creating a subdirectory in the output directory
-    #output_subdir=output_directory_path
-
-    try:
+	try:
         print("SignalP 5.0 "+faa_file)
         subprocess.check_output(signalp_path, "-fasta", input_file,
 			"-org", "gram-", "-format", "short", "-gff3")
@@ -48,6 +45,7 @@ def main(argv):
         signalp_runner(inputpath,name_faa,signalp_path) # input_directory_path,faa_file,output_directory_path
 		name_gff3 = name.split(".")[0] + ".gff3"
 		shutil.move(inputpath + name_gff3, outputpath + name_gff3)
+	return
 
 if __name__ == "__main__":
         main(sys.argv[1:])
