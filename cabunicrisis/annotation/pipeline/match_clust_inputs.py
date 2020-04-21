@@ -5,9 +5,9 @@ from shutil import copyfile
 for na in ['n','a']:
     matching = {}
 
-    for filename in listdir('./input/ku_union_f'+na+'a'):
+    for filename in listdir('./input/f'+na+'a'):
         if filename[0] == 'C':
-            filename = './input/ku_union_f'+na+'a/'+filename
+            filename = './input/f'+na+'a/'+filename
             with open(filename) as fnaa_file:
                 for line in fnaa_file:
                     if line[0] == '>':
