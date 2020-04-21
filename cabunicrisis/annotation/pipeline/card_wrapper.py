@@ -10,7 +10,7 @@ def main(input_file, output_file, db_dir):
 	try:
 		subprocess.check_output(["rgi", "load", "--card_json", db_dir + "/card.json", "--local"])
 		subprocess.check_output(["rgi", "main", "-i", input_file, "-o", output_file, "-t", "protein", "--local", "--clean"])
-		subprocess.check_output(["rgi", "tab", "-i", tab_inp])
+		subprocess.check_output(["rgi", "tab", "-i", output_file + ".json"])
 	except subprocess.CalledProcessError as err:
 		print("Error running CARD. Check the input files.")
 		print("Error thrown: " + err.output)
@@ -23,9 +23,9 @@ if __name__ == "__main__":
 	output_dir = sys.argv[2]
 	db_dir = sys.argv[3]
 
-	main(prot_file, output_dir + "/CARD_results/results", db_dir)
+	main(prot_file, output_dir + "/faa", db_dir)
 
 	for pf in os.listdir(plasmid_dir):
 		x = pf.split('_')[0]
 		plasmid = plasmid_dir + "/" + pf
-		main(plasmid, output_dir + "/CARD_plasmids_results/results_plasmid" + x, db_dir)
+		main(plasmid, output_dir + "/plasmids/" + x, db_dir)

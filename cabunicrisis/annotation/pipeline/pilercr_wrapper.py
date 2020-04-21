@@ -38,8 +38,12 @@ def main(argv):
 	files=os.listdir(inputpath)
 	if len(files) == 0:
         print("No files present in the directory.")
+		return False
 	for name in files:
-		pilercr=pilercr_runner(inputpath,name,outputpath)
+		result = pilercr_runner(inputpath,name,outputpath)
+		if not result:
+			return False
+	return True
 
 if __name__ == "__main__":
 	main(sys.argv[1:])

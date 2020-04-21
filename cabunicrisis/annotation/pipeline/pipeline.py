@@ -18,6 +18,8 @@ from shutil import rmtree
 
 import cluster_wrapper, match_clust_inputs
 
+import card_wrapper
+
 import signalp_wrapper
 import pilercr_wrapper
 import tmhmm_wrapper
@@ -75,7 +77,7 @@ def process_in_directory(in_dir):
 	return True, nags_dict
 
 
-def run_annotations(in_dir, out_dir, db_dir):
+def run_annotations(in_dir, out_dir, db_dir, plasmid_dir):
 	'''
 	Input:
 		in_dir (path of directory of fna/faa/gff directories)
@@ -101,16 +103,17 @@ def run_annotations(in_dir, out_dir, db_dir):
 		subprocess.check_output(["python", "cluster_wrapper.py", in_dir, out_dir + "/cdhit"])
 		os.remove(in_dir + "/fna/all.fna")
 		os.remove(in_dir + "/faa/all.faa")
-		print("Finished clustering!\n")
+		print("Finished clustering!")
 	except:
-		print("Clustering failed!\n")
+		print("Clustering failed!")
 		return False
 
 	try:
 		subprocess.check_output(["python", "match_clust_inputs.py", in_dir, out_dir + "/cdhit"])
-		print("Finished matching cluster outputs to individual files!\n")
+		print("Finished matching cluster outputs to individual files!")
 	except:
-		print("Cluster matching failed!\n")
+		print("Cluster matching failed!")
+		return False
 
 
 	########################
@@ -144,20 +147,42 @@ def run_annotations(in_dir, out_dir, db_dir):
 		return False
 
 	# CARD
+	c_result = card_wrapper(out_dir + "/cdhit/faa_rep_seq.faa", plasmid_dir, out_dir + "/card", db_dir + "/card")
+	if c_result:
+		print("CARD succeeded!")
+	else:
+		print("CARD failed, check input files.")
+		return False
 
 	###################
 	# ab initio tools #
 	###################
 
 	# SignalP - must be on $PATH
-	signalp_wrapper.main(input_dir + "/faa/", output_dir + "/signalp/")
+	sp_result = signalp_wrapper.main(input_dir + "/faa/", output_dir + "/signalp/")
+	if sp_result:
+		print("SignalP succeeded!")
+	else:
+		print("SignalP failed, check input files.")
+		return False
 
 	# PilerCR - must use LDLIBS = -lm when using make, needs fasta files from genome assembly
-	pilercr_wrapper.main(input_dir + "/fasta/", output_dir + "/pilercr/")
+	pc_result = pilercr_wrapper.main(input_dir + "/fasta/", output_dir + "/pilercr/")
+	if pc_result:
+		print("PilerCR succeeded!")
+	else:
+		print("PilerCR failed, check input files.")
+		return False
 
 	# TMHMM - must be on $PATH
-	tmhmm_wrapper.main(input_dir + "/faa/", output_dir + "/tmhmm/")
+	tm_result = tmhmm_wrapper.main(input_dir + "/faa/", output_dir + "/tmhmm/")
+	if pc_result:
+		print("TMHMM succeeded!")
+	else:
+		print("TMHMM failed, check input files.")
+		return False
 
+	print("All tools run!")
 	return True
 
 
@@ -166,6 +191,7 @@ def main(argv, use_clustering = True):
 	in_dir = argv[0]
 	out_dir = argv[1]
 	db_dir = argv[2]
+	plasmid_dir = argv[3]
 
 	if os.path.exists(out_dir):
 		rmtree(out_dir)
@@ -174,14 +200,13 @@ def main(argv, use_clustering = True):
 	if use_clustering:
 		os.mkdir(out_dir + "/cdhit")
 	os.mkdir(out_dir + "/eggnog_results")
-	os.mkdir(out_dir + "/CARD")
-	os.mkdir(out_dir + "/CARD/CARD_results")
-	os.mkdir(out_dir + "/CARD/CARD_plasmids_results")
+	os.mkdir(out_dir + "/card")
+	os.mkdir(out_dir + "/card/plasmids")
 	os.mkdir(out_dir + "/signalp")
 	os.mkdir(out_dir + "/pilercr")
 	os.mkdir(out_dir + "/tmhmm")
 
-	return run_annotations(in_dir, out_dir, db_dir, use_clustering)
+	return run_annotations(in_dir, out_dir, db_dir, plasmid_dir)
 
 
 if __name__ == "__main__":

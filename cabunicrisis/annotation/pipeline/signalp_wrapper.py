@@ -42,7 +42,9 @@ def main(argv):
 			shutil.move(name_gff3, outputpath + name_gff3)
 			name_summary = name.replace(".faa", "_summary.signalp5")
 			shutil.move(name_summary, outputpath + name_summary)
-	return
+		else:
+			return False
+	return True
 
 if __name__ == "__main__":
 	main(sys.argv[1:])
