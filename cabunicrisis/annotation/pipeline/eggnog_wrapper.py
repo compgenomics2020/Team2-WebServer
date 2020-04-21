@@ -9,7 +9,7 @@ def main(argv):
     output_file = argv[2]
 
     #download necessary databses
-    make_db = subprocess.check_output(["python2", eggnog_dir + "/download_eggnog_data.py"])
+    make_db = subprocess.check_output(["python2", eggnog_dir + "/download_eggnog_data.py", "-y", "--data_dir", output_file])
 
     #run faa cluster against eggnog bacteria db with diamond method (& sign makes it run in the background)
     output =  subprocess.check_output(["python2", eggnog_dir + "/emapper.py", "-i", input_file, "-output", output_file, "-d", "bact", "-m", "diamond", ">", "log", "&"])

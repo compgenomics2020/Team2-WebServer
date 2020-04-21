@@ -10,3 +10,4 @@ cabunicrisis/default.profraw
 cabunicrisis/cabunicrisis/core/migrations/*
 .DS_Store
 default.profraw
+cabunicrisis/annotation/pipeline/output/*
