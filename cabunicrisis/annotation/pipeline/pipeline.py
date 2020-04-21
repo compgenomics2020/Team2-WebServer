@@ -34,13 +34,13 @@ def check_tool(tool):
 	return True
 
 
-def process_input_directory(input_directory_path):
+def process_in_directory(in_dir):
 	'''
 	Get an idea of what the directory of directory files look like.
 	'''
 	#####################Please make sure that all files have a similar naming scheme.#####################
 
-	nag_dirs = os.listdir(input_directory_path)
+	nag_dirs = os.listdir(in_dir)
 	if len(nag_dirs) != 3:
 		return False, "Directory is not split into fna/faa/gff subdirectories."
 
@@ -49,7 +49,7 @@ def process_input_directory(input_directory_path):
 	same_files = {}
 
 	for nag in nag_dirs:
-		files = os.listdir(input_directory_path + nag)
+		files = os.listdir(in_dir + nag)
 		file_exts = set([file[file.index('.'):] for file in files])
 		if len(file_exts) > 1:
 			print("Too many file types present in a single directory.")
@@ -71,11 +71,11 @@ def process_input_directory(input_directory_path):
 	return True, nags_dict
 
 
-def run_assemblies(input_directory_path, output_directory_path, if_clustering = True):
+def run_assemblies(in_dir, out_dir, if_clustering = True):
 	'''
 	Input:
-		input_directory_path (path of directory of fna/faa/gff directories)
-	   	output_directory_path (path of final merged outputs)
+		in_dir (path of directory of fna/faa/gff directories)
+	   	out_dir (path of final merged outputs)
 	   	if_clustering (bool to see if clustering is necessary)
 
 	We'll call clustering, ab initio, and homology tools:
@@ -87,11 +87,13 @@ def run_assemblies(input_directory_path, output_directory_path, if_clustering = 
 	# Clustering
 	if if_clustering:
 		try:
-			subprocess.call(["cat " + input_directory_path + "/fna/*" + " > " + input_directory_path + "/fna/all.fna"], shell=True)
-			subprocess.call(["cat " + input_directory_path + "/faa/*" + " > " + input_directory_path + "/faa/all.faa"], shell=True)
-			subprocess.check_output(["python", "cluster_wrapper.py", input_directory_path, output_directory_path + "/cdhit"])
-			os.remove(input_directory_path + "/fna/all.fna")
-			os.remove(input_directory_path + "/faa/all.faa")
+			if !(os.path.exists(in_dir + "/fna/all.fna")):
+				subprocess.call(["cat " + in_dir + "/fna/*" + " > " + in_dir + "/fna/all.fna"], shell=True)
+			if !(os.path.exists(in_dir + "/faa/all.faa")):
+				subprocess.call(["cat " + in_dir + "/faa/*" + " > " + in_dir + "/faa/all.faa"], shell=True)
+			subprocess.check_output(["python", "cluster_wrapper.py", in_dir, out_dir + "/cdhit"])
+			os.remove(in_dir + "/fna/all.fna")
+			os.remove(in_dir + "/faa/all.faa")
 			print("Finished clustering!\n")
 		except:
 			print("Clustering failed!\n")
@@ -100,7 +102,7 @@ def run_assemblies(input_directory_path, output_directory_path, if_clustering = 
 	# EGGNOG
 	try:
 		eggnog_dir = "eggnog-mapper" #TODO: make this an input?
-		subprocess.check_output(["python2", "eggnog_wrapper.py", eggnog_dir, output_directory_path + "/cdhit/faa_rep_seq.faa", output_directory_path + "/eggnog_results"])
+		subprocess.check_output(["python2", "eggnog_wrapper.py", eggnog_dir, out_dir + "/cdhit/faa_rep_seq.faa", out_dir + "/eggnog_results"])
 	except:
 		print("EGGNOG failed!\n")
 		return False
@@ -111,7 +113,7 @@ def run_assemblies(input_directory_path, output_directory_path, if_clustering = 
 
 
 def main(argv, if_clustering = True):
-	input_dir = argv[0]
+	in_dir = argv[0]
 	output_dir = argv[1]
 
 	if os.path.exists(output_dir):
@@ -122,7 +124,7 @@ def main(argv, if_clustering = True):
 		os.mkdir(output_dir + "/cdhit")
 	os.mkdir(output_dir + "/eggnog_results")
 
-	return run_assemblies(input_dir, output_dir, if_clustering)
+	return run_assemblies(in_dir, output_dir, if_clustering)
 
 
 if __name__ == "__main__":
