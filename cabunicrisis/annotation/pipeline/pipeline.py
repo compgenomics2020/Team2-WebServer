@@ -75,12 +75,12 @@ def process_in_directory(in_dir):
 	return True, nags_dict
 
 
-def run_annotations(in_dir, out_dir, db_dir, if_clustering = True, if_pilercr = False):
+def run_annotations(in_dir, out_dir, db_dir, use_clustering = True, use_pilercr = False):
 	'''
 	Input:
 		in_dir (path of directory of fna/faa/gff directories)
 	   	out_dir (path of final merged outputs)
-	   	if_clustering (bool to see if clustering is necessary)
+	   	use_clustering (bool to see if clustering is necessary)
 
 	We'll call clustering, ab initio, and homology tools:
 		clustering: clustering_wrapper.py
@@ -92,7 +92,7 @@ def run_annotations(in_dir, out_dir, db_dir, if_clustering = True, if_pilercr = 
 	# Clustering tools #
 	####################
 
-	if if_clustering:
+	if use_clustering:
 		try:
 			if not os.path.exists(in_dir + "/fna/all.fna"):
 				subprocess.call(["cat " + in_dir + "/fna/*" + " > " + in_dir + "/fna/all.fna"], shell=True)
@@ -147,17 +147,17 @@ def run_annotations(in_dir, out_dir, db_dir, if_clustering = True, if_pilercr = 
 	signalp_wrapper.main(input_dir + "/faa/", output_dir + "/signalp/")
 
 	# PilerCR - must use LDLIBS = -lm when using make, needs fasta files from genome assembly
-	if if_pilercr:
+	if use_pilercr:
 		pilercr_wrapper.main(input_dir + "/fasta/", output_dir + "/pilercr/")
 
-	# TMHMM
+	# TMHMM - must be on $PATH
 	tmhmm_wrapper.main(input_dir + "/faa/", output_dir + "/tmhmm/")
 
 	return True
 
 
 
-def main(argv, if_clustering = True):
+def main(argv, use_clustering = True):
 	in_dir = argv[0]
 	out_dir = argv[1]
 	db_dir = argv[2]
@@ -166,14 +166,14 @@ def main(argv, if_clustering = True):
 		rmtree(out_dir)
 	os.mkdir(out_dir)
 
-	if if_clustering:
+	if use_clustering:
 		os.mkdir(out_dir + "/cdhit")
 	os.mkdir(out_dir + "/eggnog_results")
 	os.mkdir(out_dir + "/signalp")
 	os.mkdir(out_dir + "/pilercr")
 	os.mkdir(out_dir + "/tmhmm")
 
-	return run_annotations(in_dir, out_dir, db_dir, if_clustering)
+	return run_annotations(in_dir, out_dir, db_dir, use_clustering)
 
 
 if __name__ == "__main__":
