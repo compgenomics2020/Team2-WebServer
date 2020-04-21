@@ -31,19 +31,17 @@ def signalp_runner(input_directory_path,faa_file):
 def main(argv):
 	inputpath=argv[0] # input directory of files
 	outputpath=argv[1] # input subdirectory path to create
-	signalp_path=argv[2]
 	files=os.listdir(inputpath)
-
-	if os.path.exists(outputpath):
-		shutil.rmtree(outputpath)
-	os.mkdir(outputpath)
 
 	if len(files) == 0:
 		print("No files present in the directory.")
 	for name in files:
-		signalp_runner(inputpath,name)
-		name_gff3 = name.split(".")[0] + ".gff3"
-		shutil.move(name_gff3, outputpath + name_gff3)
+		result = signalp_runner(inputpath,name)
+		if result:
+			name_gff3 = name.split(".")[0] + ".gff3"
+			shutil.move(name_gff3, outputpath + name_gff3)
+			name_summary = name.split(".")[0] + "_summary.signalp5"
+			shutil.move(name_summary, outputpath + name_summary)
 	return
 
 if __name__ == "__main__":

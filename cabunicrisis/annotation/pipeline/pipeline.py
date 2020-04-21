@@ -141,7 +141,7 @@ def run_annotations(in_dir, out_dir, db_dir, if_clustering = True):
 	###################
 
 	# SignalP
-	signalp_wrapper.main()
+	signalp_wrapper.main(input_dir + "/faa/", output_dir + "/signalp/")
 
 	# PilerCR
 
@@ -163,6 +163,7 @@ def main(argv, if_clustering = True):
 	if if_clustering:
 		os.mkdir(out_dir + "/cdhit")
 	os.mkdir(out_dir + "/eggnog_results")
+	os.mkdir(out_dir + "/signalp")
 
 	return run_annotations(in_dir, out_dir, db_dir, if_clustering)
 
