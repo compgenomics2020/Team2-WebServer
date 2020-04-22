@@ -83,7 +83,7 @@ def run_annotations(in_dir, out_dir, db_dir):
 		subprocess.check_output(["python2", "card_wrapper.py",
 	        out_dir + "/cdhit/faa_rep_seq.faa", out_dir + "/card", db_dir + "/card"])
 		print("CARD succeeded!")
-	else:
+	except subprocess.CalledProcessError as err:
 		print("CARD failed, check input files.")
 		return False
 
