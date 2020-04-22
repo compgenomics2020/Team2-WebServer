@@ -19,7 +19,7 @@ def main(argv):
             files = files - input_file
             if tool != 'signalp':
                 with open(file) as f:
-    		        wc = sum(1 for line in f)
+                    wc = sum(1 for line in f)
                     tool_dict[name] = wc
             else:
                 with open(file) as f:
