@@ -12,3 +12,4 @@ cabunicrisis/cabunicrisis/core/migrations/*
 default.profraw
 cabunicrisis/annotation/pipeline/output/*
 cabunicrisis/.DS_Store
+*.pyc
