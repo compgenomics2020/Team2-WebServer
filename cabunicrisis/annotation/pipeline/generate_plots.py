@@ -19,7 +19,7 @@ def main(argv):
             files = files.remove(input_file)
             input_file = in_dir + "/" + input_file
             if tool != 'signalp':
-                with open(file) as f:
+                with open(input_file) as f:
                     wc = sum(1 for line in f)
                     tool_dict[name] = wc
             else:
