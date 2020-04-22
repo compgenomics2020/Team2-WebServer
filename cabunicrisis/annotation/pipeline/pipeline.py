@@ -134,7 +134,7 @@ def run_annotations(in_dir, out_dir, db_dir, plasmid_dir):
 	#######################
 	# Merging annotations #
 	#######################
-	create_homology_gff.main(output_dir + "/vfdb", output_dir + "/card",
+	create_homology_gff.main(output_dir + "/vfdb", output_dir + "/card/card.json",
 		output_dir + "/eggnog", out_dir + "/cdhit/faa_rep_seq.faa",
 		out_dir + "/cdhit/faa_cluster_membership.txt")
 	create_abinitio_gff.main(output_dir + "/pilercr", output_dir + "/tmhmm",
@@ -157,7 +157,7 @@ def main(argv, use_clustering = True):
 	os.mkdir(out_dir + "/cdhit")
 	os.mkdir(out_dir + "/eggnog")
 	os.mkdir(out_dir + "/card")
-	os.mkdir(out_dir + "/card/plasmids")
+	# os.mkdir(out_dir + "/card/plasmids")
 	os.mkdir(out_dir + "/signalp")
 	os.mkdir(out_dir + "/pilercr")
 	os.mkdir(out_dir + "/tmhmm")
