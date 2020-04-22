@@ -133,7 +133,7 @@ def run_annotations(in_dir, out_dir, db_dir):
 	#######################
 
 	subprocess.check_output(["python", "create_homology_gff.py",
-		out_dir + "/vfdb", out_dir + "/eggnog",
+		out_dir + "/vfdb", out_dir + "/eggnog.emapper.annotations",
 		out_dir + "/cdhit/faa_rep_seq.faa",
 		out_dir + "/cdhit/faa_cluster_membership.txt"])
 
@@ -157,7 +157,6 @@ def main(argv, use_clustering = True):
 	os.mkdir(out_dir)
 
 	os.mkdir(out_dir + "/cdhit")
-	os.mkdir(out_dir + "/eggnog")
 	# os.mkdir(out_dir + "/card")
 	os.mkdir(out_dir + "/signalp")
 	# os.mkdir(out_dir + "/pilercr")
