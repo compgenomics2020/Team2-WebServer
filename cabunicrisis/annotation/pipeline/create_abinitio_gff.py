@@ -119,6 +119,7 @@ def signalp_merger(input_directory_path,signalp_file):
 		for keys in signalp_dict.keys():
                         name=keys.split(":")
                         node=name[0]
+						print(name)
                         number=name[1].split("-")
                         start=int(number[0])-1
                         if start <0:
