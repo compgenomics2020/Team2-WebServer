@@ -22,10 +22,14 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '4uy52m(*8s$rk0fz9+6svs2!09+^ltr&d7^jbupf-$&ydh*_4x'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
 
-ALLOWED_HOSTS = ["http://predict2020t2.biosci.gatech.edu", "130.207.66.119"]
+# SECURITY WARNING: don't run with debug turned on in production!
+
+if socket.gethostname() == 'bioapppredict20.biosci.gatech.edu':
+    DEBUG = False
+    ALLOWED_HOSTS = ["http://predict2020t2.biosci.gatech.edu", "130.207.66.119"] 
+else:
+    DEBUG = True
 
 
 # Application definition
