@@ -40,102 +40,102 @@ def run_annotations(in_dir, out_dir, db_dir):
 	# ####################
 	# # Clustering tools #
 	# ####################
-	#
-	# # CD-HIT
+	
+	# CD-HIT
+	try:
+		if not os.path.exists(in_dir + "/fna/all.fna"):
+			subprocess.call(["cat " + in_dir + "/fna/*" + " > " + in_dir + "/fna/all.fna"], shell=True)
+		if not os.path.exists(in_dir + "/faa/all.faa"):
+			subprocess.call(["cat " + in_dir + "/faa/*" + " > " + in_dir + "/faa/all.faa"], shell=True)
+		subprocess.check_output(["python", "cluster_wrapper.py", in_dir, out_dir + "/cdhit"])
+		os.remove(in_dir + "/fna/all.fna")
+		os.remove(in_dir + "/faa/all.faa")
+		print("Finished clustering!")
+	except:
+		print("Clustering failed!")
+		return False
+
+	try:
+		subprocess.check_output(["python", "match_clust_inputs.py", in_dir, out_dir + "/cdhit"])
+		print("Finished matching cluster outputs to individual files!")
+	except:
+		print("Cluster matching failed!")
+		return False
+
+
+	########################
+	# Homology-based tools #
+	########################
+
+	# VFDB
+	try:
+		os.system("blastn -db "+ db_dir + '/vfdb/vfdb'+
+			" -query "+ out_dir + "/cdhit/fna_rep_seq.fna"+
+			" -out "+ out_dir + "/vfdb"+
+			" -max_hsps 1 -max_target_seqs 1 -outfmt '6 qseqid length qstart qend sstart send evalue bitscore stitle' -perc_identity 100 -num_threads 5")
+		print("Finished VFDB!")
+	except:
+		print("Error running VFDB.")
+		return False
+
+	# # CARD
 	# try:
-	# 	if not os.path.exists(in_dir + "/fna/all.fna"):
-	# 		subprocess.call(["cat " + in_dir + "/fna/*" + " > " + in_dir + "/fna/all.fna"], shell=True)
-	# 	if not os.path.exists(in_dir + "/faa/all.faa"):
-	# 		subprocess.call(["cat " + in_dir + "/faa/*" + " > " + in_dir + "/faa/all.faa"], shell=True)
-	# 	subprocess.check_output(["python", "cluster_wrapper.py", in_dir, out_dir + "/cdhit"])
-	# 	os.remove(in_dir + "/fna/all.fna")
-	# 	os.remove(in_dir + "/faa/all.faa")
-	# 	print("Finished clustering!")
-	# except:
-	# 	print("Clustering failed!")
+	# 	subprocess.check_output(["python2", "card_wrapper.py",
+	#         out_dir + "/cdhit/faa_rep_seq.faa", out_dir + "/card", db_dir + "/card"])
+	# 	print("CARD succeeded!")
+	# except subprocess.CalledProcessError as err:
+	# 	print("CARD failed, check input files.")
 	# 	return False
-	#
+
+	# # EGGNOG
 	# try:
-	# 	subprocess.check_output(["python", "match_clust_inputs.py", in_dir, out_dir + "/cdhit"])
-	# 	print("Finished matching cluster outputs to individual files!")
-	# except:
-	# 	print("Cluster matching failed!")
+	# 	subprocess.check_output(["python2", db_dir + "/eggnog-mapper/emapper.py",
+	#         "-i", out_dir + "/cdhit/faa_rep_seq.faa", "--output", out_dir + "/eggnog",
+	# 		"--data_dir", db_dir + "/eggnog-db", "-m", "diamond"])
+	# except subprocess.CalledProcessError as err:
+	# 	print("Error running EGGNOG.")
+	# 	print("Error thrown: " + err.output)
 	# 	return False
-	#
-	#
-	# ########################
-	# # Homology-based tools #
-	# ########################
-	#
-	# # VFDB
-	# try:
-	# 	os.system("blastn -db "+ db_dir + '/vfdb/vfdb'+
-	# 		" -query "+ out_dir + "/cdhit/fna_rep_seq.fna"+
-	# 		" -out "+ out_dir + "/vfdb"+
-	# 		" -max_hsps 1 -max_target_seqs 1 -outfmt '6 qseqid length qstart qend sstart send evalue bitscore stitle' -perc_identity 100 -num_threads 5")
-	# 	print("Finished VFDB!")
-	# except:
-	# 	print("Error running VFDB.")
-	# 	return False
-	#
-	# # # CARD
-	# # try:
-	# # 	subprocess.check_output(["python2", "card_wrapper.py",
-	# #         out_dir + "/cdhit/faa_rep_seq.faa", out_dir + "/card", db_dir + "/card"])
-	# # 	print("CARD succeeded!")
-	# # except subprocess.CalledProcessError as err:
-	# # 	print("CARD failed, check input files.")
-	# # 	return False
-	#
-	# # # EGGNOG
-	# # try:
-	# # 	subprocess.check_output(["python2", db_dir + "/eggnog-mapper/emapper.py",
-	# #         "-i", out_dir + "/cdhit/faa_rep_seq.faa", "--output", out_dir + "/eggnog",
-	# # 		"--data_dir", db_dir + "/eggnog-db", "-m", "diamond"])
-	# # except subprocess.CalledProcessError as err:
-	# # 	print("Error running EGGNOG.")
-	# # 	print("Error thrown: " + err.output)
-	# # 	return False
-	#
-	# ###################
-	# # ab initio tools #
-	# ###################
-	#
-	# # SignalP - must be on $PATH
-	# sp_result = signalp_wrapper.main([in_dir + "/faa/", out_dir + "/signalp/"])
-	# if sp_result:
-	# 	print("SignalP succeeded!")
+
+	###################
+	# ab initio tools #
+	###################
+
+	# SignalP - must be on $PATH
+	sp_result = signalp_wrapper.main([in_dir + "/faa/", out_dir + "/signalp/"])
+	if sp_result:
+		print("SignalP succeeded!")
+	else:
+		print("SignalP failed, check input files.")
+		return False
+
+	# # PilerCR - must use LDLIBS = -lm when using make, needs fasta files from genome assembly
+	# pc_result = pilercr_wrapper.main([in_dir + "/fasta/", out_dir + "/pilercr/"])
+	# if pc_result:
+	# 	print("PilerCR succeeded!")
 	# else:
-	# 	print("SignalP failed, check input files.")
+	# 	print("PilerCR failed, check input files.")
 	# 	return False
-	#
-	# # # PilerCR - must use LDLIBS = -lm when using make, needs fasta files from genome assembly
-	# # pc_result = pilercr_wrapper.main([in_dir + "/fasta/", out_dir + "/pilercr/"])
-	# # if pc_result:
-	# # 	print("PilerCR succeeded!")
-	# # else:
-	# # 	print("PilerCR failed, check input files.")
-	# # 	return False
-	#
-	# # TMHMM - must be on $PATH
-	# tm_result = tmhmm_wrapper.main([in_dir + "/faa/", out_dir + "/tmhmm/"])
-	# if tm_result:
-	# 	print("TMHMM succeeded!")
-	# else:
-	# 	print("TMHMM failed, check input files.")
-	# 	return False
-	#
-	# print("All tools ran!")
+
+	# TMHMM - must be on $PATH
+	tm_result = tmhmm_wrapper.main([in_dir + "/faa/", out_dir + "/tmhmm/"])
+	if tm_result:
+		print("TMHMM succeeded!")
+	else:
+		print("TMHMM failed, check input files.")
+		return False
+
+	print("All tools ran!")
 
 
 	#######################
 	# Merging annotations #
 	#######################
 
-	# subprocess.check_output(["python", "create_homology_gff.py",
-	# 	out_dir + "/vfdb", out_dir + "/eggnog.emapper.annotations",
-	# 	out_dir + "/cdhit/faa_rep_seq.faa",
-	# 	out_dir + "/cdhit/faa_cluster_membership.txt"])
+	subprocess.check_output(["python", "create_homology_gff.py",
+		out_dir + "/vfdb", out_dir + "/eggnog.emapper.annotations",
+		out_dir + "/cdhit/faa_rep_seq.faa",
+		out_dir + "/cdhit/faa_cluster_membership.txt"])
 
 	subprocess.check_output(["python", "create_abinitio_gff.py",
 		out_dir + "/tmhmm/", out_dir + "/signalp/"])
