@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 
 '''
 Welcome to the backbone script of Team-2's Functional Annotation Group.
