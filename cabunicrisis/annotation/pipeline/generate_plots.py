@@ -38,7 +38,7 @@ def main(argv):
         if tool != 'signalp':
             with open(csv_file, 'w') as file:
                 writer = csv.writer(file)
-                writer.writerow(fieldnames=["Proteome", "Count"])
+                writer.writerow(["Proteome", "Count"])
                 for name in tool_dict:
                     writer.writerow([name, int(tool_dict[name])])
 
@@ -47,17 +47,15 @@ def main(argv):
             df.set_index('Proteome', inplace=True)
             fig = plt.figure(figsize=(30,10))
             ax = fig.add_subplot(111)
-            ax2 = ax.twinx()
             width = 0.3
 
             df.Count.plot(kind='bar', color='red', ax=ax, width=width, position=1)
 
             ax.set_ylabel(tool + ' Count', fontsize=16)
-            ax2.set_ylabel('Lipoprotein Count', fontsize=16)
             ax.set_xlabel('Sequence', fontsize=16)
             #plt.title('Histogram of ', fontsize=12)
             count_patch = mpatches.Patch(color='green', label=tool + ' Count')
-            plt.legend(handles=[countpatch], frameon=False, fontsize=16)
+            plt.legend(handles=[count_patch], frameon=False, fontsize=16)
             plt.xticks(fontsize=16)
             plt.yticks(fontsize=16)
             plt.tight_layout()
@@ -66,7 +64,7 @@ def main(argv):
         else:
             with open(csv_file, 'w') as file:
                 writer = csv.writer(file)
-                writer.writerow(fieldnames=["Proteome", "Lipoprotein", "SingalPeptide"])
+                writer.writerow(["Proteome", "Lipoprotein", "SignalPeptide"])
                 for name in tool_dict:
                     (lipo, sp) = tool_dict[name]
                     writer.writerow([name, int(lipo), int(sp)])
