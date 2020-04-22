@@ -87,15 +87,15 @@ def run_annotations(in_dir, out_dir, db_dir):
 	# 	print("CARD failed, check input files.")
 	# 	return False
 
-	# EGGNOG
-	try:
-		subprocess.check_output(["python2", db_dir + "/eggnog-mapper/emapper.py",
-	        "-i", out_dir + "/cdhit/faa_rep_seq.faa", "--output", out_dir + "/eggnog",
-			"--data_dir", db_dir + "/eggnog-db", "-m", "diamond"])
-	except subprocess.CalledProcessError as err:
-		print("Error running EGGNOG.")
-		print("Error thrown: " + err.output)
-		return False
+	# # EGGNOG
+	# try:
+	# 	subprocess.check_output(["python2", db_dir + "/eggnog-mapper/emapper.py",
+	#         "-i", out_dir + "/cdhit/faa_rep_seq.faa", "--output", out_dir + "/eggnog",
+	# 		"--data_dir", db_dir + "/eggnog-db", "-m", "diamond"])
+	# except subprocess.CalledProcessError as err:
+	# 	print("Error running EGGNOG.")
+	# 	print("Error thrown: " + err.output)
+	# 	return False
 
 	###################
 	# ab initio tools #
@@ -132,13 +132,13 @@ def run_annotations(in_dir, out_dir, db_dir):
 	# Merging annotations #
 	#######################
 
-	subprocess.check_output(["python", "create_homology_gff.py",
-		out_dir + "/vfdb", out_dir + "/eggnog.emapper.annotations",
-		out_dir + "/cdhit/faa_rep_seq.faa",
-		out_dir + "/cdhit/faa_cluster_membership.txt"])
+	# subprocess.check_output(["python", "create_homology_gff.py",
+	# 	out_dir + "/vfdb", out_dir + "/eggnog.emapper.annotations",
+	# 	out_dir + "/cdhit/faa_rep_seq.faa",
+	# 	out_dir + "/cdhit/faa_cluster_membership.txt"])
 
 	subprocess.check_output(["python", "create_abinitio_gff.py",
-		out_dir + "/tmhmm", out_dir + "/signalp"])
+		out_dir + "/tmhmm/", out_dir + "/signalp/"])
 
 	subprocess.check_output(["python", "merging_annotations.py",
 		"./tmp", out_dir + "/final"])

@@ -133,8 +133,8 @@ def main():
 	inputpath_tmhmm=sys.argv[1]
 	inputpath_signalp=sys.argv[2]
 	# files_pilercr=os.listdir(inputpath_pilercr)
-	file_tmhmm=os.listdir(inputpath_tmhmm)
-	file_signalp=os.listdir(inputpath_signalp)
+	files_tmhmm=os.listdir(inputpath_tmhmm)
+	files_signalp=os.listdir(inputpath_signalp)
 
 	# #Checking if pilercr input files exist in the directory
 	# if len(files_pilercr) == 0:
