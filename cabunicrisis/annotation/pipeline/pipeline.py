@@ -102,7 +102,7 @@ def run_annotations(in_dir, out_dir, db_dir):
 	###################
 
 	# SignalP - must be on $PATH
-	sp_result = signalp_wrapper.main(input_dir + "/faa/", output_dir + "/signalp/")
+	sp_result = signalp_wrapper.main(in_dir + "/faa/", out_dir + "/signalp/")
 	if sp_result:
 		print("SignalP succeeded!")
 	else:
@@ -110,7 +110,7 @@ def run_annotations(in_dir, out_dir, db_dir):
 		return False
 
 	# PilerCR - must use LDLIBS = -lm when using make, needs fasta files from genome assembly
-	pc_result = pilercr_wrapper.main(input_dir + "/fasta/", output_dir + "/pilercr/")
+	pc_result = pilercr_wrapper.main(in_dir + "/fasta/", out_dir + "/pilercr/")
 	if pc_result:
 		print("PilerCR succeeded!")
 	else:
@@ -118,7 +118,7 @@ def run_annotations(in_dir, out_dir, db_dir):
 		return False
 
 	# TMHMM - must be on $PATH
-	tm_result = tmhmm_wrapper.main(input_dir + "/faa/", output_dir + "/tmhmm/")
+	tm_result = tmhmm_wrapper.main(in_dir + "/faa/", out_dir + "/tmhmm/")
 	if pc_result:
 		print("TMHMM succeeded!")
 	else:
@@ -131,12 +131,12 @@ def run_annotations(in_dir, out_dir, db_dir):
 	#######################
 	# Merging annotations #
 	#######################
-	create_homology_gff.main(output_dir + "/vfdb", output_dir + "/card/card.json",
-		output_dir + "/eggnog", out_dir + "/cdhit/faa_rep_seq.faa",
+	create_homology_gff.main(out_dir + "/vfdb", out_dir + "/card/card.json",
+		out_dir + "/eggnog", out_dir + "/cdhit/faa_rep_seq.faa",
 		out_dir + "/cdhit/faa_cluster_membership.txt")
-	create_abinitio_gff.main(output_dir + "/pilercr", output_dir + "/tmhmm",
-	 	output_dir + "/signalp")
-	merging_annotations.main("./tmp", output_dir + "/final")
+	create_abinitio_gff.main(out_dir + "/pilercr", out_dir + "/tmhmm",
+	 	out_dir + "/signalp")
+	merging_annotations.main("./tmp", out_dir + "/final")
 	return True
 
 
