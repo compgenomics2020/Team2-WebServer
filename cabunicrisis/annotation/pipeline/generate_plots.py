@@ -22,15 +22,14 @@ def main(argv):
                 print(input_file)
                 files.remove(input_file)
                 input_file = in_dir + "/" + input_file + ".gff"
+                with open(input_file) as f:
+                    wc = sum(1 for line in f)
                 if tool != 'signalp':
-                    with open(input_file) as f:
-                        wc = sum(1 for line in f)
-                        tool_dict[name] = wc
+                    tool_dict[name] = wc
                 else:
                     with open(input_file) as f:
-                        lipo = sum(1 for line in f if ("lipoprotein_signal_peptide" in line.split()))
-                        sp = sum(1 for line in f if ("signal_peptide" in line.split()))
-                        tool_dict[name] = (lipo,sp)
+                        lipo = sum(1 for line in f if ("lipoprotein_signal_peptide" in line))
+                        tool_dict[name] = (lipo,wc-lipo)
 
         csv_file = out_dir + '/' + tool + '.csv'
         png_file = out_dir + '/' + tool + '.png'
