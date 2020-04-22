@@ -109,13 +109,13 @@ def run_annotations(in_dir, out_dir, db_dir):
 		print("SignalP failed, check input files.")
 		return False
 
-	# PilerCR - must use LDLIBS = -lm when using make, needs fasta files from genome assembly
-	pc_result = pilercr_wrapper.main([in_dir + "/fasta/", out_dir + "/pilercr/"])
-	if pc_result:
-		print("PilerCR succeeded!")
-	else:
-		print("PilerCR failed, check input files.")
-		return False
+	# # PilerCR - must use LDLIBS = -lm when using make, needs fasta files from genome assembly
+	# pc_result = pilercr_wrapper.main([in_dir + "/fasta/", out_dir + "/pilercr/"])
+	# if pc_result:
+	# 	print("PilerCR succeeded!")
+	# else:
+	# 	print("PilerCR failed, check input files.")
+	# 	return False
 
 	# TMHMM - must be on $PATH
 	tm_result = tmhmm_wrapper.main([in_dir + "/faa/", out_dir + "/tmhmm/"])
