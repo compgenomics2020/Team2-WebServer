@@ -239,3 +239,4 @@
 130.207.66.119 - - [22/Apr/2020:08:15:27 -0400] "GET / HTTP/1.1" 200 4045 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1.2 Safari/605.1.15"
 130.207.66.119 - - [22/Apr/2020:08:15:32 -0400] "GET /assembly/home/ HTTP/1.1" 200 4249 "http://predict2020t2.biosci.gatech.edu/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1.2 Safari/605.1.15"
 130.207.66.119 - - [22/Apr/2020:08:16:53 -0400] "GET /prediction/home/ HTTP/1.1" 200 5316 "http://predict2020t2.biosci.gatech.edu/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1.2 Safari/605.1.15"
+130.207.66.119 - - [22/Apr/2020:08:43:40 -0400] "GET / HTTP/1.1" 500 141 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1.2 Safari/605.1.15"

@@ -8,8 +8,9 @@ cabunicrisis/annotation/migrations/*
 cabunicrisis/db.sqlite3
 cabunicrisis/default.profraw
 cabunicrisis/cabunicrisis/core/migrations/*
-.DS_Store
+*.DS_Store
 default.profraw
 cabunicrisis/annotation/pipeline/output/*
 cabunicrisis/.DS_Store
 *.pyc
+logs/*
