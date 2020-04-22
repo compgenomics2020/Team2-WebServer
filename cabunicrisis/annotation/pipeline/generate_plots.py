@@ -34,6 +34,7 @@ def main(argv):
 
         csv_file = out_dir + '/' + tool + '.csv'
         png_file = out_dir + '/' + tool + '.png'
+        print(tool_dict)
         if tool != 'signalp':
             with open(csv_file, 'w') as file:
                 writer = csv.DictWriter(file, fieldnames=["Proteome", "Count"])
