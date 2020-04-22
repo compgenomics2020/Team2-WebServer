@@ -202,11 +202,7 @@ def run_assemblies(input_directory_path, output_directory_path, fastq_files_dict
 				else:
 					#print("Running SPAdes for {} & {}.".format(fastq_file_forward, fastq_file_reverse))
 					contigs_file_path = output_spades_path + '/' + fastq_file_forward.split('_')[0] + '/' + 'contigs.fasta'
-					model_object_genome_assembly = GenomeAssembly(user = model_object_user,
-																	raw_untrimmed_file_1 = model_object_raw_fastq_file,
-																	path = contigs_file_path)
-					
-					model_object_genome_assembly.save()
+					model_object_genome_assembly = model_object_user.assembly.all()[0]
 					spades_output = spades_runner(fastq_file_forward, fastq_file_reverse, input_directory_path, output_spades_path, kmer_dict['spades']) 
 
 					#Check if SPAdes ran fine.

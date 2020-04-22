@@ -21,19 +21,30 @@ def assembly_home(request):
 		user_uuid = str(uuid.uuid4())
 		#Directory names.
 		dir_data = 'data/'
-		dir_user = dir_data + user_uuid + '/'
-		dir_raw_fastq = dir_user + 'raw-fastq/'
-		dir_trimmed = dir_user + 'trimmed-files'
-		dir_genome_assembly = dir_user + 'genome-assembly'
-		dir_quast = dir_user + 'quast'
+
 
 		#Creating a directory for user.
+		dir_user = os.path.join(dir_data, user_uuid)
 		os.mkdir(dir_user)
 
-		#Creating a directory for raw fastq files.
-		os.mkdir(dir_raw_fastq)
+		#For input and output.
+		dir_input = os.path.join(dir_user, 'input')
+		dir_output = os.path.join(dir_user, 'output')
+
+		os.mkdir(dir_input)
+		os.mkdir(dir_output)
+
+		#For fastq uploads.
+		dir_fastq = os.path.join(dir_input, 'fastq')
+		os.mkdir(dir_fastq)
+
+		#For Assembly, trimmed files, quast.
+		dir_trimmed = os.path.join(dir_output, 'trimmed')
+		dir_assembly = os.path.join(dir_output, 'assembly')
+		dir_quast = os.path.join(dir_output, 'quast')
+
 		os.mkdir(dir_trimmed)
-		os.mkdir(dir_genome_assembly)
+		os.mkdir(dir_assembly)
 		os.mkdir(dir_quast)
 
 		#Getting user's email.
@@ -49,14 +60,18 @@ def assembly_home(request):
 		#Create Raw files model.
 		#Accessing and saving the files sent by user.
 		for file in request.FILES.getlist('raw-fastq-files'):
-			with open(dir_raw_fastq + file.name, "w") as f:
+			#Check if fastq file is legitimate.
+			legitimate = check_if_fastq_file(file)
+			if not legitimate:
+				continue
+			with open(os.path.join(dir_fastq, file.name), "w") as f:
 				f.write(str(file.read()))	
 				number_of_files+=1
 
 		#Run Pipeline.
-		essential_arguments_for_pipeline = {'input_directory': dir_raw_fastq, 
+		essential_arguments_for_pipeline = {'input_directory': dir_fastq, 
 											'output_trimmed_files': dir_trimmed, 
-											'output_genome_assembly': dir_genome_assembly, 
+											'output_genome_assembly': dir_assembly, 
 											'output_quast': dir_quast, 
 											'model_objects': {'user': model_object_user}}
 		pipeline_status = pipeline_main(essential_arguments_for_pipeline)
