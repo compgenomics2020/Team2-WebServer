@@ -1,6 +1,4 @@
 from django.shortcuts import render
-
-# Create your views here.
 from django.http import HttpResponse, Http404
 from django.shortcuts import render, redirect
 #from .models import Input_Files
