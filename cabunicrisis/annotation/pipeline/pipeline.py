@@ -70,10 +70,7 @@ def run_annotations(in_dir, out_dir, db_dir, plasmid_dir):
 
 	# EGGNOG
 	try:
-		subprocess.check_output(["python2", db_dir + "/eggnog-mapper/emapper.py",
-            "-i", out_dir + "/cdhit/faa_rep_seq.faa",
-			"--output", out_dir + "/eggnog",
-            "--data_dir", db_dir + "/eggnog-db", "-m", "diamond", ">", "log", "&"])
+		subprocess.check_output(["python2", db_dir + "/eggnog-mapper/emapper.py", "-i", out_dir + "/cdhit/faa_rep_seq.faa", "--output", out_dir + "/eggnog", "--data_dir", db_dir + "/eggnog-db", "-m", "diamond", ">", "log", "&"])
     except subprocess.CalledProcessError as err:
 		print("Error running EGGNOG.")
 		print("Error thrown: " + err.output)
