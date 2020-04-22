@@ -25,7 +25,7 @@ import create_homology_gff, create_abinitio_gff
 import merging_annotations
 
 
-def run_annotations(in_dir, out_dir, db_dir, plasmid_dir):
+def run_annotations(in_dir, out_dir, db_dir):
 	'''
 	Input:
 		in_dir (path of directory of fna/faa/gff directories)
@@ -94,7 +94,7 @@ def run_annotations(in_dir, out_dir, db_dir, plasmid_dir):
 		return False
 
 	# CARD
-	c_result = card_wrapper(out_dir + "/cdhit/faa_rep_seq.faa", plasmid_dir, out_dir + "/card", db_dir + "/card")
+	c_result = card_wrapper(out_dir + "/cdhit/faa_rep_seq.faa", out_dir + "/card", db_dir + "/card")
 	if c_result:
 		print("CARD succeeded!")
 	else:
@@ -149,7 +149,6 @@ def main(argv, use_clustering = True):
 	in_dir = argv[0]
 	out_dir = argv[1]
 	db_dir = argv[2]
-	plasmid_dir = argv[3]
 
 	if os.path.exists(out_dir):
 		rmtree(out_dir)
@@ -158,15 +157,14 @@ def main(argv, use_clustering = True):
 	os.mkdir(out_dir + "/cdhit")
 	os.mkdir(out_dir + "/eggnog")
 	os.mkdir(out_dir + "/card")
-	# os.mkdir(out_dir + "/card/plasmids")
 	os.mkdir(out_dir + "/signalp")
 	os.mkdir(out_dir + "/pilercr")
 	os.mkdir(out_dir + "/tmhmm")
 	os.mkdir(out_dir + "/final")
 
-	return run_annotations(in_dir, out_dir, db_dir, plasmid_dir)
+	return run_annotations(in_dir, out_dir, db_dir)
 
 
 if __name__ == "__main__":
-	status = main(sys.argv[1:]) #TODO: include clustering bool in sys argv
+	status = main(sys.argv[1:])
 	print("Final Status: {}".format(status))
