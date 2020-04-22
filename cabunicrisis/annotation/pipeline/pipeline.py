@@ -37,95 +37,95 @@ def run_annotations(in_dir, out_dir, db_dir):
 		homology: eggnog_wrapper.py, vfdb_wrapper.py, card_wrapper.py
 	'''
 
-	####################
-	# Clustering tools #
-	####################
-
-	# CD-HIT
-	try:
-		if not os.path.exists(in_dir + "/fna/all.fna"):
-			subprocess.call(["cat " + in_dir + "/fna/*" + " > " + in_dir + "/fna/all.fna"], shell=True)
-		if not os.path.exists(in_dir + "/faa/all.faa"):
-			subprocess.call(["cat " + in_dir + "/faa/*" + " > " + in_dir + "/faa/all.faa"], shell=True)
-		subprocess.check_output(["python", "cluster_wrapper.py", in_dir, out_dir + "/cdhit"])
-		os.remove(in_dir + "/fna/all.fna")
-		os.remove(in_dir + "/faa/all.faa")
-		print("Finished clustering!")
-	except:
-		print("Clustering failed!")
-		return False
-
-	try:
-		subprocess.check_output(["python", "match_clust_inputs.py", in_dir, out_dir + "/cdhit"])
-		print("Finished matching cluster outputs to individual files!")
-	except:
-		print("Cluster matching failed!")
-		return False
-
-
-	########################
-	# Homology-based tools #
-	########################
-
-	# VFDB
-	try:
-		os.system("blastn -db "+ db_dir + '/vfdb/vfdb'+
-			" -query "+ out_dir + "/cdhit/fna_rep_seq.fna"+
-			" -out "+ out_dir + "/vfdb"+
-			" -max_hsps 1 -max_target_seqs 1 -outfmt '6 qseqid length qstart qend sstart send evalue bitscore stitle' -perc_identity 100 -num_threads 5")
-		print("Finished VFDB!")
-	except:
-		print("Error running VFDB.")
-		return False
-
-	# # CARD
+	# ####################
+	# # Clustering tools #
+	# ####################
+	#
+	# # CD-HIT
 	# try:
-	# 	subprocess.check_output(["python2", "card_wrapper.py",
-	#         out_dir + "/cdhit/faa_rep_seq.faa", out_dir + "/card", db_dir + "/card"])
-	# 	print("CARD succeeded!")
-	# except subprocess.CalledProcessError as err:
-	# 	print("CARD failed, check input files.")
+	# 	if not os.path.exists(in_dir + "/fna/all.fna"):
+	# 		subprocess.call(["cat " + in_dir + "/fna/*" + " > " + in_dir + "/fna/all.fna"], shell=True)
+	# 	if not os.path.exists(in_dir + "/faa/all.faa"):
+	# 		subprocess.call(["cat " + in_dir + "/faa/*" + " > " + in_dir + "/faa/all.faa"], shell=True)
+	# 	subprocess.check_output(["python", "cluster_wrapper.py", in_dir, out_dir + "/cdhit"])
+	# 	os.remove(in_dir + "/fna/all.fna")
+	# 	os.remove(in_dir + "/faa/all.faa")
+	# 	print("Finished clustering!")
+	# except:
+	# 	print("Clustering failed!")
 	# 	return False
-
-	# # EGGNOG
+	#
 	# try:
-	# 	subprocess.check_output(["python2", db_dir + "/eggnog-mapper/emapper.py",
-	#         "-i", out_dir + "/cdhit/faa_rep_seq.faa", "--output", out_dir + "/eggnog",
-	# 		"--data_dir", db_dir + "/eggnog-db", "-m", "diamond"])
-	# except subprocess.CalledProcessError as err:
-	# 	print("Error running EGGNOG.")
-	# 	print("Error thrown: " + err.output)
+	# 	subprocess.check_output(["python", "match_clust_inputs.py", in_dir, out_dir + "/cdhit"])
+	# 	print("Finished matching cluster outputs to individual files!")
+	# except:
+	# 	print("Cluster matching failed!")
 	# 	return False
-
-	###################
-	# ab initio tools #
-	###################
-
-	# SignalP - must be on $PATH
-	sp_result = signalp_wrapper.main([in_dir + "/faa/", out_dir + "/signalp/"])
-	if sp_result:
-		print("SignalP succeeded!")
-	else:
-		print("SignalP failed, check input files.")
-		return False
-
-	# # PilerCR - must use LDLIBS = -lm when using make, needs fasta files from genome assembly
-	# pc_result = pilercr_wrapper.main([in_dir + "/fasta/", out_dir + "/pilercr/"])
-	# if pc_result:
-	# 	print("PilerCR succeeded!")
+	#
+	#
+	# ########################
+	# # Homology-based tools #
+	# ########################
+	#
+	# # VFDB
+	# try:
+	# 	os.system("blastn -db "+ db_dir + '/vfdb/vfdb'+
+	# 		" -query "+ out_dir + "/cdhit/fna_rep_seq.fna"+
+	# 		" -out "+ out_dir + "/vfdb"+
+	# 		" -max_hsps 1 -max_target_seqs 1 -outfmt '6 qseqid length qstart qend sstart send evalue bitscore stitle' -perc_identity 100 -num_threads 5")
+	# 	print("Finished VFDB!")
+	# except:
+	# 	print("Error running VFDB.")
+	# 	return False
+	#
+	# # # CARD
+	# # try:
+	# # 	subprocess.check_output(["python2", "card_wrapper.py",
+	# #         out_dir + "/cdhit/faa_rep_seq.faa", out_dir + "/card", db_dir + "/card"])
+	# # 	print("CARD succeeded!")
+	# # except subprocess.CalledProcessError as err:
+	# # 	print("CARD failed, check input files.")
+	# # 	return False
+	#
+	# # # EGGNOG
+	# # try:
+	# # 	subprocess.check_output(["python2", db_dir + "/eggnog-mapper/emapper.py",
+	# #         "-i", out_dir + "/cdhit/faa_rep_seq.faa", "--output", out_dir + "/eggnog",
+	# # 		"--data_dir", db_dir + "/eggnog-db", "-m", "diamond"])
+	# # except subprocess.CalledProcessError as err:
+	# # 	print("Error running EGGNOG.")
+	# # 	print("Error thrown: " + err.output)
+	# # 	return False
+	#
+	# ###################
+	# # ab initio tools #
+	# ###################
+	#
+	# # SignalP - must be on $PATH
+	# sp_result = signalp_wrapper.main([in_dir + "/faa/", out_dir + "/signalp/"])
+	# if sp_result:
+	# 	print("SignalP succeeded!")
 	# else:
-	# 	print("PilerCR failed, check input files.")
+	# 	print("SignalP failed, check input files.")
 	# 	return False
-
-	# TMHMM - must be on $PATH
-	tm_result = tmhmm_wrapper.main([in_dir + "/faa/", out_dir + "/tmhmm/"])
-	if tm_result:
-		print("TMHMM succeeded!")
-	else:
-		print("TMHMM failed, check input files.")
-		return False
-
-	print("All tools ran!")
+	#
+	# # # PilerCR - must use LDLIBS = -lm when using make, needs fasta files from genome assembly
+	# # pc_result = pilercr_wrapper.main([in_dir + "/fasta/", out_dir + "/pilercr/"])
+	# # if pc_result:
+	# # 	print("PilerCR succeeded!")
+	# # else:
+	# # 	print("PilerCR failed, check input files.")
+	# # 	return False
+	#
+	# # TMHMM - must be on $PATH
+	# tm_result = tmhmm_wrapper.main([in_dir + "/faa/", out_dir + "/tmhmm/"])
+	# if tm_result:
+	# 	print("TMHMM succeeded!")
+	# else:
+	# 	print("TMHMM failed, check input files.")
+	# 	return False
+	#
+	# print("All tools ran!")
 
 
 	#######################
@@ -152,16 +152,18 @@ def main(argv, use_clustering = True):
 	out_dir = argv[1]
 	db_dir = argv[2]
 
-	if os.path.exists(out_dir):
-		rmtree(out_dir)
-	os.mkdir(out_dir)
-
-	os.mkdir(out_dir + "/cdhit")
-	# os.mkdir(out_dir + "/card")
-	os.mkdir(out_dir + "/signalp")
-	# os.mkdir(out_dir + "/pilercr")
-	os.mkdir(out_dir + "/tmhmm")
-	os.mkdir(out_dir + "/final")
+	# if os.path.exists(out_dir):
+	# 	rmtree(out_dir)
+	# os.mkdir(out_dir)
+	#
+	# os.mkdir(out_dir + "/cdhit")
+	# # os.mkdir(out_dir + "/card")
+	# os.mkdir(out_dir + "/signalp")
+	# # os.mkdir(out_dir + "/pilercr")
+	# os.mkdir(out_dir + "/tmhmm")
+	# os.mkdir(out_dir + "/final")
+	#
+	# os.mkdir(out_dir + "/tmp")
 
 	return run_annotations(in_dir, out_dir, db_dir)
 
