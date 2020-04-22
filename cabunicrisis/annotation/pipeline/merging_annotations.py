@@ -19,6 +19,7 @@ def merge_gff(input_directory_path,output_directory_path):
 		sample_name=item.split("_")
 		if sample_name[0] not in sample_list:
 			sample_list.append(sample_name[0])
+	print(sample_list)
 
 	#Merging the .gffs of each sample
 	for sample in sample_list:
@@ -123,6 +124,7 @@ def merge_gff(input_directory_path,output_directory_path):
 
 		#Writing final merged .gff
 		output_file=output_directory_path+"/"+sample+".gff"
+		print(sample_dict)
 		for keys in sample_dict.keys():
 			col=keys.split(",")
 			node=col[0]
