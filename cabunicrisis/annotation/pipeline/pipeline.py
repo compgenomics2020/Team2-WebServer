@@ -119,7 +119,7 @@ def run_annotations(in_dir, out_dir, db_dir):
 
 	# TMHMM - must be on $PATH
 	tm_result = tmhmm_wrapper.main([in_dir + "/faa/", out_dir + "/tmhmm/"])
-	if pc_result:
+	if tm_result:
 		print("TMHMM succeeded!")
 	else:
 		print("TMHMM failed, check input files.")
