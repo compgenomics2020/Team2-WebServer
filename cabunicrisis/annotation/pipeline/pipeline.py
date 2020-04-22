@@ -69,15 +69,16 @@ def run_annotations(in_dir, out_dir, db_dir):
 	########################
 
 	# VFDB
-	# try:
-	os.system("blastn -db"+ db_dir + '/vfdb-db/vfdb-db'+
-		" -query "+ out_dir + "/cdhit/fna_rep_seq.fna"+
-		" -out "+ out_dir + "/vfdb"+
-		" -max_hsps 1 -max_target_seqs 1 -outfmt '6 qseqid length qstart qend sstart send evalue bitscore stitle' -perc_identity 100 -num_threads 5")
-	# except subprocess.CalledProcessError as err:
-	# 	print("Error running VFDB.")
-	# 	print("Error thrown: " + err.output)
-	# 	return False
+	try:
+		subprocess.call("blastn -db"+ db_dir + '/vfdb-db/vfdb-db'+
+			" -query "+ out_dir + "/cdhit/fna_rep_seq.fna"+
+			" -out "+ out_dir + "/vfdb"+
+			" -max_hsps 1 -max_target_seqs 1 -outfmt '6 qseqid length qstart qend sstart send evalue bitscore stitle' -perc_identity 100 -num_threads 5",
+			shell=True)
+	except subprocess.CalledProcessError as err:
+		print("Error running VFDB.")
+		print("Error thrown: " + err.output)
+		return False
 
 	# CARD
 	c_result = card_wrapper(out_dir + "/cdhit/faa_rep_seq.faa", out_dir + "/card", db_dir + "/card")
