@@ -131,12 +131,18 @@ def run_annotations(in_dir, out_dir, db_dir):
 	#######################
 	# Merging annotations #
 	#######################
-	create_homology_gff.main(out_dir + "/vfdb", out_dir + "/card/card.json",
+
+	subprocess.check_output(["python", "create_homology_gff.py",
+		out_dir + "/vfdb", out_dir + "/card/card.json",
 		out_dir + "/eggnog", out_dir + "/cdhit/faa_rep_seq.faa",
-		out_dir + "/cdhit/faa_cluster_membership.txt")
-	create_abinitio_gff.main(out_dir + "/pilercr", out_dir + "/tmhmm",
-	 	out_dir + "/signalp")
-	merging_annotations.main("./tmp", out_dir + "/final")
+		out_dir + "/cdhit/faa_cluster_membership.txt"])
+
+	subprocess.check_output(["python", "create_abinitio_gff.py",
+		out_dir + "/pilercr", out_dir + "/tmhmm", out_dir + "/signalp"])
+
+	subprocess.check_output(["python", "merging_annotations.py",
+		"./tmp", out_dir + "/final"])
+	print("Everything merged!")
 	return True
 
 
