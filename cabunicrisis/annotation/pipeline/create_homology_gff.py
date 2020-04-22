@@ -170,7 +170,7 @@ def main():
 
 	#Parsing the outputs
 	vfdic=vfdb(vfdb_input)
-	clustdic=cluster(Clust2)
+	clustdic=cluster('Clust2')
 	cardic=card(card_input)
 	eggdic=eggnog(eggnog_input)
 	#operondic=operon(operon_input)
