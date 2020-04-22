@@ -15,7 +15,7 @@ def main(argv):
     for tool in tools:
         tool_dict = {}
         for name in names:
-    	    input_file = in_dir + "/" + next((x for x in files if (tool in x and name in x)), None)
+            input_file = in_dir + "/" + next((x for x in files if (tool in x and name in x)), None)
             files = files - input_file
             if tool != 'signalp':
                 with open(file) as f:
