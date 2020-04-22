@@ -138,7 +138,7 @@ def run_annotations(in_dir, out_dir, db_dir):
 	# 	out_dir + "/cdhit/faa_cluster_membership.txt"])
 
 	subprocess.check_output(["python", "create_abinitio_gff.py",
-		out_dir + "/tmhmm", out_dir + "/signalp"])
+		out_dir + "/tmhmm/", out_dir + "/signalp/"])
 
 	subprocess.check_output(["python", "merging_annotations.py",
 		"./tmp", out_dir + "/final"])
