@@ -44,7 +44,7 @@ def main(argv):
 	outputpath=argv[1]
 	files=os.listdir(inputpath)
 	if len(files) == 0:
-        print("No files present in the directory.")
+		print("No files present in the directory.")
 	for name in files:
 		tmhmm=tmhmm_runner(inputpath,name,outputpath)
 		if not tmhmm:

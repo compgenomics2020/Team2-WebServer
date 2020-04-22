@@ -70,8 +70,12 @@ def run_annotations(in_dir, out_dir, db_dir, plasmid_dir):
 
 	# EGGNOG
 	try:
-		subprocess.check_output(["python2", db_dir + "/eggnog-mapper/emapper.py", "-i", out_dir + "/cdhit/faa_rep_seq.faa", "--output", out_dir + "/eggnog", "--data_dir", db_dir + "/eggnog-db", "-m", "diamond", ">", "log", "&"])
-    except subprocess.CalledProcessError as err:
+		subprocess.check_output(["python2", db_dir + "/eggnog-mapper/emapper.py",
+	        "-i", out_dir + "/cdhit/faa_rep_seq.faa",
+			"--output", out_dir + "/eggnog",
+	        "--data_dir", db_dir + "/eggnog-db", "-m",
+			"diamond", ">", "log", "&"])
+	except subprocess.CalledProcessError as err:
 		print("Error running EGGNOG.")
 		print("Error thrown: " + err.output)
 		return False
@@ -85,8 +89,8 @@ def run_annotations(in_dir, out_dir, db_dir, plasmid_dir):
 		    "-outfmt", '"6 qseqid length qstart qend sstart send evalue bitscore stitle"',
 			"-perc_identity", "100", "-num_threads", "5"])
 	except subprocess.CalledProcessError as err:
-        print("Error running VFDB.")
-        print("Error thrown: " + err.output)
+		print("Error running VFDB.")
+		print("Error thrown: " + err.output)
 		return False
 
 	# CARD
