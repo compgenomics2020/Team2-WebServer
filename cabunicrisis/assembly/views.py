@@ -1,7 +1,7 @@
 from django.http import HttpResponse, Http404
 from django.shortcuts import render, redirect
 from django.core.exceptions import ValidationError
-from .models import User, RawFastqFiles
+from .models import User
 from .pipeline import main as pipeline_main
 import uuid
 import os
@@ -52,9 +52,6 @@ def assembly_home(request):
 			with open(dir_raw_fastq + file.name, "w") as f:
 				f.write(str(file.read()))	
 				number_of_files+=1
-			#Creating the file model object and entry in the database.
-			model_object_raw_fastq_file = RawFastqFiles(user = model_object_user, path = dir_raw_fastq + file.name)
-			model_object_raw_fastq_file.save()
 
 		#Run Pipeline.
 		essential_arguments_for_pipeline = {'input_directory': dir_raw_fastq, 

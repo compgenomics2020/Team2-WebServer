@@ -19,47 +19,14 @@ class User(models.Model):
 		return (str(self.email) + " with ID: " + str(self.uuid))
 
 
-class RawFastqFiles(models.Model):
-	user = models.ForeignKey(User, related_name = "raw_files", on_delete=models.CASCADE)
-	path = models.CharField(max_length=512)
-
-	def __str__(self):
-		return (str(self.path))
-
-
-class TrimmedFiles(models.Model):
-	raw_file = models.OneToOneField(RawFastqFiles, on_delete=models.CASCADE, related_name = "trimmed_file")
-	path = models.CharField(max_length=512)	
-
-	def __str__(self):
-		return (str(self.path))
-
-
 class GenomeAssembly(models.Model):
-	user = models.ForeignKey(User, related_name = "assembly", on_delete=models.CASCADE)
-
-	raw_untrimmed_file_1 = models.ForeignKey(RawFastqFiles, related_name = "assembly", on_delete=models.CASCADE, null = True)
-
-	trimmed_file_1 = models.ForeignKey(TrimmedFiles, related_name = "assembly", null = True, on_delete=models.CASCADE)
-
-	path = models.CharField(max_length=512)
-	job_status = models.BooleanField(default = False)
+	user = models.ForeignKey(User, related_name = "raw_files", on_delete=models.CASCADE)
+	raw_files_dir_path = models.CharField(max_length=512)
+	trimmed_files_dir_path = models.CharField(max_length=512)
+	contig_files_dir_path = models.CharField(max_length=512)
+	quast_files_dir_path = models.CharField(max_length=512)
 
 	def __str__(self):
-		return (str(self.path))
-
-
-class Quast(models.Model):
-	user = models.ForeignKey(User, related_name = "quast", on_delete=models.CASCADE)
-	assembly = models.ForeignKey(GenomeAssembly, related_name = "quast", null = True, on_delete=models.CASCADE)
-	path = models.CharField(max_length=512)
-	l_50 = models.CharField(max_length = 16)
-	n_50 = models.CharField(max_length = 16)
-
-
-	def __str__(self):
-		return (str(self.path))
-
-
+		return (str(self.user.email) + " with raw files: " + str(self.raw_files_dir_path))
 
 

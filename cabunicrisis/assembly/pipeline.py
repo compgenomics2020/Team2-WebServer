@@ -27,7 +27,7 @@ from .spades_wrapper import spades_runner
 from .quast_wrapper import quast_runner
 from .plasmid_spades_wrapper import plasmid_spades_runner
 
-from .models import GenomeAssembly, RawFastqFiles
+from .models import GenomeAssembly
 
 #############################Globals#############################
 
