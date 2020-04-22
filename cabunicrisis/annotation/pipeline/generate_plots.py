@@ -28,8 +28,8 @@ def main(argv):
                         tool_dict[name] = wc
                 else:
                     with open(input_file) as f:
-                        lipo = sum(1 for line in f if ("lipoprotein_signal_peptide" in line))
-                        sp = sum(1 for line in f if ("signal_peptide" in line))
+                        lipo = sum(1 for line in f if (" lipoprotein_signal_peptide" in line))
+                        sp = sum(1 for line in f if (" signal_peptide" in line))
                         tool_dict[name] = (lipo,sp)
 
         csv_file = out_dir + '/' + tool + '.csv'
