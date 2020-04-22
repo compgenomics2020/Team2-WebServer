@@ -15,23 +15,26 @@ def main(argv):
     for tool in tools:
         tool_dict = {}
         for name in names:
+            print(tool)
+            print(name)
             input_file = next((x for x in files if (tool in x and name in x)), None)
-            files = files.remove(input_file)
-            input_file = in_dir + "/" + input_file
+            print(input_file)
+            files.remove(input_file)
+            input_file = in_dir + "/" + input_file + ".gff"
             if tool != 'signalp':
                 with open(input_file) as f:
                     wc = sum(1 for line in f)
                     tool_dict[name] = wc
             else:
                 with open(input_file) as f:
-                    lipo = sum(1 for line in f if (line.contains("lipoprotein_signal_peptide")))
-                    sp = sum(1 for line in f if (line.contains("signal_peptide")))
+                    lipo = sum(1 for line in f if ("lipoprotein_signal_peptide" in line))
+                    sp = sum(1 for line in f if ("signal_peptide" in line))
                     tool_dict[name] = (lipo,sp)
 
         csv_file = out_dir + '/' + tool + '.csv'
         png_file = out_dir + '/' + tool + '.png'
         if tool != 'signalp':
-            with open(csv_file, 'w', newline='') as file:
+            with open(csv_file, 'w') as file:
                 writer = csv.DictWriter(file, fieldnames=["Proteome", "Count"])
                 writer.writeheader()
                 for name in tool_dict:
@@ -59,7 +62,7 @@ def main(argv):
             plt.savefig(png_file)
 
         else:
-            with open(csv_file, 'w', newline='') as file:
+            with open(csv_file, 'w') as file:
                 writer = csv.DictWriter(file, fieldnames=["Proteome", "Lipoprotein", "SingalPeptide"])
                 writer.writeheader()
                 for name in tool_dict:
