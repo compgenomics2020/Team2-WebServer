@@ -87,22 +87,22 @@ def run_annotations(in_dir, out_dir, db_dir):
 		print("CARD failed, check input files.")
 		return False
 
-	# EGGNOG
-	try:
-		subprocess.check_output(["python2", db_dir + "/eggnog-mapper/emapper.py",
-	        "-i", out_dir + "/cdhit/faa_rep_seq.faa", "--output", out_dir + "/eggnog",
-			"--data_dir", db_dir + "/eggnog-db", "-m", "diamond"])
-	except subprocess.CalledProcessError as err:
-		print("Error running EGGNOG.")
-		print("Error thrown: " + err.output)
-		return False
+	# # EGGNOG
+	# try:
+	# 	subprocess.check_output(["python2", db_dir + "/eggnog-mapper/emapper.py",
+	#         "-i", out_dir + "/cdhit/faa_rep_seq.faa", "--output", out_dir + "/eggnog",
+	# 		"--data_dir", db_dir + "/eggnog-db", "-m", "diamond"])
+	# except subprocess.CalledProcessError as err:
+	# 	print("Error running EGGNOG.")
+	# 	print("Error thrown: " + err.output)
+	# 	return False
 
 	###################
 	# ab initio tools #
 	###################
 
 	# SignalP - must be on $PATH
-	sp_result = signalp_wrapper.main(in_dir + "/faa/", out_dir + "/signalp/")
+	sp_result = signalp_wrapper.main([in_dir + "/faa/", out_dir + "/signalp/"])
 	if sp_result:
 		print("SignalP succeeded!")
 	else:
@@ -110,7 +110,7 @@ def run_annotations(in_dir, out_dir, db_dir):
 		return False
 
 	# PilerCR - must use LDLIBS = -lm when using make, needs fasta files from genome assembly
-	pc_result = pilercr_wrapper.main(in_dir + "/fasta/", out_dir + "/pilercr/")
+	pc_result = pilercr_wrapper.main([in_dir + "/fasta/", out_dir + "/pilercr/"])
 	if pc_result:
 		print("PilerCR succeeded!")
 	else:
@@ -118,7 +118,7 @@ def run_annotations(in_dir, out_dir, db_dir):
 		return False
 
 	# TMHMM - must be on $PATH
-	tm_result = tmhmm_wrapper.main(in_dir + "/faa/", out_dir + "/tmhmm/")
+	tm_result = tmhmm_wrapper.main([in_dir + "/faa/", out_dir + "/tmhmm/"])
 	if pc_result:
 		print("TMHMM succeeded!")
 	else:
