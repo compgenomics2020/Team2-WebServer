@@ -1,6 +1,6 @@
 from django.http import HttpResponse, Http404
 from django.shortcuts import render, redirect
-from .models import Input_Files
+#from .models import Input_Files
 import uuid
 import os
 
