@@ -78,14 +78,14 @@ def run_annotations(in_dir, out_dir, db_dir):
 		print("Error running VFDB.")
 		return False
 
-	# CARD
-	try:
-		subprocess.check_output(["python2", "card_wrapper.py",
-	        out_dir + "/cdhit/faa_rep_seq.faa", out_dir + "/card", db_dir + "/card"])
-		print("CARD succeeded!")
-	except subprocess.CalledProcessError as err:
-		print("CARD failed, check input files.")
-		return False
+	# # CARD
+	# try:
+	# 	subprocess.check_output(["python2", "card_wrapper.py",
+	#         out_dir + "/cdhit/faa_rep_seq.faa", out_dir + "/card", db_dir + "/card"])
+	# 	print("CARD succeeded!")
+	# except subprocess.CalledProcessError as err:
+	# 	print("CARD failed, check input files.")
+	# 	return False
 
 	# EGGNOG
 	try:
@@ -133,12 +133,12 @@ def run_annotations(in_dir, out_dir, db_dir):
 	#######################
 
 	subprocess.check_output(["python", "create_homology_gff.py",
-		out_dir + "/vfdb", out_dir + "/card/card.json",
-		out_dir + "/eggnog", out_dir + "/cdhit/faa_rep_seq.faa",
+		out_dir + "/vfdb", out_dir + "/eggnog",
+		out_dir + "/cdhit/faa_rep_seq.faa",
 		out_dir + "/cdhit/faa_cluster_membership.txt"])
 
 	subprocess.check_output(["python", "create_abinitio_gff.py",
-		out_dir + "/pilercr", out_dir + "/tmhmm", out_dir + "/signalp"])
+		out_dir + "/tmhmm", out_dir + "/signalp"])
 
 	subprocess.check_output(["python", "merging_annotations.py",
 		"./tmp", out_dir + "/final"])
@@ -158,9 +158,9 @@ def main(argv, use_clustering = True):
 
 	os.mkdir(out_dir + "/cdhit")
 	os.mkdir(out_dir + "/eggnog")
-	os.mkdir(out_dir + "/card")
+	# os.mkdir(out_dir + "/card")
 	os.mkdir(out_dir + "/signalp")
-	os.mkdir(out_dir + "/pilercr")
+	# os.mkdir(out_dir + "/pilercr")
 	os.mkdir(out_dir + "/tmhmm")
 	os.mkdir(out_dir + "/final")
 
