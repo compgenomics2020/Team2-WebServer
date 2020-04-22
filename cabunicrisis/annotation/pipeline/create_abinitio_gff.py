@@ -109,19 +109,16 @@ def signalp_merger(input_directory_path,signalp_file):
 	#Parsing the SignalP input file
 	with open(input_file,"r") as inp:
 		first=inp.readline()	#Removing the first line
-		second=inp.readline()    #Removing the second line
 		for line in inp:
 			col=line.split()
 			name=col[0]
 			funct=col[2]
 			signalp_dict[name]=funct
-	print(signalp_dict)
         #Writing to the .gff output files
 	with open(output_file,"a+") as op:
 		for keys in signalp_dict.keys():
                         name=keys.split(":")
                         node=name[0]
-                        print(name)
                         number=name[1].split("-")
                         start=int(number[0])-1
                         if start <0:
