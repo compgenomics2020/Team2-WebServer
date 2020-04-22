@@ -41,7 +41,7 @@ def main(argv):
 			name_gff3 = name.replace(".faa", ".gff3")
 			shutil.move(name_gff3, outputpath + name_gff3)
 			name_summary = name.replace(".faa", "_summary.signalp5")
-			shutil.move(name_summary, outputpath + name_summary)
+			os.remove(name_summary)
 		else:
 			return False
 	return True

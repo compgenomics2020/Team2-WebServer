@@ -152,18 +152,20 @@ def main(argv, use_clustering = True):
 	out_dir = argv[1]
 	db_dir = argv[2]
 
-	# if os.path.exists(out_dir):
-	# 	rmtree(out_dir)
-	# os.mkdir(out_dir)
-	#
-	# os.mkdir(out_dir + "/cdhit")
-	# # os.mkdir(out_dir + "/card")
-	# os.mkdir(out_dir + "/signalp")
-	# # os.mkdir(out_dir + "/pilercr")
-	# os.mkdir(out_dir + "/tmhmm")
-	# os.mkdir(out_dir + "/final")
-	#
-	# os.mkdir(out_dir + "/tmp")
+	if os.path.exists(out_dir):
+		rmtree(out_dir)
+	os.mkdir(out_dir)
+
+	os.mkdir(out_dir + "/cdhit")
+	# os.mkdir(out_dir + "/card")
+	os.mkdir(out_dir + "/signalp")
+	# os.mkdir(out_dir + "/pilercr")
+	os.mkdir(out_dir + "/tmhmm")
+	os.mkdir(out_dir + "/final")
+
+	if os.path.exists("tmp"):
+		rmtree("tmp")
+	os.mkdir("tmp")
 
 	return run_annotations(in_dir, out_dir, db_dir)
 
