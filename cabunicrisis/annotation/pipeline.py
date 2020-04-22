@@ -24,6 +24,56 @@ import create_homology_gff, create_abinitio_gff
 import merging_annotations
 
 
+def process_in_directory(file_list, input_dir):
+	'''
+	Checks if there are the same number of fna/faa/gff files, if the naming
+	schemes are consistent, and only then sort each into its own directory.
+
+	CURRENTLY ASSUMES that the input is a list of file paths, so I can move them
+	using os.move.
+	'''
+
+	fna_files = filter(lambda file: os.path.splitext(file)[1] == ".fna", file_list)
+	fna_list_length = len(fna_files)
+	fna_names = set([os.path.splitext(file)[0] for file in fna_files])
+	if len(fna_names) < fna_list_length:
+		return False, "there are duplicate fna files in your input"
+
+	faa_files = filter(lambda file: os.path.splitext(file)[1] == ".faa", file_list)
+	faa_list_length = len(faa_files)
+	faa_names = set([os.path.splitext(file)[0] for file in faa_files])
+	if len(faa_names) < faa_list_length:
+		return False, "there are duplicate faa files in your input"
+
+	gff_files = filter(lambda file: os.path.splitext(file)[1] == ".gff", file_list)
+	gff_list_length = len(gff_files)
+	gff_names = set([os.path.splitext(file)[0] for file in gff_files])
+	if len(gff_names) < gff_list_length:
+		return False, "there are duplicate gff files in your input"
+
+	if (gff_list_length != fna_list_length) or (fna_list_length != faa_list_length):
+		return False, "the number of fna, faa, and gff files are inconsistent"
+
+	if (gff_names != fna_names) or (fna_names != faa_names):
+		return False, "the naming schemes of your fna, faa, and gff files are inconsistent"
+
+	# we made sure all inputs are consistent - make directories.
+	if os.path.exists(input_dir):
+		rmtree(input_dir)
+	os.mkdir(input_dir)
+
+	os.mkdir(os.path.join(input_dir, "fna"))
+	[os.move(file, os.path.join(input_dir, "fna", file.split("/")[-1])) for file in fna_files]
+
+	os.mkdir(os.path.join(input_dir, "faa"))
+	[os.move(file, os.path.join(input_dir, "faa", file.split("/")[-1])) for file in faa_files]
+
+	os.mkdir(os.path.join(input_dir, "gff"))
+	[os.move(file, os.path.join(input_dir, "gff", file.split("/")[-1])) for file in gff_files]
+
+	return True, 3 * faa_list_length
+
+
 def run_annotations(in_dir, out_dir, db_dir):
 	'''
 	Input:
@@ -148,9 +198,13 @@ def run_annotations(in_dir, out_dir, db_dir):
 	################
 	# Making plots #
 	################
+
 	subprocess.check_output(["python", "generate_plots.py",
 		"./tmp", out_dir + "/plots"])
 	print("Everything plotted!")
+
+	os.remove("Clust2")
+	rmtree("tmp")
 	return True
 
 
