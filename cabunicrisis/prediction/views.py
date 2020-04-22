@@ -31,7 +31,7 @@ def prediction_home(request):
                 #Accessing and saving the files sent by user.
                 for file in request.FILES.getlist('contig-files'):
                         with open(dir_contig + file.name, "w") as f:
-                                f.write(str(file.read()))	
+                                f.write(str(file.read()))
                                 number_of_files+=1
                 #Create Raw files model.
                 #Run Pipeline.
