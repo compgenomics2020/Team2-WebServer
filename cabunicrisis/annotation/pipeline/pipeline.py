@@ -143,6 +143,14 @@ def run_annotations(in_dir, out_dir, db_dir):
 	subprocess.check_output(["python", "merging_annotations.py",
 		"./tmp", out_dir + "/final"])
 	print("Everything merged!")
+
+
+	################
+	# Making plots #
+	################
+	subprocess.check_output(["python", "generate_plots.py",
+		"./tmp", out_dir + "/plots"])
+	print("Everything plotted!")
 	return True
 
 
@@ -162,6 +170,7 @@ def main(argv, use_clustering = True):
 	# os.mkdir(out_dir + "/pilercr")
 	os.mkdir(out_dir + "/tmhmm")
 	os.mkdir(out_dir + "/final")
+	os.mkdir(out_dir + "/plots")
 
 	if os.path.exists("tmp"):
 		rmtree("tmp")
