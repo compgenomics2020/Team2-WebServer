@@ -70,11 +70,10 @@ def run_annotations(in_dir, out_dir, db_dir):
 
 	# VFDB
 	try:
-		subprocess.call("blastn -db"+ db_dir + '/vfdb-db/vfdb-db'+
+		subprocess.call("blastn -db "+ db_dir + '/vfdb-db/vfdb-db'+
 			" -query "+ out_dir + "/cdhit/fna_rep_seq.fna"+
 			" -out "+ out_dir + "/vfdb"+
-			" -max_hsps 1 -max_target_seqs 1 -outfmt '6 qseqid length qstart qend sstart send evalue bitscore stitle' -perc_identity 100 -num_threads 5",
-			shell=True)
+			" -max_hsps 1 -max_target_seqs 1 -outfmt '6 qseqid length qstart qend sstart send evalue bitscore stitle' -perc_identity 100 -num_threads 5")
 	except subprocess.CalledProcessError as err:
 		print("Error running VFDB.")
 		print("Error thrown: " + err.output)
