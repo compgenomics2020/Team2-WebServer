@@ -37,8 +37,8 @@ def main(argv):
         print(tool_dict)
         if tool != 'signalp':
             with open(csv_file, 'w') as file:
-                writer = csv.DictWriter(file, fieldnames=["Proteome", "Count"])
-                writer.writeheader()
+                writer = csv.writer(file)
+                writer.writerow(fieldnames=["Proteome", "Count"])
                 for name in tool_dict:
                     writer.writerow([name, int(tool_dict[name])])
 
@@ -65,8 +65,8 @@ def main(argv):
 
         else:
             with open(csv_file, 'w') as file:
-                writer = csv.DictWriter(file, fieldnames=["Proteome", "Lipoprotein", "SingalPeptide"])
-                writer.writeheader()
+                writer = csv.writer(file)
+                writer.writerow(fieldnames=["Proteome", "Lipoprotein", "SingalPeptide"])
                 for name in tool_dict:
                     (lipo, sp) = tool_dict[name]
                     writer.writerow([name, int(lipo), int(sp)])
