@@ -15,12 +15,12 @@ def pilercr_merger(input_directory_path,pilercr_file):
 
 	#Creating input file path
 	input_file=input_directory_path + pilercr_file
-	
+
 	#Creating output file path
 	mod_pilercr_file_name=pilercr_file.replace("_crispr","_crispr.gff")
 	output_file="./tmp/"+mod_pilercr_file_name
 	dict1={}        #Dictionary stores the crispr array details for each contig tested.
-	
+
 	#Parsing the CRISPR input file
 	with open(input_file,"r") as inp:
 		in_file=inp.readlines()
@@ -99,7 +99,7 @@ This function merges the predicted Transmembrane proteins to the .faa and .gff f
 
 '''
 def signalp_merger(input_directory_path,signalp_file):
-	
+
 	#Creating input file path
 	input_file=input_directory_path + signalp_file
 	#Creating output file path for .gff file
@@ -126,24 +126,24 @@ def signalp_merger(input_directory_path,signalp_file):
                         stop=number[1]
                         op.write(node+"\t"+"."+"\t"+"."+"\t"+str(start)+"\t"+stop+"\t"+"."+"\t"+"."+"\t"+"."+"\t"+signalp_dict[keys]+"\n")
 
-	
-			 
+
+
 def main():
-	inputpath_pilercr=sys.argv[1]
-	inputpath_tmhmm=sys.argv[2]
-	inputpath_signalp=sys.argv[3]
-	files_pilercr=os.listdir(inputpath_pilercr)
+	# inputpath_pilercr=sys.argv[1]
+	inputpath_tmhmm=sys.argv[1]
+	inputpath_signalp=sys.argv[2]
+	# files_pilercr=os.listdir(inputpath_pilercr)
 	file_tmhmm=os.listdir(inputpath_tmhmm)
 	file_signalp=os.listdir(inputpath_signalp)
-	
-	#Checking if pilercr input files exist in the directory
-	if len(files_pilercr) == 0:
-		print("No files present in the directory.")
-	for name in files_pilercr:
-		print("Writing file for "+name+"\n")
-		#Writing gff of  PilerCr results.
-		pilercr=pilercr_merger(inputpath_pilercr,name)
-	
+
+	# #Checking if pilercr input files exist in the directory
+	# if len(files_pilercr) == 0:
+	# 	print("No files present in the directory.")
+	# for name in files_pilercr:
+	# 	print("Writing file for "+name+"\n")
+	# 	#Writing gff of  PilerCr results.
+	# 	pilercr=pilercr_merger(inputpath_pilercr,name)
+
 	#Checking if tmhmm input files exist in the directory
 	if len(files_tmhmm) == 0:
 		print("No files present in the directory.")
@@ -151,7 +151,7 @@ def main():
 		print("Writing file for "+name+"\n")
 		#Writing gff of tmhmm results
 		tmhmm=tmhmm_merger(inputpath_tmhmm,name)
-	
+
 	#Checking if signalp input files exist in the directory
 	if len(files_signalp) == 0:
 		print("No files present in the directory.")
@@ -162,4 +162,3 @@ def main():
 
 if __name__ == "__main__":
         main()
-

@@ -143,11 +143,11 @@ def gff(clustdic,dictionary,retype):
 
 def main():
 	vfdb_input=sys.argv[1]
-	card_input=sys.argv[2]
-	eggnog_input=sys.argv[3]
+	# card_input=sys.argv[2]
+	eggnog_input=sys.argv[2]
 #	operon_input=sys.argv[4]
-	cluster_input=sys.argv[4]
-	cluster_membership=sys.argv[5]
+	cluster_input=sys.argv[3]
+	cluster_membership=sys.argv[4]
 
 	vf_name="vf"
 	card_name="card"
@@ -171,13 +171,13 @@ def main():
 	#Parsing the outputs
 	vfdic=vfdb(vfdb_input)
 	clustdic=cluster('Clust2')
-	cardic=card(card_input)
+	# cardic=card(card_input)
 	eggdic=eggnog(eggnog_input)
 	#operondic=operon(operon_input)
 
 	#Creating gffs
 	gff(clustdic,vfdic,vf_name)
-	gff(clustdic,cardic,card_name)
+	# gff(clustdic,cardic,card_name)
 	gff(clustdic,eggdic,eggnog_name)
 	#gff(clustdic,operondic,operon_name)
 
