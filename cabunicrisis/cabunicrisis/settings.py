@@ -39,7 +39,8 @@ INSTALLED_APPS = [
 	'django.contrib.staticfiles',
 	'cabunicrisis.core',
 	'assembly',
-	'prediction'
+	'prediction',
+	'annotation'
 ]
 
 MIDDLEWARE = [

@@ -21,7 +21,7 @@ from django.contrib.auth import views as auth_views
 from django.conf import settings
 from django.conf.urls.static import static
 from cabunicrisis.core import views as core_views
-	
+
 urlpatterns = [
 	#path('admin-xyzzy/', admin.site.urls),
 	#path('home/', home, name = 'home_page'),
@@ -32,4 +32,5 @@ urlpatterns = [
 	path('pipeline/', pipeline_home, name = 'pipeline_home'),
 	path('status/', job_status, name = 'job_status'),
 	path('prediction/', include('prediction.urls')),
+	path('annotation/', include('annotation.urls'))
 ]

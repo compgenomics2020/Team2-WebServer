@@ -23,7 +23,7 @@ def pilercr_runner(input_directory_path,contig_file,output_directory_path):
 	#Executing PilerCR
 	try:
 		print("Running PilerCR for "+contig_file)
-		subprocess.check_output(["pilercr", "-in", input_file, "-out",output_file, "-noinfo", "-quiet"])
+		subprocess.check_output(["pilercr1.06/pilercr", "-in", input_file, "-out",output_file, "-noinfo", "-quiet"])
 
 	except subprocess.CalledProcessError as err:
 		print("Error running PilerCR. Check the input files")

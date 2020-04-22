@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<main role="main">
+
+        <div class="jumbotron" style="background:transparent url('{% static 'images/jejuni-3.jpg' %}') no-repeat center center /cover; border-radius: 0">
+
+                <div class="container text-center">
+                        <h1 class="text-white display-3">Welcome to Functional Annotation</h1>
+                        <p class="text-white">The functional annotation step in our pipeline takes in fna, faa, multi-fasta, and gff files to create annotated gff files for Comparative Genomics.</p>
+                        <p class="text-white">We approach this through homology- and ab initio-based tools. Inputs to homology are clustered beforehand. </p>
+                        <p class="text-white">Clustering: CD-HIT. Homology: EGGNOG, CARD, VFDB. Ab initio: TMHMM2, SignalP, and PilerCR.</p>
+                        <br>
+                        <p class="text-white display-2">Unfortunately, because we need to ensure that the inputs to this step are paired, the outputs of Gene Prediction are immediately fed into Functional Annotation.</p>
+                        <br>
+
+
+                </div>
+        </div>
+
+        {% if uuid_data %}
+        <div class="row align-items-center" style="padding-right: 15px; padding-left: 15px;">
+                <div class="col-md-1">
+                </div>
+                <div class="col-md-10">
+                        <h3 class="text-center">Files Receieved from Gene Prediction!</h3>
+                        <p class="text-center">Your files were successfully ported through Gene Prediction, and are being run on Functional Annotation tools. Please note down your unique UUID and check for updates in the status page.</p>
+                        <p class="text-center">Your UUID: <b>{{ uuid_data }}</b></p>
+                        <p class="text-center"><a class="btn btn-success" href="{% url 'comparativegenomics_home' %}" role="button">Get Status »</a></p>
+                </div>
+                <div class="col-md-1">
+                </div>
+        </div>
+        {% endif %}
+
+</main>
+
+{% endblock %}

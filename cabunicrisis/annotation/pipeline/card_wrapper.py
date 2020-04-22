@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 import os
 import sys
 import subprocess
@@ -19,13 +19,7 @@ def main(input_file, output_file, db_dir):
 
 if __name__ == "__main__":
 	prot_file = sys.argv[0]
-	plasmid_dir = sys.argv[1]
-	output_dir = sys.argv[2]
-	db_dir = sys.argv[3]
+	output_dir = sys.argv[1]
+	db_dir = sys.argv[2]
 
 	main(prot_file, output_dir + "/faa", db_dir)
-
-	for pf in os.listdir(plasmid_dir):
-		x = pf.split('_')[0]
-		plasmid = plasmid_dir + "/" + pf
-		main(plasmid, output_dir + "/plasmids/" + x, db_dir)

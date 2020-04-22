@@ -6,7 +6,7 @@ class FunctionalAnnotation(models.Model):
 	user = models.ForeignKey(User, related_name = "functional_annotation", on_delete=models.CASCADE)
 	input_dir = models.ForeignKey(Blast_Results, related_name = "functional_annotation", on_delete=models.CASCADE)
 	graphs = models.CharField(max_length=512)
-	output_dir = models.FileField(upload = '/')
+	output_dir = models.CharField(max_length=512)
 
 	def __str__(self):
 		return (str(self.path))
