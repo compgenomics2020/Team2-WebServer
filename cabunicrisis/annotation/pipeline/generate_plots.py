@@ -17,13 +17,13 @@ def main(argv):
         for name in names:
             input_file = next((x for x in files if (tool in x and name in x)), None)
             files = files.remove(input_file)
-            input_file = in_dir + "/" + input_file 
+            input_file = in_dir + "/" + input_file
             if tool != 'signalp':
                 with open(file) as f:
                     wc = sum(1 for line in f)
                     tool_dict[name] = wc
             else:
-                with open(file) as f:
+                with open(input_file) as f:
                     lipo = sum(1 for line in f if (line.contains("lipoprotein_signal_peptide")))
                     sp = sum(1 for line in f if (line.contains("signal_peptide")))
                     tool_dict[name] = (lipo,sp)
