@@ -74,7 +74,7 @@ def run_annotations(in_dir, out_dir, db_dir):
 			" -query "+ out_dir + "/cdhit/fna_rep_seq.fna"+
 			" -out "+ out_dir + "/vfdb"+
 			" -max_hsps 1 -max_target_seqs 1 -outfmt '6 qseqid length qstart qend sstart send evalue bitscore stitle' -perc_identity 100 -num_threads 5")
-			print("Finished VFDB!")
+		print("Finished VFDB!")
 	except:
 		print("Error running VFDB.")
 		return False
