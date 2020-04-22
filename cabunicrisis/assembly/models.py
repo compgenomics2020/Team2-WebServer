@@ -20,11 +20,13 @@ class User(models.Model):
 
 
 class GenomeAssembly(models.Model):
-	user = models.ForeignKey(User, related_name = "raw_files", on_delete=models.CASCADE)
+	user = models.ForeignKey(User, related_name = "assembly", on_delete=models.CASCADE)
 	raw_files_dir_path = models.CharField(max_length=512)
 	trimmed_files_dir_path = models.CharField(max_length=512)
 	contig_files_dir_path = models.CharField(max_length=512)
 	quast_files_dir_path = models.CharField(max_length=512)
+	plasmid_files_dir_path = models.CharField(max_length=512)
+	job_status = models.BooleanField(default = False)
 
 	def __str__(self):
 		return (str(self.user.email) + " with raw files: " + str(self.raw_files_dir_path))
