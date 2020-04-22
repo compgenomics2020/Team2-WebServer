@@ -79,8 +79,9 @@ def run_annotations(in_dir, out_dir, db_dir):
 		return False
 
 	# CARD
-	c_result = card_wrapper.main(out_dir + "/cdhit/faa_rep_seq.faa", out_dir + "/card", db_dir + "/card")
-	if c_result:
+	try:
+		subprocess.check_output(["python2", "card_wrapper.py",
+	        out_dir + "/cdhit/faa_rep_seq.faa", out_dir + "/card", db_dir + "/card"])
 		print("CARD succeeded!")
 	else:
 		print("CARD failed, check input files.")
