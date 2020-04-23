@@ -14,3 +14,4 @@ cabunicrisis/annotation/pipeline/output/*
 cabunicrisis/.DS_Store
 *.pyc
 logs/*
+*db.sqlite3

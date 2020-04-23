@@ -98,6 +98,12 @@ def assembly_home(request):
 		raw_html = render(request, 'assembly/assembly_homepage.html', {'uuid_data': user_uuid, 'number_of_files': number_of_files})
 		return HttpResponse(raw_html)
 
+
+def pipeline_home(request):
+	return HttpResponse("Pipeline Home Page")
+
+
+
 def job_status(request):
 	if request.method == 'GET':
 		raw_html = render(request, 'status/status.html', {'user': False})
@@ -114,15 +120,29 @@ def job_status(request):
 			raw_html = render(request, 'status/status.html', {'user': False})
 			response = HttpResponse(raw_html)
 			return response
-		
-		#Get the assembly contig files.
 
-		raw_html = render(request, 'status/status.html', {'user': model_object_user})
+		model_object_genome_assembly = model_object_user.assembly.all()[0]		
+		#Get the assembly contig files.
+		number_of_contig_files = len(contig_file_paths(dir_assembly))
+
+		raw_html = render(request, 'status/status.html', {'user': model_object_user, 
+															'assembly': model_object_genome_assembly, 
+															'number_of_contig_files': number_of_contig_files})
 		return HttpResponse(raw_html)
 
 
-def pipeline_home(request):
-	return HttpResponse("Pipeline Home Page")
+def get_contig_file_paths(dir_assembly):
+	dir_spades = os.path.join(dir_assembly, 'spades')
+	sample_paths = [os.path.join(dir_spades, sample) for sample in os.listdir(dir_spades)]
+	contig_file_paths = []
+	for sample_path in sample_paths:
+		if os.path.exists(os.path.join(sample_path, 'contigs.fasta')):
+			contig_file_paths.append(os.path.join(sample_path, 'contigs.fasta'))
+	return contig_file_paths
+
+
+def download_contig_files(request):
+	return
 
 
 
