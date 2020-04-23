@@ -1,10 +1,11 @@
 from django.http import HttpResponse, Http404
 from django.shortcuts import render, redirect
 from django.core.exceptions import ValidationError
-from .models import User
+from .models import User, GenomeAssembly
 from .pipeline import main as pipeline_main
 import uuid
 import os
+import threading
 
 # Create your views here.
 
@@ -42,10 +43,14 @@ def assembly_home(request):
 		dir_trimmed = os.path.join(dir_output, 'trimmed')
 		dir_assembly = os.path.join(dir_output, 'assembly')
 		dir_quast = os.path.join(dir_output, 'quast')
+		dir_plasmids = os.path.join(dir_output, 'plasmids')
+
 
 		os.mkdir(dir_trimmed)
 		os.mkdir(dir_assembly)
 		os.mkdir(dir_quast)
+		os.mkdir(dir_plasmids)
+
 
 		#Getting user's email.
 		email = request.POST['email']
@@ -68,13 +73,27 @@ def assembly_home(request):
 				f.write(str(file.read()))	
 				number_of_files+=1
 
+		#Create a GenomeAssembly Object.
+		model_object_genome_assembly = GenomeAssembly(user = model_object_user, 
+														raw_files_dir_path = dir_fastq, 
+														trimmed_files_dir_path = dir_trimmed,
+														contig_files_dir_path = dir_assembly,
+														quast_files_dir_path = dir_quast,
+														plasmid_files_dir_path = dir_plasmids )
+		model_object_genome_assembly.save()
+
 		#Run Pipeline.
-		essential_arguments_for_pipeline = {'input_directory': dir_fastq, 
+		essential_arguments_for_pipeline = {'input_directory_path_for_fastq_files': dir_fastq, 
 											'output_trimmed_files': dir_trimmed, 
-											'output_genome_assembly': dir_assembly, 
+											'output_genome_assembly': dir_assembly,
+											'output_plasmids': dir_plasmids, 
 											'output_quast': dir_quast, 
-											'model_objects': {'user': model_object_user}}
-		pipeline_status = pipeline_main(essential_arguments_for_pipeline)
+											'model_objects': {'user': model_object_user, 'assembly': model_object_genome_assembly}}
+		#pipeline_status = pipeline_main(essential_arguments_for_pipeline)
+
+		pipeline_thread = threading.Thread(target=pipeline_main, kwargs=essential_arguments_for_pipeline) 
+		pipeline_thread.start() 
+
 
 		raw_html = render(request, 'assembly/assembly_homepage.html', {'uuid_data': user_uuid, 'number_of_files': number_of_files})
 		return HttpResponse(raw_html)
@@ -95,6 +114,9 @@ def job_status(request):
 			raw_html = render(request, 'status/status.html', {'user': False})
 			response = HttpResponse(raw_html)
 			return response
+		
+		#Get the assembly contig files.
+
 		raw_html = render(request, 'status/status.html', {'user': model_object_user})
 		return HttpResponse(raw_html)
 
@@ -103,3 +125,6 @@ def pipeline_home(request):
 	return HttpResponse("Pipeline Home Page")
 
 
+
+def check_if_fastq_file(file):
+	return True
