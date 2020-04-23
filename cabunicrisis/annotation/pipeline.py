@@ -14,14 +14,9 @@ import os
 import subprocess
 from shutil import rmtree
 
-import cluster_wrapper, match_clust_inputs
-import card_wrapper
-import signalp_wrapper
-import pilercr_wrapper
-import tmhmm_wrapper
-
-import create_homology_gff, create_abinitio_gff
-import merging_annotations
+from .signalp_wrapper import main as sp_main
+from .pilercr_wrapper import main as pc_main
+from .tmhmm_wrapper import main as tm_main
 
 
 def process_in_directory(file_list, input_dir):
@@ -128,15 +123,6 @@ def run_annotations(in_dir, out_dir, db_dir):
 		print("Error running VFDB.")
 		return False
 
-	# # CARD
-	# try:
-	# 	subprocess.check_output(["python2", "card_wrapper.py",
-	#         out_dir + "/cdhit/faa_rep_seq.faa", out_dir + "/card", db_dir + "/card"])
-	# 	print("CARD succeeded!")
-	# except subprocess.CalledProcessError as err:
-	# 	print("CARD failed, check input files.")
-	# 	return False
-
 	# EGGNOG
 	try:
 		subprocess.check_output(["python2", db_dir + "/eggnog-mapper/emapper.py",
@@ -152,7 +138,7 @@ def run_annotations(in_dir, out_dir, db_dir):
 	###################
 
 	# SignalP - must be on $PATH
-	sp_result = signalp_wrapper.main([in_dir + "/faa/", out_dir + "/signalp/"])
+	sp_result = sp_main([in_dir + "/faa/", out_dir + "/signalp/"])
 	if sp_result:
 		print("SignalP succeeded!")
 	else:
@@ -160,7 +146,7 @@ def run_annotations(in_dir, out_dir, db_dir):
 		return False
 
 	# # PilerCR - must use LDLIBS = -lm when using make, needs fasta files from genome assembly
-	# pc_result = pilercr_wrapper.main([in_dir + "/fasta/", out_dir + "/pilercr/"])
+	# pc_result = pc_main([in_dir + "/fasta/", out_dir + "/pilercr/"])
 	# if pc_result:
 	# 	print("PilerCR succeeded!")
 	# else:
@@ -168,7 +154,7 @@ def run_annotations(in_dir, out_dir, db_dir):
 	# 	return False
 
 	# TMHMM - must be on $PATH
-	tm_result = tmhmm_wrapper.main([in_dir + "/faa/", out_dir + "/tmhmm/"])
+	tm_result = tm_main([in_dir + "/faa/", out_dir + "/tmhmm/"])
 	if tm_result:
 		print("TMHMM succeeded!")
 	else:
