@@ -13,10 +13,10 @@ def annotation_home(request):
         return response
 
     if request.method == 'POST':
-		#Create a UUID for user.
-		user_uuid = str(uuid.uuid4())
-		#Directory names.
-		dir_data = 'data/'
+        #Create a UUID for user.
+        user_uuid = str(uuid.uuid4())
+        #Directory names.
+        dir_data = 'data/'
 
         #Creating a directory for user.
         dir_user = os.path.join(dir_data, user_uuid)
@@ -30,29 +30,29 @@ def annotation_home(request):
         os.mkdir(dir_output)
 
         #For sorting input into faa/fna/gff dirs
-		fna_dir = os.path.join(dir_input, 'fna')
-		faa_dir = os.path.join(dir_input, 'faa')
-		gff_dir = os.path.join(dir_input, 'gff')
+        fna_dir = os.path.join(dir_input, 'fna')
+        faa_dir = os.path.join(dir_input, 'faa')
+        gff_dir = os.path.join(dir_input, 'gff')
 
-		os.mkdir(fna_dir)
-		os.mkdir(faa_dir)
-		os.mkdir(gff_dir)
+        os.mkdir(fna_dir)
+        os.mkdir(faa_dir)
+        os.mkdir(gff_dir)
 
-		#Getting user's email.
-		email = request.POST['email']
+        #Getting user's email.
+        email = request.POST['email']
 
         #Get number of files.
-		number_of_files = 0
+        number_of_files = 0
 
-		#Create User model.
-		model_object_user = User(uuid = user_uuid, email = email, if_pipeline = False)
-		model_object_user.save()
+        #Create User model.
+        model_object_user = User(uuid = user_uuid, email = email, if_pipeline = False)
+        model_object_user.save()
 
-		#Create FunctionalAnnotation files model.
-		#Accessing and saving the files sent by user.
-		input_files = request.FILES.getlist('all-files')
-		#Check if input files are legitimate, make input directory suitable for pipeline.
-		legitimate, message_or_numfiles = pipeline.process_in_directory(input_files, input_dir)
+        #Create FunctionalAnnotation files model.
+        #Accessing and saving the files sent by user.
+        input_files = request.FILES.getlist('all-files')
+        #Check if input files are legitimate, make input directory suitable for pipeline.
+        legitimate, message_or_numfiles = pipeline.process_in_directory(input_files, input_dir)
         if not legitimate:
             print(message_or_numfiles)
 
@@ -68,7 +68,7 @@ def annotation_home(request):
         pipeline.main(input_dir, output_dir, "/projects/VirtualHost/predictb/databases/annotation")
 
         raw_html = render(request, 'annotation/annotation_homepage.html', {'uuid_data': user_uuid, 'number_of_files': message_or_numfiles})
-		return HttpResponse(raw_html)
+        return HttpResponse(raw_html)
 
 
 def pipeline_home(request):
