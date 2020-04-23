@@ -1,7 +1,7 @@
 from django.http import HttpResponse, Http404
 from django.shortcuts import render, redirect
 from .models import FunctionalAnnotation
-import .pipeline
+from .pipeline import main, process_in_directory
 import uuid
 import os
 
@@ -52,7 +52,7 @@ def annotation_home(request):
         #Accessing and saving the files sent by user.
         input_files = request.FILES.getlist('all-files')
         #Check if input files are legitimate, make input directory suitable for pipeline.
-        legitimate, message_or_numfiles = pipeline.process_in_directory(input_files, input_dir)
+        legitimate, message_or_numfiles = process_in_directory(input_files, input_dir)
         if not legitimate:
             print(message_or_numfiles)
 
@@ -65,7 +65,7 @@ def annotation_home(request):
         if signalp_path not in os.environ["PATH"]:
             os.environ["PATH"] += signalp_path
 
-        pipeline.main(input_dir, output_dir, "/projects/VirtualHost/predictb/databases/annotation")
+        main(input_dir, output_dir, "/projects/VirtualHost/predictb/databases/annotation")
 
         raw_html = render(request, 'annotation/annotation_homepage.html', {'uuid_data': user_uuid, 'number_of_files': message_or_numfiles})
         return HttpResponse(raw_html)
