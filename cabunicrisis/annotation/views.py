@@ -4,6 +4,7 @@ from .models import FunctionalAnnotation
 from .pipeline import main, process_in_directory
 import uuid
 import os
+import threading
 
 def annotation_home(request):
     #Landing page of Functional Annotation isolated functionality.
@@ -52,7 +53,10 @@ def annotation_home(request):
         #Accessing and saving the files sent by user.
         input_files = request.FILES.getlist('all-files')
         #Check if input files are legitimate, make input directory suitable for pipeline.
-        legitimate, message_or_numfiles = process_in_directory(input_files, input_dir)
+        # legitimate, message_or_numfiles = process_in_directory(input_files, input_dir)
+        check_thread = threading.Thread(process_in_directory, [input_files, input_dir])
+        check_thread.start()
+        [legitimate, message_or_numfiles] = check_thread
         if not legitimate:
             print(message_or_numfiles)
 
@@ -65,7 +69,8 @@ def annotation_home(request):
         if signalp_path not in os.environ["PATH"]:
             os.environ["PATH"] += signalp_path
 
-        main(input_dir, output_dir, "/projects/VirtualHost/predictb/databases/annotation")
+        pipeline_thread = threading.Thread(target=main, args=[input_dir, output_dir, "/projects/VirtualHost/predictb/databases/annotation"])
+        pipeline_thread.start()
 
         raw_html = render(request, 'annotation/annotation_homepage.html', {'uuid_data': user_uuid, 'number_of_files': message_or_numfiles})
         return HttpResponse(raw_html)
