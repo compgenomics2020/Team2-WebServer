@@ -170,7 +170,6 @@ def download_contig_files(request):
 			response['Content-Disposition'] = 'attachment; filename=' + os.path.basename(tmp_zip_file_path)
 			return response
 
-
 	else:
 		raise Http404("Bad boy, come nicely; the right way!")
 
