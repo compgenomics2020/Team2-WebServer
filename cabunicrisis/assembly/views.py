@@ -1,6 +1,7 @@
 from django.http import HttpResponse, Http404
 from django.shortcuts import render, redirect
 from django.core.exceptions import ValidationError
+from django.db import models
 from .models import User, GenomeAssembly
 from .pipeline import main as pipeline_main
 import uuid
@@ -69,9 +70,11 @@ def assembly_home(request):
 			legitimate = check_if_fastq_file(file)
 			if not legitimate:
 				continue
-			with open(os.path.join(dir_fastq, file.name), "w") as f:
-				f.write(str(file.read()))	
+			
+			with open(os.path.join(dir_fastq, file.name), "wb") as f:
+				f.write(file.read())	
 				number_of_files+=1
+			
 
 		#Create a GenomeAssembly Object.
 		model_object_genome_assembly = GenomeAssembly(user = model_object_user, 
