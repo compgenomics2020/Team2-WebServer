@@ -126,7 +126,7 @@ def job_status(request):
 
 		model_object_genome_assembly = model_object_user.assembly.all()[0]		
 		#Get the assembly contig files.
-		number_of_contig_files = len(contig_file_paths(dir_assembly))
+		number_of_contig_files = len(get_contig_file_paths(model_object_genome_assembly.contig_files_dir_path))
 
 		raw_html = render(request, 'status/status.html', {'user': model_object_user, 
 															'assembly': model_object_genome_assembly, 
