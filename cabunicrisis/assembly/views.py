@@ -1,5 +1,5 @@
 from django.http import HttpResponse, Http404
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.core.exceptions import ValidationError
 from django.db import models
 from .models import User, GenomeAssembly
@@ -7,6 +7,8 @@ from .pipeline import main as pipeline_main
 import uuid
 import os
 import threading
+from zipfile import ZipFile
+from io import StringIO
 
 # Create your views here.
 
@@ -145,7 +147,32 @@ def get_contig_file_paths(dir_assembly):
 
 
 def download_contig_files(request):
-	return
+	if request.method == 'POST':
+		uuid = request.POST['uuid']
+		if uuid == "" or uuid is None:
+			raise Http404("Bad boy, come nicely; the right way!")
+		model_object_user = get_object_or_404(User, uuid = uuid)
+
+		#Get genome assembly object.
+		model_object_genome_assembly = model_object_user.assembly.all()[0]
+		contig_file_paths = get_contig_file_paths(model_object_genome_assembly.contig_files_dir_path)
+
+		#contig_file_paths = ['data/2eb893e9-b38a-43ce-b368-3ac438f7369f/input/fastq/CGT2149_1.fq', 'data/2eb893e9-b38a-43ce-b368-3ac438f7369f/input/fastq/CGT2149_2.fq']
+		
+		tmp_zip_file_path = os.path.join("tmp", str(uuid) + "_contig_files.zip")
+
+		with ZipFile(tmp_zip_file_path, 'w') as zp:
+			for file in contig_file_paths:
+				zp.write(file)
+
+		with open(tmp_zip_file_path, 'rb') as fh:
+			response = HttpResponse(fh.read(), content_type="application/zip")
+			response['Content-Disposition'] = 'attachment; filename=' + os.path.basename(tmp_zip_file_path)
+			return response
+
+
+	else:
+		raise Http404("Bad boy, come nicely; the right way!")
 
 
 
