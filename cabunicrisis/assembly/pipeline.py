@@ -249,13 +249,6 @@ def run_assemblies(input_directory_path, output_directory_path, fastq_files_dict
 
 def main(input_directory_path_for_fastq_files, output_trimmed_files, output_genome_assembly, output_plasmids, output_quast, model_objects):
 	#Getting the arguments Model Objects.
-	print(input_directory_path_for_fastq_files)
-	print(output_trimmed_files)
-	print(output_genome_assembly)
-	print(output_plasmids)
-	print(output_quast)
-
-	print(model_objects)
 	model_object_user = model_objects['user']
 	model_object_genome_assembly = model_objects['assembly']
 
