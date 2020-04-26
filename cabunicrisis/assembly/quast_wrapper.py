@@ -23,27 +23,10 @@ def get_files_by_tools(output_directory_path):
 						masurca_results.append(path)	
 				
 				if "spades" in path:
-					if "untrimmed" in path:
-						spades_results_untrimmed.append(path)
-					if "on_trimmed" in path:
-						spades_results_on_trimmed.append(path)
-				
-				if "skesa" in path:
-					skesa_results.append(path)		
-				
-				if "abyss" in path:
-					pass
-				
-				if "velvet" in path:
-					velvet_results.append(path)		
-				
-				if "unicycler" in path:
-					unicycler_results.append(path)
+					spades_results.append(path)
 
 
-	return {"masurca": masurca_results, "spades_untrimmed": spades_results_untrimmed, 
-			"spades_trimmed": spades_results_on_trimmed, "skesa": skesa_results, 
-			"abyss": abyss_results, "velvet": velvet_results, "unicycler": unicycler_results}
+	return {"masurca": masurca_results, "spades": spades_results,}
 
 def quast_runner(output_directory_path):
 	#Get output files by tools used.

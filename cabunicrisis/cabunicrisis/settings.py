@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
-
+import socket
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -22,10 +22,14 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '4uy52m(*8s$rk0fz9+6svs2!09+^ltr&d7^jbupf-$&ydh*_4x'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
-ALLOWED_HOSTS = []
+# SECURITY WARNING: don't run with debug turned on in production!
+
+if socket.gethostname() == 'bioapppredict20.biosci.gatech.edu':
+    DEBUG = False
+    ALLOWED_HOSTS = ["http://predict2020t2.biosci.gatech.edu", "130.207.66.119"] 
+else:
+    DEBUG = True
 
 
 # Application definition
@@ -39,7 +43,8 @@ INSTALLED_APPS = [
 	'django.contrib.staticfiles',
 	'cabunicrisis.core',
 	'assembly',
-	'prediction'
+	'prediction',
+	'annotation'
 ]
 
 MIDDLEWARE = [
@@ -123,6 +128,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static"),]
+STATIC_ROOT = os.path.join(BASE_DIR, 'deploy/static')
+
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

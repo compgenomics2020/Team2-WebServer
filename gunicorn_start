@@ -1,0 +1,27 @@
+#!/bin/bash
+
+NAME="cabunicrisis"
+DIR=/projects/VirtualHost/predictb/Team2-WebServer/cabunicrisis
+WORKERS=3
+BIND=unix:/projects/VirtualHost/predictb/Team2-WebServer/run/gunicorn.sock
+DJANGO_SETTINGS_MODULE=cabunicrisis.settings
+DJANGO_WSGI_MODULE=cabunicrisis.wsgi
+LOG_LEVEL=error
+
+cd $DIR
+source /projects/VirtualHost/predictb/miniconda3/bin/activate
+conda activate web-server
+
+export DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE
+export PYTHONPATH=$DIR:$PYTHONPATH
+
+exec gunicorn ${DJANGO_WSGI_MODULE}:application \
+  --name $NAME \
+  --workers $WORKERS \
+  --user=$USER \
+  --bind=$BIND \
+  --log-level=$LOG_LEVEL \
+  --log-file=-
+
+#Running chmod 777 on socket file.
+chmod 777 /projects/VirtualHost/predictb/Team2-WebServer/run/gunicorn.sock 

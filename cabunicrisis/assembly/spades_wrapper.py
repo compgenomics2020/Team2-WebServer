@@ -5,8 +5,8 @@ import os
 
 def spades_runner(fastq_file_forward, fastq_file_reverse, input_directory_path, output_directory_path, kmer):
 	#Create file paths.
-	fastq_file_forward_path = input_directory_path + fastq_file_forward
-	fastq_file_reverse_path = input_directory_path + fastq_file_reverse
+	fastq_file_forward_path = os.path.join(input_directory_path, fastq_file_forward)
+	fastq_file_reverse_path = os.path.join(input_directory_path, fastq_file_reverse)
 
 	#Creating a directory inside output directory.
 	output_subdir_name = fastq_file_forward.split('.')[0].split('_')[0]

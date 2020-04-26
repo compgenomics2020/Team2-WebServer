@@ -1,43 +1,38 @@
 from django.db import models
-from assembly.models import GenomeAssembly, User
-from prediction.models import CodingGenePrediction
+from assembly.models import User
+from prediction.models import Blast_Results
 
-class PredictionGffFiles(models.Model):
-	pred_gff = models.ForeignKey(CodingGenePrediction, related_name = "pred_gff_files")
-	path = models.CharField(max_length=512)
-	file = models.FileField(upload = 'raw_gff_files/')
-
-	def __str__(self):
-		return (str(self.path))
-
-class PredictionFnaFiles(models.Model):
-	pred_fna = models.ForeignKey(CodingGenePrediction, related_name = "pred_fna_files")
-	path = models.CharField(max_length=512)
-	file = models.FileField(upload = 'raw_fna_files/')
+class FunctionalAnnotation(models.Model):
+	user = models.ForeignKey(User, related_name = "functional_annotation", on_delete=models.CASCADE)
+	input_dir = models.ForeignKey(Blast_Results, related_name = "functional_annotation", on_delete=models.CASCADE)
+	graphs = models.CharField(max_length=512)
+	output_dir = models.CharField(max_length=512)
 
 	def __str__(self):
 		return (str(self.path))
 
-class PredictionFaaFiles(models.Model):
-	pred_faa = models.ForeignKey(CodingGenePrediction, related_name = "pred_faa_files")
-	path = models.CharField(max_length=512)
-	file = models.FileField(upload = 'raw_faa_files/')
 
-	def __str__(self):
-		return (str(self.path))
+# inputs: combined directory of fna/faa/gff directories - ex: dir/fna/*.fna
+# the subdirectories are called faa and fna and gff.
 
-class PredictionFnaFiles(models.Model):
-	pred_fna = models.ForeignKey(CodingGenePrediction, related_name = "pred_fna_files")
-	path = models.CharField(max_length=512)
-	file = models.FileField(upload = 'raw_fna_files/')
+# pipeline: faa/fna -> clustering + gff -> homology.
+# faa + fna + gff -> ab initio.
+# above two lines -> merged annotations into one directory.
 
-	def __str__(self):
-		return (str(self.path))
+# output: directory of 50 gff files
 
-class ClusteredFiles(models.Model):
-	clust_files = models.ForeignKey(CodingGenePrediction, related_name = "pred_fna_files")
-	path = models.CharField(max_length=512)
-	file = models.FileField(upload = 'raw_fna_files/')
+# START of pipeline
+# Paarth gives the following:
+# user_uuid = user_model_object.uuid <- correct path of directories
+# input_dir = blast_results_model_object.path
+# "data/" + user_uuid + "/" + "Annotation" <- output directory of directories (add /graphs, /output_dir)
 
-	def __str__(self):
-		return (str(self.path))
+# END of PIPELINE
+# model_object_genome_assembly = GenomeAssembly(user = model_object_user,
+# 												raw_untrimmed_file_1 = model_object_raw_fastq_file,
+# 												path = contigs_file_path)
+#
+# model_object_genome_assembly.save()
+
+# TODO:
+# must add signalp/bin to $PATH
