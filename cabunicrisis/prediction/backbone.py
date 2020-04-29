@@ -6,7 +6,7 @@ Run Gene Prediction Pipe
 """
 
 #!/usr/bin/env python
-import matplotlib.pyplot as plt; plt.rcdefaults()
+import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib.pyplot as plt
 import argparse
@@ -21,7 +21,8 @@ from coding.rename_faa_fna import rename
 from coding.rename_gff import rename_gff
 from noncoding.aragorn_wrapper import aragorn_script
 from noncoding.barrnap_wrapper import barrnap_script
-
+from .models import Coding_Rename_Path
+import json
 
 #############################################################################################################################################################################################
 ############################### https://stackoverflow.com/questions/3853722/python-argparse-how-to-insert-newline-in-the-help-text/22157136#22157136 ########################################
@@ -149,7 +150,7 @@ def blast_results(run_tool,out):
 def rename_scripts(list_of_files,out,run_tool):
     blast_input_path=out+"/blast"
     output_check=out+"/known_unknown/"
-    os.mkdir(output_check)
+    #os.mkdir(output_check)
     #Checks if gene_marks2 is called or prodigal or the union of both
     if run_tool=="1":
         for files in list_of_files:
@@ -270,7 +271,7 @@ def hits_list(list_of_files,run_tool,out):
         merge_folder=out+"/merge_out/"
         shutil.rmtree(union_path_gff)
         shutil.rmtree(merge_folder)
-    shutil.rmtree(blast_input_path)
+    #shutil.rmtree(blast_input_path)
 
 #################################################################################################################################################################################################
 
@@ -278,7 +279,7 @@ def hits_list(list_of_files,run_tool,out):
 def noncoding_run(input_path,output_path,flag,name="contigs.fasta"):
     #List all the directories present in the input path, where the wrapper goes into those directories and runs the contigs files
     for folder in os.listdir(input_path):
-        #barrnap_output=barrnap_script(input_path,folder,output_path,flag,name)
+        barrnap_output=barrnap_script(input_path,folder,output_path,flag,name)
         aragon_output=aragorn_script(input_path,folder,output_path,flag,name)
         if aragon_output==False:
             return False
@@ -287,39 +288,40 @@ def noncoding_run(input_path,output_path,flag,name="contigs.fasta"):
 
 ######## main of the script which takes in the input ###################################### 
 
-def main():
+def main(model_object_user,model_object_rename,gene_output,input_option,input_assembly=None,input_plasmids=None,input_files77=None,input_files99=None,coding_tools="3"):
 
 
     ################################# User Input ######################################################################
-    parser = argparse.ArgumentParser(description="Backbone script",formatter_class=SmartFormatter)
-
-    parser.add_argument("-io","--input-option",default="1",help="R|Default Option is 1, options available\n"
-    "1 Take input from the genome assembly results \n"
-    "2 Input your own assembly files \n"
-    "3 Plasmid Input from Genome Assembly")
-    parser.add_argument("-nc", "--name-contigs", default="contigs.fasta" ,help="Name of the contig files,called when option 2 for input-option is selected, default considered is contigs.fasta",required=False)
-    parser.add_argument("-ia", "--input-assembly", help="Path to the directory that contains input file manually,called when option 2 for input-option is selected",required=False)
-    parser.add_argument("-ip", "--input-plasmids", help="Path to the directory that contains input file for plasmid spades output called when Plasmid Input from Genome Assembly called ",required=False)
-    parser.add_argument("-if77", "--input-files77", help="Path to the directory that contains input file for spades output of 21,33,55,77, called when default option for input-option is selected",required=False)
-    parser.add_argument("-if99", "--input-files99", help="Path to the directory that contains input file for spades output of 21,33,55,77,99,127,called when default option for input-option is selected",required=False)
-    parser.add_argument("-go", "--gene-output", help="Path to a directory that will store the output gff files, fna files and faa files.", required=True)
-    parser.add_argument("-tr","--coding-tools",default="3",help="R|Default Option is 3, options available to run are\n"
-    "1 Only GeneMarkS-2 \n"
-    "2 Only Prodigal \n"
-    "3 Both and getting a union of the genes")
-    parser.add_argument("-ts", "--type-species", help="if running Gene_MarkS-2, mention species to be either bacteria or auto")
-
-    
-    
-    args = vars(parser.parse_args())
+    # parser = argparse.ArgumentParser(description="Backbone script",formatter_class=SmartFormatter)
+# 
+    # parser.add_argument("-io","--input-option",default="1",help="R|Default Option is 1, options available\n"
+    # "1 Take input from the genome assembly results \n"
+    # "2 Input your own assembly files \n"
+    # "3 Plasmid Input from Genome Assembly")
+    # parser.add_argument("-nc", "--name-contigs", default="contigs.fasta" ,help="Name of the contig files,called when option 2 for input-option is selected, default considered is contigs.fasta",required=False)
+    # parser.add_argument("-ia", "--input-assembly", help="Path to the directory that contains input file manually,called when option 2 for input-option is selected",required=False)
+    # parser.add_argument("-ip", "--input-plasmids", help="Path to the directory that contains input file for plasmid spades output called when Plasmid Input from Genome Assembly called ",required=False)
+    # parser.add_argument("-if77", "--input-files77", help="Path to the directory that contains input file for spades output of 21,33,55,77, called when default option for input-option is selected",required=False)
+    # parser.add_argument("-if99", "--input-files99", help="Path to the directory that contains input file for spades output of 21,33,55,77,99,127,called when default option for input-option is selected",required=False)
+    # parser.add_argument("-go", "--gene-output", help="Path to a directory that will store the output gff files, fna files and faa files.", required=True)
+    # parser.add_argument("-tr","--coding-tools",default="3",help="R|Default Option is 3, options available to run are\n"
+    # "1 Only GeneMarkS-2 \n"
+    # "2 Only Prodigal \n"
+    # "3 Both and getting a union of the genes")
+    # parser.add_argument("-ts", "--type-species", help="if running Gene_MarkS-2, mention species to be either bacteria or auto")
+# 
+    # 
+    # 
+    # args = vars(parser.parse_args())
     ##################################### User input ends and variables are assigned #############################################################
 
-
-    output_path=args['gene_output']
-    run_tool=args['coding_tools']
-    type_species=args['type_species']
-    flag=args['input_option']
-    name=args['name_contigs']
+    
+    output_path=gene_output
+    run_tool=coding_tools
+    if run_tool=="1" or run_tool=="3":
+        type_species="auto"
+    flag=input_option
+    name="contigs.fasta"
     #print(flag)
 
 
@@ -330,8 +332,7 @@ def main():
 
     ##### If the user wants to take in his own input###############################################################################################
     if flag == "2":
-        input_path=args['input_assembly']
-        print(input_path)        
+        input_path=input_assembly        
         
         if check_input(input_path):
             # checks the input folder for manual input, and then runs the tools. Considers input folder to contain specific sequence folder which in turn contains the name variable (name of the contigs)
@@ -377,12 +378,16 @@ def main():
             if not nc_run_out:
                 return False
             ###########################################################################################################
+            model_object_rename.list_failed = json.dumps(list_failed)
+            model_object_rename.save()
+            model_object_user.job_status = True
+            model_object_user.save()
         else:
             return False
     ##################################################################################################################################################
     elif flag== "1":
-        input_folder77=args['input_files77']
-        input_folder99=args['input_files99']
+        input_folder77=input_files77
+        input_folder99=input_files99
         if check_input(input_folder77) and check_input(input_folder99):
             ###########################Coding tools, GeneMarkS2 and Prodigal, merge the results or keep them seperate blast out the results and 
             # there are two input paths as there are two folders given to us by the genome assembly group according to the kmer count
@@ -427,11 +432,14 @@ def main():
             if not nc_run_out:
                 return False
             ###########################################################################################################
-            print(list_failed)
+            model_object_rename.list_failed = json.dumps(list_failed)
+            model_object_rename.save()
+            model_object_user.job_status = True
+            model_object_user.save()
         else:
             return False
     else:
-        input_path=args['input_plasmids']
+        input_path=input_plasmids
 
         if check_input(input_path):
             # checks the input folder for plasmids, and then runs the tools.
@@ -461,6 +469,13 @@ def main():
             rename_output=rename_scripts(list_of_files,output_path,run_tool)
             if not rename_output:
                 return False
+            ###########################################################################################################
+            model_object_rename.list_failed = json.dumps(list_failed)
+            model_object_rename.save()
+            model_object_user.job_status = True
+            model_object_user.save()
+        else:
+            return False
 ################################################################################################################################################################################################################
 if __name__=="__main__":
     main()
