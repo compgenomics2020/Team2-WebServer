@@ -2,7 +2,7 @@
 Run Gene Prediction Pipe
 
     last edited: 03/21/2020
-    
+
 """
 
 #!/usr/bin/env python
@@ -13,14 +13,14 @@ import argparse
 import os
 import subprocess
 import shutil
-from coding.genemarks2_wrapper import genemarks2_script
-from coding.prodigal_wrapper import prodigal_script
-from coding.union_outputs import merge_predict
-from coding.blastn import blastn_script
-from coding.rename_faa_fna import rename
-from coding.rename_gff import rename_gff
-from noncoding.aragorn_wrapper import aragorn_script
-from noncoding.barrnap_wrapper import barrnap_script
+from .coding.genemarks2_wrapper import genemarks2_script
+from .coding.prodigal_wrapper import prodigal_script
+from .coding.union_outputs import merge_predict
+from .coding.blastn import blastn_script
+from .coding.rename_faa_fna import rename
+from .coding.rename_gff import rename_gff
+from .noncoding.aragorn_wrapper import aragorn_script
+from .noncoding.barrnap_wrapper import barrnap_script
 from .models import Coding_Rename_Path
 import json
 
@@ -87,7 +87,7 @@ def running_tools(input_path,output_path,type_species,run_tool,input_option,name
     #List all the directories present in the input path, where the wrapper goes into those directories and runs the contigs files
     #print(os.listdir(input_path))
     for folder in sorted(os.listdir(input_path)):
-       
+
        #print(folder)
        if (run_tool=="1" or run_tool=="3"):
             genemarks2_output=genemarks2_script(input_path,folder,output_path,type_species,input_option,name)
@@ -146,7 +146,7 @@ def blast_results(run_tool,out):
 
 #################################################################################################################################################################################################
 
-# Run the rename script to generate output files with known and unknown genes 
+# Run the rename script to generate output files with known and unknown genes
 def rename_scripts(list_of_files,out,run_tool):
     blast_input_path=out+"/blast"
     output_check=out+"/known_unknown/"
@@ -232,9 +232,9 @@ def hits_list(list_of_files,run_tool,out):
             if p.returncode != 0:
                 raise IOError(err)
             genemark_hits.append(int(result.strip().split()[0]))
-        
+
         graph(list_of_files,genemark_hits,"GeneMarkS-2 Results",out)
-        
+
         genemarks2_output=out+"/genemarks2/"
         shutil.rmtree(genemarks2_output)
 
@@ -248,12 +248,12 @@ def hits_list(list_of_files,run_tool,out):
             if p.returncode != 0:
                 raise IOError(err)
             prodigal_hits.append(int(result.strip().split()[0]))
-            
+
         graph(list_of_files,prodigal_hits,"Prodigal Results",out)
 
         prodigal_output=out+"/prodigal/"
         shutil.rmtree(prodigal_output)
-            
+
     #Same if both the tools are called and the merge results are obtained
     if run_tool=="3":
         union_path_gff=out+"/merge_out/union_gff/"
@@ -286,14 +286,14 @@ def noncoding_run(input_path,output_path,flag,name="contigs.fasta"):
     return True
 #################################################################################################################################################################################################
 
-######## main of the script which takes in the input ###################################### 
+######## main of the script which takes in the input ######################################
 
 def main(model_object_user,model_object_rename,gene_output,input_option,input_assembly=None,input_plasmids=None,input_files77=None,input_files99=None,coding_tools="3"):
 
 
     ################################# User Input ######################################################################
     # parser = argparse.ArgumentParser(description="Backbone script",formatter_class=SmartFormatter)
-# 
+#
     # parser.add_argument("-io","--input-option",default="1",help="R|Default Option is 1, options available\n"
     # "1 Take input from the genome assembly results \n"
     # "2 Input your own assembly files \n"
@@ -309,13 +309,13 @@ def main(model_object_user,model_object_rename,gene_output,input_option,input_as
     # "2 Only Prodigal \n"
     # "3 Both and getting a union of the genes")
     # parser.add_argument("-ts", "--type-species", help="if running Gene_MarkS-2, mention species to be either bacteria or auto")
-# 
-    # 
-    # 
+#
+    #
+    #
     # args = vars(parser.parse_args())
     ##################################### User input ends and variables are assigned #############################################################
 
-    
+
     output_path=gene_output
     run_tool=coding_tools
     if run_tool=="1" or run_tool=="3":
@@ -332,24 +332,24 @@ def main(model_object_user,model_object_rename,gene_output,input_option,input_as
 
     ##### If the user wants to take in his own input###############################################################################################
     if flag == "2":
-        input_path=input_assembly        
-        
+        input_path=input_assembly
+
         if check_input(input_path):
             # checks the input folder for manual input, and then runs the tools. Considers input folder to contain specific sequence folder which in turn contains the name variable (name of the contigs)
-            # Runs prodigal or genemarks2 or both depending on the user's choice calls the function run_out 
+            # Runs prodigal or genemarks2 or both depending on the user's choice calls the function run_out
             run_out,list_of_files,list_failed=running_tools(input_path,output_path,type_species,run_tool,flag,name)
             #If run out is false, it just returns false and the function returns the appropriate error message
             if not run_out:
                 return False
-            
+
 
             #If the user has chosen to run both gene marks2 and prodigal, we get the merge results of it by calling the script function merge_predict from the union script
             if run_tool=="3":
                 genemarks2_output=output_path+"/genemarks2/"
                 prodigal_output=output_path+"/prodigal/"
                 merge_output=output_path+"/merge_out"
-                #### If the merge output directory doesnt exist, it makes a directory called merge out where the output files will be located, 
-                # or just deletes the folder if it is present 
+                #### If the merge output directory doesnt exist, it makes a directory called merge out where the output files will be located,
+                # or just deletes the folder if it is present
                 if os.path.exists(merge_output) == False:
                     os.mkdir(merge_output)
                 else:
@@ -389,21 +389,21 @@ def main(model_object_user,model_object_rename,gene_output,input_option,input_as
         input_folder77=input_files77
         input_folder99=input_files99
         if check_input(input_folder77) and check_input(input_folder99):
-            ###########################Coding tools, GeneMarkS2 and Prodigal, merge the results or keep them seperate blast out the results and 
+            ###########################Coding tools, GeneMarkS2 and Prodigal, merge the results or keep them seperate blast out the results and
             # there are two input paths as there are two folders given to us by the genome assembly group according to the kmer count
-            # Runs prodigal or genemarks2 or both depending on the user's choice calls the function run_out 
+            # Runs prodigal or genemarks2 or both depending on the user's choice calls the function run_out
             run_out,list_of_files_77,list_failed_77=running_tools(input_folder77,output_path,type_species,run_tool,flag,name)
             #If run_out is false, it just returns false and the function returns the appropriate error message
             run_out,list_of_files_99,list_failed_99=running_tools(input_folder99,output_path,type_species,run_tool,flag,name)
             list_of_files=list_of_files_77+list_of_files_99
             list_failed=list_failed_77+list_failed_99
-            #If the user has chosen to run both gene marks2 and prodigal, we get the merge results of it by calling the script function merge_predict from the union script    
+            #If the user has chosen to run both gene marks2 and prodigal, we get the merge results of it by calling the script function merge_predict from the union script
             if run_tool=="3":
                 genemarks2_output=output_path+"/genemarks2/"
                 prodigal_output=output_path+"/prodigal/"
                 merge_output=output_path+"/merge_out"
-                #### If the merge output directory doesnt exist, it makes a directory called merge out where the output files will be located, 
-                # or just deletes the folder if it is present 
+                #### If the merge output directory doesnt exist, it makes a directory called merge out where the output files will be located,
+                # or just deletes the folder if it is present
                 if os.path.exists(merge_output) == False:
                     os.mkdir(merge_output)
                 else:
@@ -414,7 +414,7 @@ def main(model_object_user,model_object_rename,gene_output,input_option,input_as
                 #If merge is false, it just returns false and the function returns the appropriate error message
                 if not merge:
                     return False
-            # Running the individual results or 
+            # Running the individual results or
             blast_output=blast_results(run_tool,output_path)
             if not blast_output:
                 return False
@@ -443,7 +443,7 @@ def main(model_object_user,model_object_rename,gene_output,input_option,input_as
 
         if check_input(input_path):
             # checks the input folder for plasmids, and then runs the tools.
-            # Runs prodigal or genemarks2 or both depending on the user's choice calls the function run_out 
+            # Runs prodigal or genemarks2 or both depending on the user's choice calls the function run_out
             run_out,list_of_files,list_failed=running_tools(input_path,output_path,type_species,run_tool,flag,name)
             #If run out is false, it just returns false and the function returns the appropriate error message
             #If the user has chosen to run both gene marks2 and prodigal, we get the merge results of it by calling the script function merge_predict from the union script
@@ -451,8 +451,8 @@ def main(model_object_user,model_object_rename,gene_output,input_option,input_as
                 genemarks2_output=output_path+"/genemarks2/"
                 prodigal_output=output_path+"/prodigal/"
                 merge_output=output_path+"/merge_out"
-                #### If the merge output directory doesnt exist, it makes a directory called merge out where the output files will be located, 
-                # or just deletes the folder if it is present 
+                #### If the merge output directory doesnt exist, it makes a directory called merge out where the output files will be located,
+                # or just deletes the folder if it is present
                 if os.path.exists(merge_output) == False:
                     os.mkdir(merge_output)
                 else:

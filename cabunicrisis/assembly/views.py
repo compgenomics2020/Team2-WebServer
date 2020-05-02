@@ -57,7 +57,7 @@ def assembly_home(request):
 
 		#Getting user's email.
 		email = request.POST['email']
-		
+
 		#Get number of files.
 		number_of_files = 0
 
@@ -72,15 +72,15 @@ def assembly_home(request):
 			legitimate = check_if_fastq_file(file)
 			if not legitimate:
 				continue
-			
+
 			with open(os.path.join(dir_fastq, file.name), "wb") as f:
-				f.write(file.read())	
+				f.write(file.read())
 				number_of_files+=1
-			
+
 
 		#Create a GenomeAssembly Object.
-		model_object_genome_assembly = GenomeAssembly(user = model_object_user, 
-														raw_files_dir_path = dir_fastq, 
+		model_object_genome_assembly = GenomeAssembly(user = model_object_user,
+														raw_files_dir_path = dir_fastq,
 														trimmed_files_dir_path = dir_trimmed,
 														contig_files_dir_path = dir_assembly,
 														quast_files_dir_path = dir_quast,
@@ -88,16 +88,16 @@ def assembly_home(request):
 		model_object_genome_assembly.save()
 
 		#Run Pipeline.
-		essential_arguments_for_pipeline = {'input_directory_path_for_fastq_files': dir_fastq, 
-											'output_trimmed_files': dir_trimmed, 
+		essential_arguments_for_pipeline = {'input_directory_path_for_fastq_files': dir_fastq,
+											'output_trimmed_files': dir_trimmed,
 											'output_genome_assembly': dir_assembly,
-											'output_plasmids': dir_plasmids, 
-											'output_quast': dir_quast, 
+											'output_plasmids': dir_plasmids,
+											'output_quast': dir_quast,
 											'model_objects': {'user': model_object_user, 'assembly': model_object_genome_assembly}}
 		#pipeline_status = pipeline_main(essential_arguments_for_pipeline)
 
-		pipeline_thread = threading.Thread(target=pipeline_main, kwargs=essential_arguments_for_pipeline) 
-		pipeline_thread.start() 
+		pipeline_thread = threading.Thread(target=pipeline_main, kwargs=essential_arguments_for_pipeline)
+		pipeline_thread.start()
 
 
 		raw_html = render(request, 'assembly/assembly_homepage.html', {'uuid_data': user_uuid, 'number_of_files': number_of_files})
@@ -126,12 +126,14 @@ def job_status(request):
 			response = HttpResponse(raw_html)
 			return response
 
-		model_object_genome_assembly = model_object_user.assembly.all()[0]		
+		# This is where assembly gets its data
+		model_object_genome_assembly = model_object_user.assembly.all()[0]
 		#Get the assembly contig files.
 		number_of_contig_files = len(get_contig_file_paths(model_object_genome_assembly.contig_files_dir_path))
 
-		raw_html = render(request, 'status/status.html', {'user': model_object_user, 
-															'assembly': model_object_genome_assembly, 
+		# Start of annotation
+		raw_html = render(request, 'status/status.html', {'user': model_object_user,
+															'assembly': model_object_genome_assembly,
 															'number_of_contig_files': number_of_contig_files})
 		return HttpResponse(raw_html)
 
@@ -158,7 +160,7 @@ def download_contig_files(request):
 		contig_file_paths = get_contig_file_paths(model_object_genome_assembly.contig_files_dir_path)
 
 		#contig_file_paths = ['data/2eb893e9-b38a-43ce-b368-3ac438f7369f/input/fastq/CGT2149_1.fq', 'data/2eb893e9-b38a-43ce-b368-3ac438f7369f/input/fastq/CGT2149_2.fq']
-		
+
 		tmp_zip_file_path = os.path.join("tmp", str(uuid) + "_contig_files.zip")
 
 		with ZipFile(tmp_zip_file_path, 'w') as zp:

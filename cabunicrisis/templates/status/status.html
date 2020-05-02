@@ -16,7 +16,7 @@
 				{% csrf_token %}
 				<div class="row">
 					<button type="button" class="btn text-white btn-outline-warning btn-lg col-md-5 p-3">
-						<div class="row align-items-center"> 
+						<div class="row align-items-center">
 							<div class="col-md-7">
 								<input type="email" name="email" class="form-control">
 							</div>
@@ -27,7 +27,7 @@
 					</button>
 					<div class="col-md-2"><h5 class="text-white">OR</h5></div>
 					<button type="button" class="btn text-white btn-outline-warning btn-lg col-md-5 p-3">
-						<div class="row align-items-center"> 
+						<div class="row align-items-center">
 							<div class="col-md-8">
 								<input type="text" name="uuid" class="form-control">
 							</div>
@@ -38,7 +38,7 @@
 					</button>
 				</div>
 				<br>
-				<div class="row"> 
+				<div class="row">
 					<div class="col-md-9"></div>
 					<button type="submit" class="btn btn-warning btn-lg col-md-3">Submit »</button>
 				</div>
@@ -89,7 +89,7 @@
 			<button class="btn {% if not prediction %} btn-secondary {% else %} btn-primary {% endif %} align-items-center" type="button" data-toggle="collapse" data-target="#prediction" aria-expanded="false" aria-controls="prediction">Gene Prediciton</button>
 		</div>
 		<div class="col-md-3 text-center">
-			<button class="btn {% if not annotation %} btn-secondary {% else %} btn-primary {% endif %} align-items-center" type="button" data-toggle="collapse" data-target="#annotation" aria-expanded="false" aria-controls="annotation">Functional Annotation</button>
+			<button class="btn {% if not annotation.job_status %} btn-secondary {% else %} btn-primary {% endif %} align-items-center" type="button" data-toggle="collapse" data-target="#annotation" aria-expanded="false" aria-controls="annotation">Functional Annotation</button>
 		</div>
 		<div class="col-md-3 text-center">
 			<button class="btn {% if not comparative %} btn-secondary {% else %} btn-primary {% endif %} align-items-center" type="button" data-toggle="collapse" data-target="#comparative" aria-expanded="false" aria-controls="comparative" >Comparative Genomics</button>
@@ -97,7 +97,7 @@
 	</div>
 	<br><br>
 	<div class="collapse" id="assembly" style="padding-right: 15px; padding-left: 15px;">
-		
+
 		{% if not assembly %}
 
 			<div class="card card-body">
@@ -118,7 +118,7 @@
 						</div>
 					</div>
 					<div class="col-md-2"></div>
-					
+
 					<br><br>
 
 					<div class="album py-5 bg-light">
@@ -138,7 +138,7 @@
 							<div class="col-md-1"></div>
 						</div>
 						</div>
-  					
+
   					</div>
 				</div>
 

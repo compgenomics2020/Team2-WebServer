@@ -8,12 +8,27 @@
 
                 <div class="container text-center">
                         <h1 class="text-white display-3">Welcome to Functional Annotation</h1>
-                        <p class="text-white">The functional annotation step in our pipeline takes in fna, faa, multi-fasta, and gff files to create annotated gff files for Comparative Genomics.</p>
-                        <p class="text-white">We approach this through homology- and ab initio-based tools. Inputs to homology are clustered beforehand. </p>
-                        <p class="text-white">Clustering: CD-HIT. Homology: EGGNOG, CARD, VFDB. Ab initio: TMHMM2, SignalP, and PilerCR.</p>
+                        <p class="text-white">The functional annotation step in our pipeline takes in fna, faa, multi-fasta, and gff files to create annotated gff files for Comparative Genomics. We approach this through homology- and ab initio-based tools. Inputs to homology are clustered beforehand. </p>
+                        <p class="text-white">Clustering: CD-HIT. Homology: EGGNOG and VFDB. Ab initio: TMHMM2 and SignalP.</p>
                         <br>
-                        <p class="text-white display-2">Unfortunately, because we need to ensure that the inputs to this step are paired, the outputs of Gene Prediction are immediately fed into Functional Annotation.</p>
+                        <h4 class="text-white">Please enter faa, fna, and gff files with the same naming schemes. There must be an equal number of each.</h4>
                         <br>
+                        <form method="post" enctype="multipart/form-data" class="text-center">
+                                {% csrf_token %}
+                                <button type="button" class="btn text-white btn-outline-warning btn-lg p-3 col-md-7">
+                                        <div class="row align-items-center">
+                                                <div class="col-md-8">
+                                                        <input type="email" name="email" class="form-control">
+                                                </div>
+                                                <div class="col-md-4">
+                                                        <h5><b>Email Address</b></h5>
+                                                </div>
+                                        </div>
+                                </button>
+                                <button class="btn text-white btn-outline-warning btn-lg p-3 col-md-7">
+                                        <input type="file" class="text-white" name="all-fa-files" multiple ><b>Upload Files »</b>
+                                </button>
+                        </form>
 
 
                 </div>
